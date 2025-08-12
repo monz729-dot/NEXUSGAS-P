@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,55 +19,131 @@
 <header class="main-header" id="header">
   <div class="main-header__inner">
     <a href="MN01.html" class="main-header__logo">
-      <span class="ir">NEXUSGAS</span>
+      <span class="ir">NEXUS</span>
     </a>
     <div class="main-header__gnb gnb">
-      <ul class="gnb__list">
+      <ul class="gnb__list" role="menubar">
         <li class="gnb__item">
-          <a href="CO01.html" class="gnb__link">NEXUSGAS</a>
+          <a href="#" class="gnb__link" data-menu="nexus">NEXUSGAS</a>
         </li>
         <li class="gnb__item">
-          <a href="BU00.html" class="gnb__link">Business</a>
+          <a href="#" class="gnb__link" data-menu="business">Business</a>
         </li>
         <li class="gnb__item">
-          <a href="SU01.html" class="gnb__link">Solutions</a>
+          <a href="#" class="gnb__link" data-menu="solution">Solutions</a>
         </li>
         <li class="gnb__item">
-          <a href="HV01.html" class="gnb__link">Hydrogen</a>
-          <div class="gnb__dropdown">
-            <ul class="gnb__dropdown-list">
-              <li class="gnb__dropdown-item">
-                <a href="HV01.html" class="gnb__dropdown-link">Value Chain</a>
-              </li>
-              <li class="gnb__dropdown-item">
-                <a href="HV02.html" class="gnb__dropdown-link">Our Role</a>
-              </li>
-              <li class="gnb__dropdown-item">
-                <a href="HV03.html" class="gnb__dropdown-link">Fuel Cell Applications</a>
-              </li>
-              <li class="gnb__dropdown-item">
-                <a href="HV04.html" class="gnb__dropdown-link">Charging Infrastructure</a>
-              </li>
-            </ul>
-          </div>
+          <a href="#" class="gnb__link" data-menu="pr">PR</a>
         </li>
         <li class="gnb__item">
-          <a href="MK01.html" class="gnb__link">Media</a>
+          <a href="#" class="gnb__link" data-menu="esg">Sustainability</a>
         </li>
         <li class="gnb__item">
-          <a href="EM01.html" class="gnb__link">Sustainability</a>
+          <a href="#" class="gnb__link" data-menu="recruit">Careers</a>
         </li>
       </ul>
     </div>
     <div class="main-header__util">
-      <div class="main-header__util-item">
-        <button type="button" class="main-header__util-button has-dropdown">Support</button>
+      <div class="main-header__util-item main-header__support">
+        <button type="button" class="main-header__util-button main-header__support-button has-dropdown">Support</button>
+        <div class="main-header__support-dropdown">
+          <ul class="main-header__support-list">
+            <li class="main-header__support-item">
+              <a href="FAQ01.html" class="main-header__support-link">Contact</a>
+            </li>
+            <li class="main-header__support-item">
+              <a href="FAQ02.html" class="main-header__support-link">FAQ</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="main-header__util-item">
-        <button type="button" class="main-header__util-button has-dropdown" onclick="switchLanguage('en')">EN</button>
+      <div class="main-header__util-item main-header__lang">
+        <button type="button" class="main-header__util-button main-header__lang-button has-dropdown">
+          EN
+        </button>
+        <div class="main-header__lang-dropdown">
+          <ul class="main-header__lang-list">
+            <li class="main-header__lang-item">
+              <a href="../sub/HV01.html" class="main-header__lang-link">한국어(KR)</a>
+            </li>
+            <li class="main-header__lang-item">
+              <a href="#" class="main-header__lang-link">English (EN)</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- ?듯빀 硫붽?硫붾돱 -->
+  <div id="mega-menu" class="mega" aria-hidden="true" role="menu">
+    <div class="mega__bridge" aria-hidden="true"></div>
+    <div class="mega__inner">
+      <div class="mega__content">
+        <div class="mega__grid">
+        <!-- NEXUSGAS 而щ읆 -->
+        <div class="mega__col" data-col="nexus">
+          <ul class="mega__col-list">
+            <li><a href="CO01.html">Company</a></li>
+            <li><a href="CO04.html">Greetings</a></li>
+            <li><a href="CO05.html">History</a></li>
+            <li><a href="CO06.html">CI</a></li>
+            <li><a href="CO07.html">Location</a></li>
+            <li><a href="HV01.html">Hydrogen Value Chain</a></li>
+          </ul>
+        </div>
+        
+        <!-- ?ъ뾽遺꾩빞 而щ읆 -->
+        <div class="mega__col" data-col="business">
+          <ul class="mega__col-list">
+            <li><a href="BU00.html">Business</a></li>
+            <li><a href="BU01.html">Equipment</a></li>
+            <li><a href="BU11.html">Technology</a></li>
+          </ul>
+        </div>
+        
+        <!-- ?붾（?섎텇??而щ읆 -->
+        <div class="mega__col" data-col="solution">
+          <ul class="mega__col-list">
+            <li><a href="BU21.html">Solutions</a></li>
+            <li><a href="BU31.html">R&D</a></li>
+          </ul>
+        </div>
+        
+        <!-- ?띾낫 而щ읆 -->
+        <div class="mega__col" data-col="pr">
+          <ul class="mega__col-list">
+            <li><a href="MK01.html">News</a></li>
+            <li><a href="MK11.html">Resources</a></li>
+            <li><a href="MK21.html">Projects</a></li>
+          </ul>
+        </div>
+        
+        <!-- 吏?띻??κ꼍??而щ읆 -->
+        <div class="mega__col" data-col="esg">
+          <ul class="mega__col-list">
+            <li><a href="SU01.html">ESG Management</a></li>
+            <li><a href="SU02.html">Safety & Environment</a></li>
+            <li><a href="SU03.html">Ethics</a></li>
+            <li><a href="SU04.html">Quality</a></li>
+            <li><a href="SU05.html">Social Contribution</a></li>
+          </ul>
+        </div>
+        
+        <!-- 梨꾩슜 而щ읆 -->
+        <div class="mega__col" data-col="recruit">
+          <ul class="mega__col-list">
+            <li><a href="EM01.html">Talent</a></li>
+            <li><a href="EM02.html">Recruitment</a></li>
+            <li><a href="EM03.html">Apply</a></li>
+          </ul>
+        </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
 </header>
     <div id="content" class="page-content">
       <div class="page-header">
@@ -132,7 +208,7 @@
               <div class="content-image__detail rise-fast">
                 <h4 class="content-image__title">The hydrogen economy is not isolated technology but a connected flow.</h4>
                 <p class="content-image__text">
-                  The stages leading from hydrogen production → storage → transportation → utilization
+                  The stages leading from hydrogen production ??storage ??transportation ??utilization
                   <strong class="bold">
                     must be connected through infrastructure<br />
                     such as piping, storage tanks, and charging stations
@@ -173,7 +249,7 @@
       <div class="main-footer__logo">
         <span class="ir">NEXUSGAS</span>
       </div>
-      <p class="main-footer__copyright">Copyright © 2025 NEXUSGAS. <br />All rights reserved.</p>
+      <p class="main-footer__copyright">Copyright 짤 2025 NEXUSGAS. <br />All rights reserved.</p>
     </div>
     <div class="main-footer__info">
       <ul class="main-footer__site">
@@ -182,7 +258,7 @@
         <li class="main-footer__site-item"><a href="MK21.html" class="main-footer__site-link">Projects</a></li>
         <li class="main-footer__site-item"><a href="BU00.html" class="main-footer__site-link">Business Areas</a></li>
         <li class="main-footer__site-item"><a href="EM01.html" class="main-footer__site-link">Sustainability</a></li>
-        <li class="main-footer__site-item"><a href="SU01.html" class="main-footer__site-link">NEXUS™ Solution</a></li>
+        <li class="main-footer__site-item"><a href="SU01.html" class="main-footer__site-link">NEXUS??Solution</a></li>
       </ul>
       <div class="main-footer__contact-wrap">
         <dl class="main-footer__contact">

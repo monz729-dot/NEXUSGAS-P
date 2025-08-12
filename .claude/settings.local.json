@@ -16,7 +16,11 @@
       "Bash(git remote add:*)",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(powershell:*)",
+      "Bash(grep:*)",
+      "Bash(echo:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": []
   }
