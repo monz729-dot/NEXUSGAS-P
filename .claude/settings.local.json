@@ -37,7 +37,8 @@
       "Bash(od:*)",
       "Bash(do echo \"=== $file ===\")",
       "Bash(do sed -i 's/<a href=\"\"#\"\" class=\"\"gnb__link\"\" data-menu=\"\"business\"\">사업분야<\\/a>/<a href=\"\"BU00.html\"\" class=\"\"gnb__link\"\">사업분야<\\/a>/g' \"$file\")",
-      "Bash(do sed -i '/<!-- 사업분야 컬럼 -->/,/        <\\/div>/{ /<!-- 사업분야 컬럼 -->/d; /^        <div class=\"\"mega__col\"\" data-col=\"\"business\"\">/,/^        <\\/div>$/d; }' \"$file\")"
+      "Bash(do sed -i '/<!-- 사업분야 컬럼 -->/,/        <\\/div>/{ /<!-- 사업분야 컬럼 -->/d; /^        <div class=\"\"mega__col\"\" data-col=\"\"business\"\">/,/^        <\\/div>$/d; }' \"$file\")",
+      "Bash(node:*)"
     ],
     "deny": []
   }
