@@ -2535,3 +2535,103 @@ button.swiper-pagination-bullet {
   color: #333;
 }
 
+/* 고객지원 드롭다운 스타일 - Family Site와 동일한 스타일 적용 */
+.main-header__support {
+  position: relative;
+  display: inline-block;
+}
+
+.main-header__support-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  margin-top: 10px;
+}
+
+.main-header__support:hover .main-header__support-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.main-header__support-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.main-header__support-item {
+  margin: 0;
+}
+
+.main-header__support-link {
+  display: block;
+  padding: 8px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.main-header__support-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* 언어 선택 드롭다운 스타일 - 고객지원과 동일한 스타일 적용 */
+.main-header__lang {
+  position: relative;
+  display: inline-block;
+}
+
+.main-header__lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  margin-top: 10px;
+}
+
+.main-header__lang:hover .main-header__lang-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.main-header__lang-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.main-header__lang-item {
+  margin: 0;
+}
+
+.main-header__lang-link {
+  display: block;
+  padding: 8px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.main-header__lang-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+

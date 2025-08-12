@@ -977,4 +977,6 @@ document.addEventListener('DOMContentLoaded', function () {
       hideMegaMenu();
     });
   }
+
+  // 고객지원 드롭다운은 CSS hover로 처리
 });
