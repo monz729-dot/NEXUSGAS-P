@@ -20,7 +20,24 @@
       "Bash(powershell:*)",
       "Bash(grep:*)",
       "Bash(echo:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(do if ! grep -q \"page-header\" \"$file\")",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)",
+      "Bash(then echo \"Missing page-header: $file\")",
+      "Bash(do sed -i 's/<!-- ?듯빀 硫붽?硫붾돱 -->/<!-- Integrated Mega Menu -->/g' \"$file\")",
+      "Bash(do sed -i 's/<!-- NEXUSGAS 而щ읆 -->/<!-- NEXUSGAS Column -->/g; s/<!-- ?ъ뾽遺꾩빞 而щ읆 -->/<!-- Business Column -->/g; s/<!-- ?붾（?섎텇??而щ읆 -->/<!-- Solutions Column -->/g; s/<!-- ?띾낫 而щ읆 -->/<!-- PR Column -->/g; s/<!-- 吏?띻??κ꼍??而щ읆 -->/<!-- Sustainability Column -->/g; s/<!-- 梨꾩슜 而щ읆 -->/<!-- Careers Column -->/g' \"$file\")",
+      "Bash(do sed -i 's/쨌/\\&middot;/g' \"$file\")",
+      "Bash(do sed -i 's/NEXUS\\?\\?/NEXUS\\&trade;/g' \"$file\")",
+      "Bash(do sed -i 's/alarm \\?\\?response/alarm \\& response/g; s/?듯빀 硫붽?硫붾돱/Integrated Mega Menu/g; s/NEXUS&trade;&trade;/NEXUS\\&trade;/g' \"$file\")",
+      "Bash(do sed -i 's/NEXUS&trade;\\?\\?/NEXUS\\&trade;/g; s/\\?\\?/\\&trade;/g' \"$file\")",
+      "Bash(do sed -i 's/&trade;/\\?/g' \"$file\")",
+      "Bash(cat:*)",
+      "Bash(sed:*)",
+      "Bash(od:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(do sed -i 's/<a href=\"\"#\"\" class=\"\"gnb__link\"\" data-menu=\"\"business\"\">사업분야<\\/a>/<a href=\"\"BU00.html\"\" class=\"\"gnb__link\"\">사업분야<\\/a>/g' \"$file\")",
+      "Bash(do sed -i '/<!-- 사업분야 컬럼 -->/,/        <\\/div>/{ /<!-- 사업분야 컬럼 -->/d; /^        <div class=\"\"mega__col\"\" data-col=\"\"business\"\">/,/^        <\\/div>$/d; }' \"$file\")"
     ],
     "deny": []
   }
