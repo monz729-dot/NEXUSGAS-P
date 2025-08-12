@@ -1103,11 +1103,6 @@ body {
     font-size: 16px;
   }
 }
-  width: 0.625vw;
-  height: 0.4166666667vw;
-  mask: url(../img/icon/arrow-header-light.svg) 50% 50%/100% auto no-repeat;
-  background: #fff;
-}
 
 .main-footer {
   padding: 3.8541666667vw 0 2.2916666667vw !important;

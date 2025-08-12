@@ -417,7 +417,7 @@ body.main {
   top: 0;
   z-index: 10;
   left: -50%;
-  background: #fff;
+  background: transparent;
   transform: translateX(-39.5833333333vw);
 }
 .main-media__inner .swiper {

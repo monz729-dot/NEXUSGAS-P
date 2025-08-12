@@ -581,7 +581,10 @@ document.addEventListener('DOMContentLoaded', () => {
   historyContent();
   goTop();
 
-  transformTrand.init();
+  // transformTrand가 존재할 때만 초기화
+  if (typeof transformTrand !== 'undefined' && transformTrand && typeof transformTrand.init === 'function') {
+    transformTrand.init();
+  }
 
   // Initialize Lenis smooth scrolling only for BU00.html
   if (document.querySelector('.submain')) {
