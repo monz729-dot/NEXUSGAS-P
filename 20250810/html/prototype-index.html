@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus 퍼블 프로토타입</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            font-size: 1.5rem;
+        }
+        
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .page-link:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .page-link.main {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .page-link.main:hover {
+            background: #27ae60;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .page-link.dashboard {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .page-link.dashboard:hover {
+            background: #c0392b;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .page-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .page-path {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .info {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .info h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        
+        .info p {
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nexus 퍼블 프로토타입</h1>
+            <p>개발 환경에서 모든 페이지를 확인할 수 있습니다</p>
+        </div>
+        
+        <div class="info">
+            <h3>📋 사용 방법</h3>
+            <p>• 각 페이지를 클릭하면 해당 페이지로 이동합니다</p>
+            <p>• 파일을 수정하면 자동으로 브라우저가 새로고침됩니다</p>
+            <p>• 개발 서버 주소: <strong>http://localhost:3000</strong></p>
+            <p>• <a href="dashboard.html" style="color: #e74c3c; text-decoration: none; font-weight: bold;">📊 대시보드로 돌아가기</a></p>
+        </div>
+        
+        <div class="section">
+            <h2>🏠 메인 페이지</h2>
+            <div class="page-grid">
+                <a href="main/MN01.html" class="page-link main">
+                    <div class="page-name">메인 페이지</div>
+                    <div class="page-path">main/MN01.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📊 대시보드</h2>
+            <div class="page-grid">
+                <a href="dashboard.html" class="page-link dashboard">
+                    <div class="page-name">대시보드</div>
+                    <div class="page-path">dashboard.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🏢 기업소개</h2>
+            <div class="page-grid">
+                <a href="sub/CO01.html" class="page-link">
+                    <div class="page-name">기업 개요</div>
+                    <div class="page-path">sub/CO01.html</div>
+                </a>
+                <a href="sub/CO02.html" class="page-link">
+                    <div class="page-name">조직도</div>
+                    <div class="page-path">sub/CO02.html</div>
+                </a>
+                <a href="sub/CO03.html" class="page-link">
+                    <div class="page-name">비전</div>
+                    <div class="page-path">sub/CO03.html</div>
+                </a>
+                <a href="sub/CO04.html" class="page-link">
+                    <div class="page-name">인사말</div>
+                    <div class="page-path">sub/CO04.html</div>
+                </a>
+                <a href="sub/CO05.html" class="page-link">
+                    <div class="page-name">연혁</div>
+                    <div class="page-path">sub/CO05.html</div>
+                </a>
+                <a href="sub/CO06.html" class="page-link">
+                    <div class="page-name">CI</div>
+                    <div class="page-path">sub/CO06.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">찾아오시는길</div>
+                <a href="sub/CO07.html" class="page-link">
+                    <div class="page-name">광양본사</div>
+                    <div class="page-path">sub/CO07.html</div>
+                </a>
+                <a href="sub/CO08.html" class="page-link">
+                    <div class="page-name">광주사무소</div>
+                    <div class="page-path">sub/CO08.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>⚡ 수소 벨류체인</h2>
+            <div class="page-grid">
+                <a href="sub/HV01.html" class="page-link">
+                    <div class="page-name">수소 가치사슬</div>
+                    <div class="page-path">sub/HV01.html</div>
+                </a>
+                <a href="sub/HV02.html" class="page-link">
+                    <div class="page-name">넥서스의 역할</div>
+                    <div class="page-path">sub/HV02.html</div>
+                </a>
+                <a href="sub/HV03.html" class="page-link">
+                    <div class="page-name">연료전지 활용</div>
+                    <div class="page-path">sub/HV03.html</div>
+                </a>
+                <a href="sub/HV04.html" class="page-link">
+                    <div class="page-name">충전 인프라 기술</div>
+                    <div class="page-path">sub/HV04.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>💼 사업분야</h2>
+            <div class="page-grid">
+                <a href="sub/BU00.html" class="page-link">
+                    <div class="page-name">서브메인</div>
+                    <div class="page-path">sub/BU00.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">설비 부문</div>
+                <a href="sub/BU01.html" class="page-link">
+                    <div class="page-name">수소 인프라</div>
+                    <div class="page-path">sub/BU01.html</div>
+                </a>
+                <a href="sub/BU02.html" class="page-link">
+                    <div class="page-name">LPG 인프라</div>
+                    <div class="page-path">sub/BU02.html</div>
+                </a>
+                <a href="sub/BU03.html" class="page-link">
+                    <div class="page-name">LNG 인프라</div>
+                    <div class="page-path">sub/BU03.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">기술부문</div>
+                <a href="sub/BU11.html" class="page-link">
+                    <div class="page-name">핵심시공</div>
+                    <div class="page-path">sub/BU11.html</div>
+                </a>
+                <a href="sub/BU12.html" class="page-link">
+                    <div class="page-name">EPC</div>
+                    <div class="page-path">sub/BU12.html</div>
+                </a>
+                <a href="sub/BU13.html" class="page-link">
+                    <div class="page-name">E&M</div>
+                    <div class="page-path">sub/BU13.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">솔루션부문</div>
+                <a href="sub/BU21.html" class="page-link">
+                    <div class="page-name">디지털트윈</div>
+                    <div class="page-path">sub/BU21.html</div>
+                </a>
+                <a href="sub/BU22.html" class="page-link">
+                    <div class="page-name">핵심기술영상</div>
+                    <div class="page-path">sub/BU22.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">R&D 부문</div>
+                <a href="sub/BU31.html" class="page-link">
+                    <div class="page-name">R&D 과제</div>
+                    <div class="page-path">sub/BU31.html</div>
+                </a>
+                <a href="sub/BU32.html" class="page-link">
+                    <div class="page-name">정부정책</div>
+                    <div class="page-path">sub/BU32.html</div>
+                </a>
+                <a href="sub/BU33.html" class="page-link">
+                    <div class="page-name">글로벌기술트렌드</div>
+                    <div class="page-path">sub/BU33.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📢 홍보</h2>
+            <div class="page-grid">
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">뉴스</div>
+                <a href="sub/MK01.html" class="page-link">
+                    <div class="page-name">뉴스목록</div>
+                    <div class="page-path">sub/MK01.html</div>
+                </a>
+                <a href="sub/MK02.html" class="page-link">
+                    <div class="page-name">뉴스상세</div>
+                    <div class="page-path">sub/MK02.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">자료실</div>
+                <a href="sub/MK11.html" class="page-link">
+                    <div class="page-name">자료실목록</div>
+                    <div class="page-path">sub/MK11.html</div>
+                </a>
+                <a href="sub/MK12.html" class="page-link">
+                    <div class="page-name">자료실상세</div>
+                    <div class="page-path">sub/MK12.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">프로젝트</div>
+                <a href="sub/MK21.html" class="page-link">
+                    <div class="page-name">our work</div>
+                    <div class="page-path">sub/MK21.html</div>
+                </a>
+                <a href="sub/MK22.html" class="page-link">
+                    <div class="page-name">인증 및 수상</div>
+                    <div class="page-path">sub/MK22.html</div>
+                </a>
+                <a href="sub/MK23.html" class="page-link">
+                    <div class="page-name">이미지 라이브러리</div>
+                    <div class="page-path">sub/MK23.html</div>
+                </a>
+            </div>
+        </div>
+        
+
+        
+        <div class="section">
+            <h2>🌱 지속가능경영</h2>
+            <div class="page-grid">
+                <a href="sub/SU01.html" class="page-link">
+                    <div class="page-name">ESG경영</div>
+                    <div class="page-path">sub/SU01.html</div>
+                </a>
+                <a href="sub/SU02.html" class="page-link">
+                    <div class="page-name">안전 보건 환경</div>
+                    <div class="page-path">sub/SU02.html</div>
+                </a>
+                <a href="sub/SU03.html" class="page-link">
+                    <div class="page-name">윤리경영</div>
+                    <div class="page-path">sub/SU03.html</div>
+                </a>
+                <a href="sub/SU04.html" class="page-link">
+                    <div class="page-name">품질경영</div>
+                    <div class="page-path">sub/SU04.html</div>
+                </a>
+                <a href="sub/SU05.html" class="page-link">
+                    <div class="page-name">사회공헌</div>
+                    <div class="page-path">sub/SU05.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>💼 채용</h2>
+            <div class="page-grid">
+                <a href="sub/EM01.html" class="page-link">
+                    <div class="page-name">인재상</div>
+                    <div class="page-path">sub/EM01.html</div>
+                </a>
+                <div style="grid-column: 1 / -1; margin: 20px 0 10px 0; font-weight: bold; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">지원서 접수</div>
+                <a href="sub/EM02.html" class="page-link">
+                    <div class="page-name">목록</div>
+                    <div class="page-path">sub/EM02.html</div>
+                </a>
+                <a href="sub/EM03.html" class="page-link">
+                    <div class="page-name">상세</div>
+                    <div class="page-path">sub/EM03.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎧 고객지원</h2>
+            <div class="page-grid">
+                <a href="sub/FAQ01.html" class="page-link">
+                    <div class="page-name">상담/문의</div>
+                    <div class="page-path">sub/FAQ01.html</div>
+                </a>
+                <a href="sub/FAQ02.html" class="page-link">
+                    <div class="page-name">FAQ</div>
+                    <div class="page-path">sub/FAQ02.html</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

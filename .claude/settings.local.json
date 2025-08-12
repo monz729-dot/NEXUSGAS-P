@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"Creating $file\")",
+      "Bash(done)",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:127.0.0.1)",
+      "Bash(do echo \"Processing $file\")",
+      "Bash(find:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}

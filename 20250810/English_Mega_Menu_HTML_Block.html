@@ -1,0 +1,203 @@
+<!-- ====================================== -->
+<!-- ENGLISH MEGA MENU - COMPLETE BLOCK -->
+<!-- Copy this entire block to replace header navigation in English pages -->
+<!-- ====================================== -->
+
+<!-- Navigation Bar -->
+<div class="main-header__gnb gnb">
+  <ul class="gnb__list" role="menubar">
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="nexus">NEXUSGAS</a>
+    </li>
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="business">Business</a>
+    </li>
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="solution">Solutions</a>
+    </li>
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="pr">Media</a>
+    </li>
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="esg">Sustainability</a>
+    </li>
+    <li class="gnb__item">
+      <a href="#" class="gnb__link" data-menu="recruit">Careers</a>
+    </li>
+  </ul>
+</div>
+
+<!-- Utility Section -->
+<div class="main-header__util">
+  <div class="main-header__util-item">
+    <button type="button" class="main-header__util-button">Support</button>
+  </div>
+  <div class="main-header__util-item">
+    <button type="button" class="main-header__util-button has-dropdown">
+      EN
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- Mega Menu Structure -->
+<div id="mega-menu" class="mega" aria-hidden="true" role="menu">
+  <div class="mega__bridge" aria-hidden="true"></div>
+  <div class="mega__inner">
+    <div class="mega__content">
+      <div class="mega__grid">
+      <!-- NEXUSGAS Column -->
+      <div class="mega__col" data-col="nexus">
+        <ul class="mega__col-list">
+          <li><a href="CO01.html">Company Overview</a></li>
+          <li><a href="CO04.html">CEO Message</a></li>
+          <li><a href="CO05.html">History</a></li>
+          <li><a href="CO06.html">CI</a></li>
+          <li><a href="CO07.html">Location</a></li>
+        </ul>
+      </div>
+      
+      <!-- Business Column -->
+      <div class="mega__col" data-col="business">
+        <ul class="mega__col-list">
+          <li><a href="BU01.html">Hydrogen Infrastructure</a></li>
+          <li><a href="BU02.html">LNG Infrastructure</a></li>
+          <li><a href="BU03.html">LPG Infrastructure</a></li>
+          <li><a href="BU11.html">Technology</a></li>
+        </ul>
+      </div>
+      
+      <!-- Solutions Column -->
+      <div class="mega__col" data-col="solution">
+        <ul class="mega__col-list">
+          <li><a href="SU01.html">NEXUS™</a></li>
+          <li><a href="BU31.html">R&D</a></li>
+        </ul>
+      </div>
+      
+      <!-- Media Column -->
+      <div class="mega__col" data-col="pr">
+        <ul class="mega__col-list">
+          <li><a href="MK01.html">News</a></li>
+          <li><a href="MK01.html">Resources</a></li>
+          <li><a href="MK21.html">Projects</a></li>
+        </ul>
+      </div>
+      
+      <!-- Sustainability Column -->
+      <div class="mega__col" data-col="esg">
+        <ul class="mega__col-list">
+          <li><a href="EM01.html">ESG Management</a></li>
+          <li><a href="EM02.html">Safety·Health·Environment</a></li>
+          <li><a href="EM03.html">Ethics Management</a></li>
+          <li><a href="EM04.html">Quality Management</a></li>
+          <li><a href="HV01.html">Social Contribution</a></li>
+        </ul>
+      </div>
+      
+      <!-- Careers Column -->
+      <div class="mega__col" data-col="recruit">
+        <ul class="mega__col-list">
+          <li><a href="FAQ01.html">Talent Vision</a></li>
+          <li><a href="FAQ01.html">Recruitment</a></li>
+          <li><a href="FAQ01.html">Application</a></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================== -->
+<!-- JAVASCRIPT BLOCK -->
+<!-- Add this JavaScript after the existing scripts -->
+<!-- ====================================== -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const header = document.querySelector('#header');
+  const gnb = header.querySelector('.gnb');
+  const links = gnb.querySelectorAll('.gnb__link');
+  const panels = document.querySelectorAll('.mega');
+  let closeT;
+
+  function openMenu(key, link){
+    clearTimeout(closeT);
+    header.classList.add('is-open');
+    
+    // Deactivate all mega menus
+    panels.forEach(p=>{
+      p.classList.remove('is-active');
+      p.setAttribute('aria-hidden', 'true');
+    });
+    
+    // Activate the mega menu
+    const targetPanel = document.querySelector('#mega-menu');
+    if (targetPanel) {
+      targetPanel.classList.add('is-active');
+      targetPanel.setAttribute('aria-hidden', 'false');
+    }
+    
+    // Show active link
+    links.forEach(l=>l.classList.remove('active'));
+    link.classList.add('active');
+  }
+
+  function scheduleClose(){
+    clearTimeout(closeT);
+    closeT = setTimeout(()=> {
+      header.classList.remove('is-open');
+      panels.forEach(p=>{ 
+        p.classList.remove('is-active');
+        p.setAttribute('aria-hidden', 'true');
+      });
+      links.forEach(l=>l.classList.remove('active'));
+    }, 180);
+  }
+
+  links.forEach(link=>{
+    const key = link.dataset.menu;
+    if (key) {
+      link.addEventListener('mouseenter', ()=> openMenu(key, link));
+      link.addEventListener('focusin', ()=> openMenu(key, link));
+    }
+  });
+
+  // Close when mouse leaves mega menu area
+  panels.forEach(panel => {
+    panel.addEventListener('mouseleave', scheduleClose);
+  });
+
+  // Close when mouse leaves header
+  header.addEventListener('mouseleave', scheduleClose);
+  
+  document.addEventListener('keydown', (e)=>{ 
+    if(e.key==='Escape') scheduleClose(); 
+  });
+});
+
+// Language switching function
+function switchLanguage(lang) {
+  const currentPath = window.location.pathname;
+  let newPath = currentPath;
+  
+  if (lang === 'kr') {
+    // Switch to Korean version
+    if (currentPath.includes('/en/')) {
+      const fileName = currentPath.split('/en/')[1];
+      if (fileName === 'MN01.html') {
+        newPath = currentPath.replace('/en/MN01.html', '/main/MN01.html');
+      } else {
+        newPath = currentPath.replace('/en/', '/sub/');
+      }
+    }
+  } else if (lang === 'en') {
+    // Stay on English version - no change needed
+    return;
+  }
+  
+  if (newPath !== currentPath) {
+    window.location.href = newPath;
+  }
+}
+</script>

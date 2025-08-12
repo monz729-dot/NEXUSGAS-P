@@ -1,0 +1,53 @@
+MEGA MENU TRANSFORMATION PATTERNS FOR ENGLISH PAGES:
+
+# Pattern 1: Replace GNB navigation
+OLD_PATTERN_1: Complex gnb__dropdown structure starting with "    <div class="main-header__gnb gnb">" and ending with "    </div>"
+
+NEW_PATTERN_1: Simple data-menu navigation:
+    <div class="main-header__gnb gnb">
+      <ul class="gnb__list" role="menubar">
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="nexus">NEXUSGAS</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="business">Business</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="solution">Solutions</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="pr">Media</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="esg">Sustainability</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="recruit">Careers</a>
+        </li>
+      </ul>
+    </div>
+
+# Pattern 2: Simplify header util
+OLD_PATTERN_2: Complex util dropdown with onclick functions
+NEW_PATTERN_2: Simple util buttons:
+    <div class="main-header__util">
+      <div class="main-header__util-item">
+        <button type="button" class="main-header__util-button">Support</button>
+      </div>
+      <div class="main-header__util-item">
+        <button type="button" class="main-header__util-button has-dropdown">
+          EN
+        </button>
+      </div>
+    </div>
+
+# Pattern 3: Add mega menu after header inner
+OLD_PATTERN_3: "  </div>\n</header>"
+NEW_PATTERN_3: Complete mega menu insertion with proper structure
+
+# Pattern 4: Add/Update JavaScript
+OLD_PATTERN_4: Basic language switching and mobile menu
+NEW_PATTERN_4: Complete mega menu functionality with hover/focus handling
+
+# Pattern 5: Ensure lenis.min.js is included
+Check for lenis.min.js in script imports and add if missing

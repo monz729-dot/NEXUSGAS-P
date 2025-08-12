@@ -1,0 +1,31 @@
+MEGA MENU TEMPLATE FOR BU FILES:
+
+1. Title: Change "Document" to "NEXUSGAS"
+
+2. Navigation: Replace old GNB with:
+    <div class="main-header__gnb gnb">
+      <ul class="gnb__list" role="menubar">
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="nexus">NEXUSGAS</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="business">사업분야</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="solution">솔루션분야</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="pr">홍보</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="esg">지속가능경영</a>
+        </li>
+        <li class="gnb__item">
+          <a href="#" class="gnb__link" data-menu="recruit">채용</a>
+        </li>
+      </ul>
+    </div>
+
+3. Add mega menu after header close
+4. Update footer style and links
+5. Add lenis.min.js and complete JavaScript

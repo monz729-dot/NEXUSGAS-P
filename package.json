@@ -1,0 +1,17 @@
+{
+  "name": "nexus-prototype",
+  "version": "1.0.0",
+  "description": "Nexus 퍼블 프로토타입",
+  "main": "index.js",
+  "scripts": {
+    "dev": "live-server 20250810 --port=3000 --open=/html/prototype-index.html",
+    "start": "live-server 20250810 --port=3000",
+    "build": "echo '빌드가 필요하지 않습니다.'"
+  },
+  "keywords": ["prototype", "html", "css", "javascript"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

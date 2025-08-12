@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 개발시 삭제: robots -->
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../assets/dashboard/dashboard.css" />
+    <link rel="stylesheet" href="../assets/dashboard/sshpre.css" />
+    <!--
+    Vue.js: Vue의 문법으로 Dashboard 구성
+    lodash.min.js: Array / Object 관련
+    sshpre.umd.min.js: Vue 용 Syntax Highlighter
+  -->
+    <script src="../assets/dashboard/moment-with-locales.min.js"></script>
+    <script src="../assets/dashboard/vue.js"></script>
+    <script src="../assets/dashboard/lodash.min.js"></script>
+    <script src="../assets/dashboard/sshpre.umd.min.js"></script>
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link href="../assets/css/global.css" rel="stylesheet"> -->
+
+    <style>
+      /*
+    * Dashboard 의 기본 설정(css 변수)
+    */
+      body {
+        --color: #00bfc2;
+        --blue: #00bfc2;
+        --action: all 0.3s ease;
+        --header: 50px;
+        --menu: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="wrapper">
+        <!-- 네비게이션 링크 추가 -->
+        <div class="navigation-links" style="background: #f8f9fa; padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #e9ecef;">
+          <h3 style="margin: 0 0 15px 0; color: #2c3e50;">🔗 빠른 네비게이션</h3>
+          <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <a href="main/MN01.html" style="padding: 8px 16px; background: #2ecc71; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">🏠 메인 페이지</a>
+            <a href="prototype-index.html" style="padding: 8px 16px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">📋 프로토타입 네비게이션</a>
+            <a href="sub/CO01.html" style="padding: 8px 16px; background: #9b59b6; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">🏢 NEXUSGAS</a>
+            <a href="sub/BU00.html" style="padding: 8px 16px; background: #e67e22; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">💼 사업분야</a>
+            <a href="sub/SU01.html" style="padding: 8px 16px; background: #1abc9c; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">🔧 솔루션분야</a>
+            <a href="sub/MK01.html" style="padding: 8px 16px; background: #f39c12; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">📢 홍보</a>
+            <a href="sub/EM01.html" style="padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">🌱 지속가능경영</a>
+            <a href="sub/FAQ01.html" style="padding: 8px 16px; background: #34495e; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">💼 채용</a>
+          </div>
+        </div>
+
+        <div class="title">페이지 목록</div>
+        <template v-for="(list, i) in getPage">
+          <div class="page-title">
+            {{ list.category }}
+          </div>
+          <div class="pages header">
+            <!-- <div class="step page-id">화면명</div> -->
+            <div class="step step-level">Depth</div>
+            <div class="step date">최종수정일</div>
+            <div class="step status">상태</div>
+            <div class="step status">{{ list.category === 'Interaction' ? '적용대상': '수정내역'}}</div>
+            <div class="step link">Link</div>
+            <div class="step memo">Memo</div>
+          </div>
+          <div
+            v-for="(page, p) in list.pages"
+            v-show="page.isVisible"
+            :key="p"
+            :class="{'parent-depth': page.isTitle, 'is-pot': page.pot}"
+            class="pages"
+          >
+            <template v-if="page.isTitle">
+              {{ page.L1 }} (전체: {{ page.count }} / 완료: {{ page.complete }} / 검수필요: {{ page.ing }})
+              
+            </template>
+            <template v-else>
+              <div class="step step-level">
+
+                <span>
+                  <template v-if="page.pot"><strong>{{ page.complete}}</strong> -</template>
+                  <template v-if="page.L1">{{ page.L1 }}</template>
+                  <template v-if="page.L2">> {{ page.L2 }}</template>
+                  <template v-if="page.L3">> {{ page.L3 }}</template>
+                </span>
+              </div>
+              <div class="step date">{{ setDate(page.date) }}</div>
+              <div class="step status">
+                <button
+                  class="status"
+                  @click="showStatus(page.status)"
+                  :class="[
+                  { 'wait': page.status === 0},
+                  { 'comp': page.status === 1},
+                  { 'modify': page.status === 2 }
+                ]"
+                >
+                  {{ page.status === 0 && '대기' || page.status === 1 && '완료' || page.status === 2 && '수정' }}
+                </button>
+              </div>
+              <div class="step status">
+                <button
+                  type="button"
+                  class="modify-button"
+                  v-if="page.status === 4 || list.category === 'Interaction'"
+                  @click="setReversion(page.pageId)"
+                >
+                  {{ list.category === 'Interaction' ? '적용대상': '수정내역' }}
+                </button>
+              </div>
+              <div class="step link">
+                <template v-if="page.pageType != 'A'">
+                  <a :href="makeURL(page.folder, page.pageId)" target="_blank">{{ page.pageId }}</a>
+                </template>
+                <template v-else> API </template>
+              </div>
+              <div class="step memo" :title="page.memo">{{ page.memo }}</div>
+            </template>
+          </div>
+        </template>
+        <div class="change-layer" v-show="showReversion">
+          <div class="change-layer__inner">
+            <button type="button" class="change-layer__close" @click="showReversion = false"></button>
+            <div class="change-layer__header">
+              {{ changeLog.pageId }} {{ changeLog.pageId.split('_')[0] !== 'animate' ? '수정내역' : '적용대상'}}
+            </div>
+            <div class="change-layer__list">
+              <div class="change-layer__list-header">
+                <div class="date" v-if="changeLog.pageId.split('_')[0] !== 'animate'">주석</div>
+                <div class="desc">{{ changeLog.pageId.split('_')[0] === 'animate' ? '적용대상' : '수정내역' }}</div>
+              </div>
+              <div class="change-layer__list-item" v-for="(list, i) in changeLog.modifyList" :key="i">
+                <div class="date" v-if="changeLog.pageId.split('_')[0] !== 'animate'">{{ list.date }}</div>
+                <div class="desc">{{ list.desc }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" id="pageList">
+      [
+        {
+          "category": "pages",
+          "pages": [
+            {
+              "pageId": "base",
+              "folder": "base",
+              "L1": "BASE",
+              "L2": "",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "해당 파일 기준으로 작업 진행"
+            },
+            {
+              "pageId": "MN01",
+              "folder": "main",
+              "L1": "MAIN",
+              "L2": "",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO01",
+              "folder": "sub",
+              "L1": "기업소개",
+              "L2": "기업 개요",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO02",
+              "folder": "sub",
+              "L1": "기업소개",
+              "L2": "조직도",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO03",
+              "folder": "sub",
+              "L1": "기업소개",
+              "L2": "비전",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO04",
+              "folder": "sub",
+              "L1": "인사말",
+              "L2": "",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO05",
+              "folder": "sub",
+              "L1": "연혁",
+              "L2": "",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO06",
+              "folder": "sub",
+              "L1": "CI",
+              "L2": "",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO07",
+              "folder": "sub",
+              "L1": "찾아오시는길",
+              "L2": "광양본사",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "CO08",
+              "folder": "sub",
+              "L1": "찾아오시는길",
+              "L2": "광주사무소",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            
+            {
+              "pageId": "HV01",
+              "folder": "sub",
+              "L1": "수소 벨류체인",
+              "L2": "수소 가치사슬",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "HV02",
+              "folder": "sub",
+              "L1": "수소 벨류체인",
+              "L2": "넥서스의 역할",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "HV03",
+              "folder": "sub",
+              "L1": "수소 벨류체인",
+              "L2": "연료전지 활용",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "HV04",
+              "folder": "sub",
+              "L1": "수소 벨류체인",
+              "L2": "충전 인프라 기술",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU00",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "서브메인",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU01",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "설비 부문",
+              "L3": "수소 인프라",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU02",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "설비 부문",
+              "L3": "LPG 인프라",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU03",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "설비 부문",
+              "L3": "LNG 인프라",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU11",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "기술부문",
+              "L3": "핵심시공",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU12",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "기술부문",
+              "L3": "EPC",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "jakomo 와 동일한 이미지 제작 필요(gif 혹은 lottie)"
+            },
+            {
+              "pageId": "BU13",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "기술부문",
+              "L3": "E&M",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU21",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "솔루션부문",
+              "L3": "디지털트윈",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU22",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "솔루션부문",
+              "L3": "핵심기술영상",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "삭제제"
+            },
+            {
+              "pageId": "BU31",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "R&D 부문",
+              "L3": "R&D 과제",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU32",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "R&D 부문",
+              "L3": "정부정책",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "BU33",
+              "folder": "sub",
+              "L1": "사업분야",
+              "L2": "R&D 부문",
+              "L3": "글로벌기술트렌드",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "MK01",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "뉴스",
+              "L3": "뉴스목록",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": " "
+            },
+            {
+              "pageId": "MK02",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "뉴스",
+              "L3": "뉴스상세",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "MK11",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "자료실",
+              "L3": "자료실목록",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "MK12",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "자료실",
+              "L3": "자료실상세",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "MK21",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "프로젝트",
+              "L3": "our work",
+              "L4": "주요실적 / 전체실적",
+              "date": "",
+              "status": 1,
+              "memo": "인터렉션 개선중"
+            },
+            {
+              "pageId": "MK22",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "프로젝트",
+              "L3": "인증 및 수상",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "MK23",
+              "folder": "sub",
+              "L1": "홍보",
+              "L2": "프로젝트",
+              "L3": "이미지 라이브러리",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "SU01",
+              "folder": "sub",
+              "L1": "지속가능경영",
+              "L2": "ESG경영",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "SU02",
+              "folder": "sub",
+              "L1": "지속가능경영",
+              "L2": "안전 보건 환경",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "SU03",
+              "folder": "sub",
+              "L1": "지속가능경영",
+              "L2": "윤리경영",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "jakomo 와 동일한 이미지 제작 필요(gif 혹은 lottie)"
+            },
+            {
+              "pageId": "SU04",
+              "folder": "sub",
+              "L1": "지속가능경영",
+              "L2": "품질경영",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "SU05",
+              "folder": "sub",
+              "L1": "지속가능경영",
+              "L2": "사회공헌",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "EM01",
+              "folder": "sub",
+              "L1": "채용",
+              "L2": "인재상",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "EM02",
+              "folder": "sub",
+              "L1": "채용",
+              "L2": "지원서 접수",
+              "L3": "목록",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "히어로 이미지 X"
+            },
+            {
+              "pageId": "EM03",
+              "folder": "sub",
+              "L1": "채용",
+              "L2": "지원서 접수",
+              "L3": "상세",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": "히어로 이미지 X"
+            },
+            {
+              "pageId": "FAQ01",
+              "folder": "sub",
+              "L1": "고객지원",
+              "L2": "상담/문의",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 1,
+              "memo": ""
+            },
+            {
+              "pageId": "FAQ02",
+              "folder": "sub",
+              "L1": "고객지원",
+              "L2": "FAQ",
+              "L3": "",
+              "L4": "",
+              "date": "",
+              "status": 0,
+              "memo": ""
+            },
+          ]
+        }
+      ]
+    </script>
+    <script type="application/json" id="changeLog">
+      [
+        {
+          "pageId": "TBD",
+          "modifyList": [
+            { "date": "YYYY-MM-DD", "desc": "하단으로 추가하여 수정사항 기입" }
+          ]
+        }
+      ]
+    </script>
+    <script>
+      const pageList = document.querySelector('#pageList'); 
+      const pageData = eval(pageList.textContent); 
+      const modifyList = document.querySelector('#changeLog');
+      const modifyData = eval(modifyList.textContent);
+
+      new Vue({
+        el: '#app',
+        data: () => {
+          return {
+            activeIndex: 0, // 페이지 목록의 탭 활성화
+            activeMenu: 'common', // 메뉴 설정
+            activeNav: false, // 메뉴 활성화
+            isModify: false, // 수정된 목록 노출여부
+            showAll: false, // 페이지 목록 ? 탭형태: 전체 목록
+            currentComponent: 'paragraph',
+            showReversion: false,
+            fontSize: 10,
+            currentStatus: 9,
+            logList: [],
+            logCurrent: false,
+            orderBy: 'none',
+            origin: [],
+            reversionLog: {
+              pageId: 'test_main',
+              modifyList: [
+                {
+                  date: '2024-03-27',
+                  desc: '수정수정함',
+                },
+              ],
+            },
+          };
+        },
+        components: {
+          sshpre,
+        },
+        computed: {
+          // 모바일 구분
+          isMobile() {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+              return true;
+            } else {
+              return false;
+            }
+          },
+          selectedStatus() {
+            const _ = this;
+            return _.currentStatus;
+          },
+          getPage() {
+            // revision log 가 있는 화면 ID 를 찾아서 수정일 자동 기입
+            const page = pageData;
+            const log = this.revisionLog;
+            const result = this.getList(log, pageData);
+
+
+            result.forEach((mainArray) => {
+              let countResult = 0;
+              const count = _.forEach(mainArray.pages, (o) => {
+                if (o.isTitle) {
+                  countResult += o.count;
+                }
+                // return !o.isTitle;
+              });
+              const complete = _.filter(mainArray.pages, (o) => {
+                return o.complete;
+              });
+              const ing = _.filter(mainArray.pages, (o) => {
+                if (o.status === 2) {
+                  return o;
+                }
+              });
+
+              mainArray.count = countResult;
+
+              // console.log(mainArray.pages.length, count)
+              mainArray.ing = ing.length;
+              mainArray.complete = complete.length;
+            });
+
+            return result;
+          },
+          changeLog() {
+            return this.reversionLog;
+          },
+        },
+        created() {
+          // 페이지 로드되었을때 localStorage 에서 활성화된 메뉴들을 가져옴(없으면 초기화)
+          const current = localStorage.getItem('current');
+          const menu = localStorage.getItem('active');
+          const compo = localStorage.getItem('component');
+          if (!!current) {
+            // current 는 string 형태이므로 number 로 변환
+            this.activeIndex = current * 1;
+          } else {
+            this.activeIndex = 0;
+          }
+          if (!!menu) {
+            this.activeMenu = menu;
+          } else {
+            this.activeMenu = 'common';
+          }
+          if (!!compo) {
+            this.currentComponent = compo;
+          } else {
+            this.currentComponent = 'paragraph';
+          }
+        },
+        methods: {
+          orderList(list, target, order) {
+            const item = _.orderBy(list, target, order);
+            return item;
+          },
+          // 페이지 목록 정렬
+          getList(log, page) {
+            const result = _.cloneDeep(page);
+            let asdf = 0;
+
+            // console.log(result)
+            result.forEach((category, i) => {
+              const pages = category.pages;
+
+              pages.forEach((page) => {
+                if (page.isTitle) {
+                  const textObj = _.groupBy(pages, 'L1');
+
+                  const ing = _.filter(textObj[page.L1], (el) => {
+                    return el.status === 2;
+                  });
+
+                  const count = textObj[page.L1].length === 1 ? 1 : textObj[page.L1].length - 1;
+                  // console.log(count)
+                  const complete = _.compact(_.map(textObj[page.L1], 'complete'));
+
+                  page.count = count;
+                  page.complete = complete.length;
+                  page.ing = ing.length;
+                  asdf += count;
+                }
+                if (this.selectedStatus === 9) {
+                  page.isVisible = true;
+                } else {
+                  if (page.status === this.selectedStatus || page.isTitle) {
+                    page.isVisible = true;
+                  } else {
+                    page.isVisible = false;
+                  }
+                }
+
+                if (page.status === 4) {
+                  modifyData.forEach((m) => {
+                    if (m.pageId === page.pageId) {
+                      page.date = m.modifyList[m.modifyList.length - 1].date;
+                    }
+                  });
+                }
+              });
+            });
+            return result;
+          },
+          // 활성화 탭 걸졍(localStorage 에 저장)
+          activeTab(idx) {
+            this.activeIndex = idx;
+            localStorage.setItem('current', idx);
+          },
+          // 활성화 메뉴 걸졍(localStorage 에 저장)
+          activeItem(menu) {
+            this.activeMenu = menu;
+            this.activeNav = false;
+            localStorage.setItem('active', menu);
+          },
+          changeComponent(item) {
+            this.currentComponent = item;
+            localStorage.setItem('component', item);
+          },
+          sortBy(i) {
+            if (this.orderBy === 'ascending') {
+              this.orderBy = 'descending';
+            } else if (this.orderBy === 'descending') {
+              this.orderBy = 'none';
+            } else {
+              this.orderBy = 'ascending';
+            }
+          },
+          // 수정이력 보기
+          viewLog(pid) {
+            const pageId = pid;
+            const list = this.revisionLog;
+            let msg = [];
+
+            _.forEach(list, (k, v) => {
+              if (k.pageId === pageId) {
+                msg = k.list;
+              }
+            });
+
+            this.logCurrent = pid;
+          },
+          makeURL(folder, page) {
+            const fullURL = `./${folder}/${page}.html`;
+
+            return fullURL;
+          },
+          showStatus(status) {
+            if (this.currentStatus === status) {
+              this.currentStatus = 9;
+            } else {
+              this.currentStatus = status;
+            }
+          },
+          setDate(date) {
+            const defaultDate = date.split('/').length > 1 ? moment(`2025/${date}`, 'YYYY-MM-DD').format('YYYY-MM-DD') : date;
+
+            // console.log(defaultDate)
+            return defaultDate;
+          },
+          async setReversion(pageId) {
+            const revList = modifyData;
+
+            await revList.forEach((list) => {
+              if (list.pageId === pageId) {
+                this.reversionLog = list;
+              }
+            });
+
+            this.showReversion = true;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
