@@ -4,8 +4,8 @@
   "description": "Nexus 퍼블 프로토타입",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server 20250810 --port=3000 --host=0.0.0.0 --open=/html/prototype-index.html",
-    "start": "live-server 20250810 --port=3000 --host=0.0.0.0",
+    "dev": "live-server 20250812 --port=3000 --host=0.0.0.0 --open=/html/main/MN01.html",
+    "start": "live-server 20250812 --port=3000 --host=0.0.0.0",
     "build": "echo '빌드가 필요하지 않습니다.'"
   },
   "keywords": ["prototype", "html", "css", "javascript"],

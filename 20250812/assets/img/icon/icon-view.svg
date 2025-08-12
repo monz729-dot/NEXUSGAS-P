@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="31" viewBox="0 0 25 31">
+    <g data-name="사각형 26819" style="stroke:#111;stroke-width:2px;fill:#fff">
+        <path style="stroke:none" d="M0 0h20v27H0z"/>
+        <path style="fill:none" d="M1 1h18v25H1z"/>
+    </g>
+    <g data-name="사각형 26818" style="stroke:#111;stroke-width:2px;fill:#fff">
+        <path style="stroke:none" d="M0 0h20v26H0z" transform="translate(5 5)"/>
+        <path style="fill:none" d="M1 1h18v24H1z" transform="translate(5 5)"/>
+    </g>
+    <path data-name="선 217" transform="translate(9.8 12.5)" style="fill:none;stroke:#111;stroke-width:2px" d="M0 0h11"/>
+    <path data-name="선 218" transform="translate(9.8 17.5)" style="fill:none;stroke:#111;stroke-width:2px" d="M0 0h11"/>
+    <path data-name="선 219" transform="translate(9.8 22.5)" style="fill:none;stroke:#111;stroke-width:2px" d="M0 0h11"/>
+</svg>
