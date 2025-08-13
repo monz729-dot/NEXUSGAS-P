@@ -42,7 +42,10 @@
       "Bash(git pull:*)",
       "Bash(ipconfig)",
       "Bash(netsh advfirewall firewall show rule:*)",
-      "Bash(netsh:*)"
+      "Bash(netsh:*)",
+      "Bash(touch:*)",
+      "Bash(del:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }
