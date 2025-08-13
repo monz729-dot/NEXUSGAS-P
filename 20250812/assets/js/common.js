@@ -955,4 +955,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
   limitText('.info-cards__title', 28);
   limitText('.slide-item__title', 28);
+
+  // 팝업 기능 초기화
+  initPopup();
 });
+
+// 팝업 기능
+function initPopup() {
+  const popup = document.querySelector('.popup');
+  const closeBtn = document.querySelector('.btn-close');
+  const galleryLinks = document.querySelectorAll('.progress-swiper__link');
+
+  if (!popup || !closeBtn) return;
+
+  // 닫기 버튼 클릭 이벤트
+  closeBtn.addEventListener('click', function() {
+    closePopup();
+  });
+
+  // 팝업 배경 클릭 시 닫기
+  popup.addEventListener('click', function(e) {
+    if (e.target === popup) {
+      closePopup();
+    }
+  });
+
+  // ESC 키로 팝업 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && popup.classList.contains('is-active')) {
+      closePopup();
+    }
+  });
+
+  // 갤러리 링크 클릭 시 팝업 열기
+  galleryLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      openPopup();
+    });
+  });
+}
+
+function openPopup() {
+  const popup = document.querySelector('.popup');
+  if (popup) {
+    popup.classList.add('is-active');
+    document.body.style.overflow = 'hidden'; // 스크롤 방지
+  }
+}
+
+function closePopup() {
+  const popup = document.querySelector('.popup');
+  if (popup) {
+    popup.classList.remove('is-active');
+    document.body.style.overflow = ''; // 스크롤 복원
+  }
+}
