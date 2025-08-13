@@ -377,14 +377,14 @@ body {
   background: url(../img/logo-nexus-black.webp) 50% 50%/100% auto no-repeat;
 }
 .main-header.is-active::before {
-  height: clamp(273px, 20.3125vw, 780px);
+  height: clamp(358px, 26.4vw, 1015px);
 }
 .main-header.is-active .main-header__inner {
-  height: clamp(273px, 20.3125vw, 780px);
+  height: clamp(358px, 26.4vw, 1015px);
 }
 .main-header.is-active .gnb__item {
   width: clamp(126px, 9.375vw, 360px) !important;
-  height: clamp(273px, 20.3125vw, 780px);
+  height: clamp(358px, 26.4vw, 1015px);
   max-width: clamp(126px, 9.375vw, 360px);
 }
 .main-header.is-active .gnb__link {
@@ -395,7 +395,7 @@ body {
   max-width: 100%;
 }
 .main-header.is-active .gnb__item::before {
-  height: clamp(273px, 20.3125vw, 780px);
+  height: clamp(358px, 26.4vw, 1015px);
 }
 .main-header.is-active .gnb__child {
   display: flex;
@@ -529,6 +529,7 @@ body {
   transition: color 0.4s ease-in-out;
 }
 .main-header .gnb__child-link:hover, .main-header .gnb__child-link:focus {
+  color: #1897eb;
   font-weight: 500;
 }
 .main-header .gnb__child-link.current {
