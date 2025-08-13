@@ -732,7 +732,7 @@ const subMainVisual = new Swiper('.submain-swiper__inner .swiper', {
     bulletActiveClass: 'is-active',
     renderBullet: function (index, className) {
       return `
-      <div class="${className}" data-index="${index}">${['설비 부문', '기술 부문', '솔루션 부문', 'R&D 부문'][index]}</div>
+      <div class="${className}" data-index="${index}">${['설비 부문', '기술 부문', '솔루션 부문', 'R&D'][index]}</div>
       `;
     },
   },

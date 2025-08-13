@@ -45,7 +45,9 @@
       "Bash(netsh:*)",
       "Bash(touch:*)",
       "Bash(del:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(python:*)",
+      "Bash(npx http-server:*)"
     ],
     "deny": []
   }
