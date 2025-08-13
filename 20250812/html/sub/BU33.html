@@ -14,6 +14,43 @@
     <link rel="stylesheet" href="../../assets/css/global.css" />
 <!-- <link rel="stylesheet" href="../../assets/css/component.css" /> -->
     <link rel="stylesheet" href="../../assets/css/page.css" />
+    <style>
+      .card-content {
+        width: 490px;
+        height: 800px;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+      
+      .card-content .swiper-slide__number {
+        color: #1897eb !important;
+      }
+      
+      .card-content .swiper-slide__title {
+        color: #333 !important;
+      }
+      
+      .card-content ul {
+        display: none;
+      }
+      
+      .card-content.active {
+        background-color: #1897eb !important;
+      }
+      
+      .card-content.active .swiper-slide__number,
+      .card-content.active .swiper-slide__title {
+        color: #fff !important;
+      }
+      
+      .card-content.active ul {
+        display: block !important;
+      }
+      
+      .card-content.active li {
+        color: #fff !important;
+      }
+    </style>
   </head>
   <body>
 <!-- HEADER -->
@@ -205,66 +242,50 @@
           <div class="trand-swiper-section__swiper swiper">
             <div class="swiper-wrapper">
               <div class="swiper-slide">
-                <div class="swiper-slide__inner">
-                  <span class="swiper-slide__number">1</span>
+                <div class="swiper-slide__inner card-content active" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">1</span>
                   <div class="swiper-slide__text">
-                    <h4 class="swiper-slide__title">글로벌 동향 반영한<br />‘수출형 수소 인프라 기술’ 개발</h4>
-                    <div class="swiper-slide__desc">
-                      <ul class="dotted-list">
-                        <li class="dotted-list__item">해외 수소 시장 트렌드 및 정책 변화에 선제적 대응</li>
-                        <li class="dotted-list__item">
-                          다양한 현지 환경에 적용 가능한 모듈형·스케일러블 수소 인프라 솔루션 개발
-                        </li>
-                        <li class="dotted-list__item">
-                          수소 생산, 저장, 운송, 충전 등 전 주기 설비의 국산화 및 고효율화 추진
-                        </li>
-                        <li class="dotted-list__item">친환경(그린수소/블루수소 등) 생산·공급 인프라 확대</li>
-                        <li class="dotted-list__item">
-                          현지 기업 및 연구기관과 기술 협력체계 구축을 통한 현지화 역량 강화
-                        </li>
-                        <li class="dotted-list__item">수출국별 인허가·규제 기준 분석 및 맞춤형 기술 적용</li>
-                      </ul>
-                    </div>
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">글로벌 동향 반영한<br />'수출형 수소 인프라 기술' 개발</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 해외 수소 시장 트렌드 및 정책 변화에 선제적 대응</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 다양한 현지 환경에 적용 가능한 모듈형·스케일러블 수소 인프라 솔루션 개발</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 수소 생산, 저장, 운송, 충전 등 전 주기 설비의 국산화 및 고효율화 추진</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 친환경(그린수소/블루수소 등) 생산·공급 인프라 확대</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 현지 기업 및 연구기관과 기술 협력체계 구축을 통한 현지화 역량 강화</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 수출국별 인허가·규제 기준 분석 및 맞춤형 기술 적용</li>
+                    </ul>
                   </div>
                 </div>
               </div>
               <div class="swiper-slide">
-                <div class="swiper-slide__inner">
-                  <span class="swiper-slide__number">2</span>
+                <div class="swiper-slide__inner card-content" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">2</span>
                   <div class="swiper-slide__text">
-                    <h4 class="swiper-slide__title">국제 인증(KGS/ISO/IGC 등)<br />기반 표준 설비 패키지화​</h4>
-                    <div class="swiper-slide__desc">
-                      <ul class="dotted-list">
-                        <li class="dotted-list__item">
-                          KGS, ISO, IGC 등 주요 국제 인증 기준을 충족하는 표준 설비 설계​
-                        </li>
-                        <li class="dotted-list__item">글로벌 시장 진출을 위한 인증 절차 최적화 및 신속 대응</li>
-                        <li class="dotted-list__item">인증 획득 기반의 설비 패키지(생산, 저장, 운송, 충전 등) 제공</li>
-                        <li class="dotted-list__item">패키지 설비의 품질·안전성·신뢰성 강화</li>
-                        <li class="dotted-list__item">설계-제작-검사-운영에 이르는 전주기 품질관리 체계 구축</li>
-                        <li class="dotted-list__item">표준화된 기술 및 부품 적용을 통한 설비 경쟁력 확보</li>
-                      </ul>
-                    </div>
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">국제 인증(KGS/ISO/IGC 등)<br />기반 표준 설비 패키지화​</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· KGS, ISO, IGC 등 주요 국제 인증 기준을 충족하는 표준 설비 설계​</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 글로벌 시장 진출을 위한 인증 절차 최적화 및 신속 대응</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 인증 획득 기반의 설비 패키지(생산, 저장, 운송, 충전 등) 제공</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 패키지 설비의 품질·안전성·신뢰성 강화</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 설계-제작-검사-운영에 이르는 전주기 품질관리 체계 구축</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 표준화된 기술 및 부품 적용을 통한 설비 경쟁력 확보</li>
+                    </ul>
                   </div>
                 </div>
               </div>
               <div class="swiper-slide">
-                <div class="swiper-slide__inner">
-                  <span class="swiper-slide__number">3</span>
+                <div class="swiper-slide__inner card-content" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">3</span>
                   <div class="swiper-slide__text">
-                    <h4 class="swiper-slide__title">스마트 관제·시뮬레이션 기술을<br />통한 운영 고도화​</h4>
-                    <div class="swiper-slide__desc">
-                      <ul class="dotted-list">
-                        <li class="dotted-list__item">AI 및 IoT 기반 실시간 설비 모니터링 및 데이터 분석</li>
-                        <li class="dotted-list__item">
-                          예측 유지보수(Predictive Maintenance) 및 설비 고장 예방 체계 구현
-                        </li>
-                        <li class="dotted-list__item">설비 운영 시뮬레이션을 통한 최적화(효율, 비용, 안전 등)</li>
-                        <li class="dotted-list__item">원격 제어·운영 시스템 도입으로 관리 효율화</li>
-                        <li class="dotted-list__item">위험상황 자동 감지 및 대응(비상 알림, 자동차단 등)</li>
-                        <li class="dotted-list__item">운영 데이터 기반 정책 수립 및 지속적 개선 프로세스 내재화</li>
-                      </ul>
-                    </div>
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">스마트 관제·시뮬레이션 기술을<br />통한 운영 고도화​</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· AI 및 IoT 기반 실시간 설비 모니터링 및 데이터 분석</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 예측 유지보수(Predictive Maintenance) 및 설비 고장 예방 체계 구현</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 설비 운영 시뮬레이션을 통한 최적화(효율, 비용, 안전 등)</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 원격 제어·운영 시스템 도입으로 관리 효율화</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 위험상황 자동 감지 및 대응(비상 알림, 자동차단 등)</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· 운영 데이터 기반 정책 수립 및 지속적 개선 프로세스 내재화</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -371,5 +392,37 @@
 <script src="../../assets/js/lib/gsap.min.js"></script>
 <script src="../../assets/js/lib/ScrollTrigger.min.js"></script>
 <script src="../../assets/js/common.js"></script>
+<script>
+// 슬라이드 활성 상태 관리
+document.addEventListener('DOMContentLoaded', function() {
+  const swiper = document.querySelector('.trand-swiper-section__swiper');
+  if (swiper && swiper.swiper) {
+    swiper.swiper.on('slideChange', function() {
+      updateActiveSlide(this.activeIndex);
+    });
+  }
+  
+  // Swiper가 아직 초기화되지 않은 경우를 위한 대기
+  setTimeout(() => {
+    const swiperInstance = document.querySelector('.trand-swiper-section__swiper');
+    if (swiperInstance && swiperInstance.swiper) {
+      swiperInstance.swiper.on('slideChange', function() {
+        updateActiveSlide(this.activeIndex);
+      });
+    }
+  }, 1000);
+});
+
+function updateActiveSlide(activeIndex) {
+  const allCards = document.querySelectorAll('.card-content');
+  allCards.forEach((card, index) => {
+    if (index === activeIndex) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+}
+</script>
   </body>
 </html>
