@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+        .animate-bounce-in { animation: bounceIn 1s ease-out; }
+        .animate-scale-in { animation: scaleIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .loading-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md space-y-6 animate-fade-in">
+            <!-- 로고 및 타이틀 -->
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce-in">
+                    <span class="text-white font-bold text-xl">YCS</span>
+                </div>
+                <div class="space-y-2">
+                    <h1 class="text-2xl font-bold text-blue-900">YCS 물류 시스템</h1>
+                    <p class="text-blue-600">안전하고 신뢰할 수 있는 물류 서비스</p>
+                </div>
+            </div>
+
+            <!-- 로그인 폼 -->
+            <div class="bg-white shadow-lg border border-blue-100 rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-center text-blue-900 text-lg font-semibold">로그인</h2>
+                </div>
+                <div class="p-6">
+                    <form id="loginForm" class="space-y-4" novalidate>
+                        <!-- 이메일 입력 -->
+                        <div class="space-y-2">
+                            <label for="email" class="text-blue-900 flex items-center gap-2 text-sm font-medium">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.95a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                이메일
+                                <span class="text-red-500" aria-label="필수 입력">*</span>
+                            </label>
+                            <div class="relative">
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="example@company.com"
+                                    class="w-full h-12 px-4 bg-blue-50/30 border border-blue-200 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                                    autocomplete="email"
+                                    required
+                                />
+                                <div id="email-error-icon" class="absolute inset-y-0 right-0 flex items-center pr-3 hidden">
+                                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p id="email-error" class="text-sm text-red-600 hidden" role="alert"></p>
+                        </div>
+
+                        <!-- 비밀번호 입력 -->
+                        <div class="space-y-2">
+                            <label for="password" class="text-blue-900 flex items-center gap-2 text-sm font-medium">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                비밀번호
+                                <span class="text-red-500" aria-label="필수 입력">*</span>
+                            </label>
+                            <div class="relative">
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="비밀번호를 입력하세요"
+                                    class="w-full h-12 px-4 pr-12 bg-blue-50/30 border border-blue-200 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                                    autocomplete="current-password"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    id="togglePassword"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 hover:text-blue-700 transition-colors"
+                                    aria-label="비밀번호 보기"
+                                >
+                                    <svg id="eyeIcon" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    <svg id="eyeOffIcon" class="h-4 w-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="password-error" class="text-sm text-red-600 hidden" role="alert"></p>
+                        </div>
+
+                        <!-- 로그인 유지 체크박스 -->
+                        <div class="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label for="rememberMe" class="text-sm text-blue-700 cursor-pointer">
+                                로그인 상태 유지
+                            </label>
+                        </div>
+                        <p class="text-xs text-blue-600 ml-6">
+                            공용 컴퓨터에서는 사용하지 마세요
+                        </p>
+
+                        <!-- 로그인 버튼 -->
+                        <button
+                            type="submit"
+                            id="loginButton"
+                            class="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 rounded-md font-medium"
+                        >
+                            <span id="loginButtonText">로그인</span>
+                            <svg id="loginSpinner" class="h-4 w-4 loading-spin mr-2 hidden inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- 링크 섹션 -->
+                    <div class="mt-6 space-y-4">
+                        <div class="flex justify-center space-x-4 text-sm">
+                            <button
+                                onclick="navigateToFindId()"
+                                class="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                            >
+                                아이디 찾기
+                            </button>
+                            <span class="text-blue-300">|</span>
+                            <button
+                                onclick="navigateToFindPassword()"
+                                class="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                            >
+                                비밀번호 찾기
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-sm text-blue-600 mb-2">아직 계정이 없으신가요?</p>
+                            <button
+                                onclick="navigateToSignup()"
+                                class="w-full bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 py-2 px-4 rounded-md transition-colors"
+                            >
+                                회원가입
+                            </button>
+                        </div>
+
+                        <!-- 알림 메시지 -->
+                        <div id="alertMessage" class="hidden animate-scale-in rounded-md p-4" role="alert" aria-live="polite">
+                            <div class="flex items-center">
+                                <svg id="alertIcon" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                                <span id="alertText"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 테스트 계정 빠른 로그인 -->
+            <div class="bg-blue-50/30 border border-blue-100 rounded-lg">
+                <div class="px-6 py-3 border-b border-blue-100">
+                    <h3 class="text-sm text-blue-900 font-semibold">테스트 계정</h3>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="quickLogin('general')" class="text-blue-700 hover:bg-blue-50 py-2 px-3 rounded-md text-sm transition-colors">일반회원</button>
+                        <button onclick="quickLogin('corporate')" class="text-blue-700 hover:bg-blue-50 py-2 px-3 rounded-md text-sm transition-colors">기업회원</button>
+                        <button onclick="quickLogin('partner')" class="text-blue-700 hover:bg-blue-50 py-2 px-3 rounded-md text-sm transition-colors">파트너</button>
+                        <button onclick="quickLogin('admin')" class="text-blue-700 hover:bg-blue-50 py-2 px-3 rounded-md text-sm transition-colors">관리자</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 폼 데이터
+        let formData = {
+            email: '',
+            password: '',
+            rememberMe: false
+        };
+
+        let isLoading = false;
+        let showPassword = false;
+
+        // Mock 사용자 데이터
+        const mockUsers = {
+            'general@example.com': {
+                password: 'password123',
+                userData: {
+                    id: 'USER-001',
+                    type: 'general',
+                    name: '김일반',
+                    email: 'general@example.com',
+                    phone: '010-1234-5678'
+                }
+            },
+            'corporate@example.com': {
+                password: 'password123',
+                userData: {
+                    id: 'USER-002',
+                    type: 'corporate',
+                    name: '이기업',
+                    email: 'corporate@example.com',
+                    phone: '02-1234-5678',
+                    companyName: '(주)테스트기업',
+                    businessNumber: '123-45-67890',
+                    contactPerson: '김담당',
+                    contactPhone: '010-9876-5432'
+                }
+            },
+            'admin@example.com': {
+                password: 'admin123',
+                userData: {
+                    id: 'USER-003',
+                    type: 'admin',
+                    name: '관리자',
+                    email: 'admin@example.com',
+                    phone: '02-9999-8888'
+                }
+            },
+            'partner@example.com': {
+                password: 'partner123',
+                userData: {
+                    id: 'USER-004',
+                    type: 'partner',
+                    name: '파트너',
+                    email: 'partner@example.com',
+                    phone: '02-7777-8888',
+                    companyName: '(주)파트너물류',
+                    businessNumber: '987-65-43210',
+                    contactPerson: '박파트',
+                    contactPhone: '010-1111-2222'
+                }
+            }
+        };
+
+        // DOM 요소
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const rememberMeInput = document.getElementById('rememberMe');
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const loginButtonText = document.getElementById('loginButtonText');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+        // 이메일 유효성 검사
+        const validateEmail = (email) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        };
+
+        // 에러 표시
+        const showFieldError = (field, message) => {
+            const errorElement = document.getElementById(`${field}-error`);
+            const errorIcon = document.getElementById(`${field}-error-icon`);
+            const inputElement = document.getElementById(field);
+            
+            if (errorElement && inputElement) {
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+                inputElement.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+                inputElement.classList.remove('border-blue-200', 'focus:border-blue-500', 'focus:ring-blue-200');
+                
+                if (errorIcon) {
+                    errorIcon.classList.remove('hidden');
+                }
+            }
+        };
+
+        // 에러 숨김
+        const hideFieldError = (field) => {
+            const errorElement = document.getElementById(`${field}-error`);
+            const errorIcon = document.getElementById(`${field}-error-icon`);
+            const inputElement = document.getElementById(field);
+            
+            if (errorElement && inputElement) {
+                errorElement.classList.add('hidden');
+                inputElement.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+                inputElement.classList.add('border-blue-200', 'focus:border-blue-500', 'focus:ring-blue-200');
+                
+                if (errorIcon) {
+                    errorIcon.classList.add('hidden');
+                }
+            }
+        };
+
+        // 알림 메시지 표시
+        const showAlert = (message, type = 'info') => {
+            const alertElement = document.getElementById('alertMessage');
+            const alertText = document.getElementById('alertText');
+            const alertIcon = document.getElementById('alertIcon');
+            
+            alertText.textContent = message;
+            
+            // 스타일 초기화
+            alertElement.className = 'animate-scale-in rounded-md p-4';
+            
+            // 타입별 스타일 적용
+            if (type === 'success') {
+                alertElement.classList.add('bg-green-50', 'border-green-200', 'text-green-800');
+                alertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+            } else if (type === 'error') {
+                alertElement.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+                alertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>';
+            } else {
+                alertElement.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
+                alertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+            }
+            
+            alertElement.classList.remove('hidden');
+            
+            // 5초 후 자동 숨김
+            setTimeout(() => {
+                alertElement.classList.add('hidden');
+            }, 5000);
+        };
+
+        // 폼 유효성 검사
+        const validateForm = () => {
+            let isValid = true;
+            
+            // 이메일 검사
+            if (!formData.email.trim()) {
+                showFieldError('email', '이메일을 입력해주세요.');
+                isValid = false;
+            } else if (!validateEmail(formData.email)) {
+                showFieldError('email', '올바른 이메일 형식을 입력해주세요.');
+                isValid = false;
+            } else {
+                hideFieldError('email');
+            }
+            
+            // 비밀번호 검사
+            if (!formData.password.trim()) {
+                showFieldError('password', '비밀번호를 입력해주세요.');
+                isValid = false;
+            } else {
+                hideFieldError('password');
+            }
+            
+            return isValid;
+        };
+
+        // 로딩 상태 설정
+        const setLoading = (loading) => {
+            isLoading = loading;
+            
+            if (loading) {
+                loginButtonText.textContent = '로그인 중...';
+                loginSpinner.classList.remove('hidden');
+                loginButton.disabled = true;
+            } else {
+                loginButtonText.textContent = '로그인';
+                loginSpinner.classList.add('hidden');
+                loginButton.disabled = false;
+            }
+        };
+
+        // 로그인 처리
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                showAlert('입력 정보를 확인해주세요.', 'error');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // Mock 로그인 처리 (1.5초 지연)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                const mockUser = mockUsers[formData.email];
+                
+                // operator 계정 체크
+                if (formData.email.includes('operator@')) {
+                    throw new Error('오퍼레이터 계정은 더 이상 지원하지 않습니다. 관리자에게 문의해주세요.');
+                }
+                
+                if (!mockUser || mockUser.password !== formData.password) {
+                    throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+                }
+
+                // 로그인 정보 저장
+                if (formData.rememberMe) {
+                    localStorage.setItem('rememberedUser', formData.email);
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
+
+                showAlert('로그인이 완료되었습니다.', 'success');
+
+                // 성공 후 리다이렉트
+                setTimeout(() => {
+                    const userData = mockUser.userData;
+                    localStorage.setItem('mockUser', JSON.stringify(userData));
+                    
+                    if (userData.type === 'admin') {
+                        window.location.href = 'App.html?page=admin-dashboard';
+                    } else if (userData.type === 'partner') {
+                        window.location.href = 'App.html?page=partner-dashboard';
+                    } else {
+                        window.location.href = 'App.html?page=dashboard';
+                    }
+                }, 1000);
+
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // 비밀번호 보기/숨기기
+        const togglePassword = () => {
+            showPassword = !showPassword;
+            passwordInput.type = showPassword ? 'text' : 'password';
+            
+            if (showPassword) {
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+                togglePasswordBtn.setAttribute('aria-label', '비밀번호 숨기기');
+            } else {
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+                togglePasswordBtn.setAttribute('aria-label', '비밀번호 보기');
+            }
+        };
+
+        // 테스트 계정 빠른 로그인
+        const quickLogin = (userType) => {
+            const email = `${userType}@example.com`;
+            let password = 'password123';
+            if (userType === 'admin') password = 'admin123';
+            if (userType === 'partner') password = 'partner123';
+            
+            emailInput.value = email;
+            passwordInput.value = password;
+            formData.email = email;
+            formData.password = password;
+            
+            showAlert(`${userType} 계정 정보가 입력되었습니다.`, 'info');
+        };
+
+        // 네비게이션 함수들
+        const navigateToFindId = () => {
+            window.location.href = 'App.html?page=find-id';
+        };
+
+        const navigateToFindPassword = () => {
+            window.location.href = 'App.html?page=find-password';
+        };
+
+        const navigateToSignup = () => {
+            window.location.href = 'App.html?page=signup';
+        };
+
+        // 이벤트 리스너
+        emailInput.addEventListener('input', (e) => {
+            formData.email = e.target.value;
+            hideFieldError('email');
+        });
+
+        passwordInput.addEventListener('input', (e) => {
+            formData.password = e.target.value;
+            hideFieldError('password');
+        });
+
+        rememberMeInput.addEventListener('change', (e) => {
+            formData.rememberMe = e.target.checked;
+        });
+
+        togglePasswordBtn.addEventListener('click', togglePassword);
+        loginForm.addEventListener('submit', handleLogin);
+
+        // 키보드 네비게이션
+        emailInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleLogin(e);
+            }
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 저장된 로그인 정보 확인
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                emailInput.value = rememberedUser;
+                formData.email = rememberedUser;
+                rememberMeInput.checked = true;
+                formData.rememberMe = true;
+            }
+            
+            // 첫 번째 입력 필드에 포커스
+            emailInput.focus();
+        });
+    </script>
+</body>
+</html>

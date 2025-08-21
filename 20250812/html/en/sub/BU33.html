@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+<meta name="Generator" content="" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"
+/>
+<meta name="keywords" content="" />
+<meta name="format-detection" content="telephone=no" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/css/global.css" />
+<!-- <link rel="stylesheet" href="/assets/css/component.css" /> -->
+    <link rel="stylesheet" href="/assets/css/page.css" />
+    <style>
+      .card-content {
+        width: 490px;
+        height: 800px;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+      
+      .card-content .swiper-slide__number {
+        color: #1897eb !important;
+      }
+      
+      .card-content .swiper-slide__title {
+        color: #333 !important;
+      }
+      
+      .card-content ul {
+        display: none;
+      }
+      
+      .card-content.active {
+        background-color: #1897eb !important;
+      }
+      
+      .card-content.active .swiper-slide__number,
+      .card-content.active .swiper-slide__title {
+        color: #fff !important;
+      }
+      
+      .card-content.active ul {
+        display: block !important;
+      }
+      
+      .card-content.active li {
+        color: #fff !important;
+      }
+    </style>
+  </head>
+  <body>
+<!-- HEADER -->
+<header class="main-header" id="header">
+  <div class="main-header__inner">
+    <a href="../main/MN01.html" class="main-header__logo">
+      <span class="ir">NEXUS</span>
+    </a>
+    <button type="button" class="gnb-toggle">
+      <span class="ir">GNB</span>
+    </button>
+    <div class="main-header__inner-wrap">
+      <a href="../main/MN01.html" class="main-header__logo-mobile">
+        <span class="ir">NEXUS</span>
+      </a>
+      <div class="main-header__gnb gnb">
+        <ul class="gnb__list">
+          <li class="gnb__item">
+            <a href="#" class="gnb__link">NEXUSGAS</a>
+            <div class="gnb__child">
+              <a href="CO01.html" class="gnb__child-link">About us</a>
+              <a href="CO04.html" class="gnb__child-link">Leadership</a>
+              <a href="CO05.html" class="gnb__child-link">History</a>
+              <a href="CO06.html" class="gnb__child-link">CI</a>
+              <a href="CO07.html" class="gnb__child-link">Contact</a>
+              <a href="HV01.html" class="gnb__child-link">H2 value chain</a>
+            </div>
+          </li>
+          <li class="gnb__item">
+            <a href="BU00.html" class="gnb__link">Business</a>
+            <div class="gnb__child">
+              <a href="BU01.html" class="gnb__child-link">Equipment</a>
+              <a href="BU11.html" class="gnb__child-link">Technology</a>
+            </div>
+          </li>
+          <li class="gnb__item">
+            <a href="#" class="gnb__link">Solutions</a>
+            <div class="gnb__child">
+              <a href="BU21.html" class="gnb__child-link">Solutions</a>
+              <a href="BU31.html" class="gnb__child-link">R&D</a>
+            </div>
+          </li>
+          <li class="gnb__item">
+            <a href="#" class="gnb__link">Media</a>
+            <div class="gnb__child">
+              <a href="MK01.html" class="gnb__child-link">News</a>
+              <a href="MK11.html" class="gnb__child-link">Resources</a>
+              <a href="MK21.html" class="gnb__child-link">Projects</a>
+            </div>
+          </li>
+          <li class="gnb__item">
+            <a href="#" class="gnb__link">Sustainability</a>
+            <div class="gnb__child">
+              <a href="SU01.html" class="gnb__child-link">ESG</a>
+              <a href="SU02.html" class="gnb__child-link">HSE</a>
+              <a href="SU03.html" class="gnb__child-link">Ethics</a>
+              <a href="SU04.html" class="gnb__child-link">Quality</a>
+              <a href="SU05.html" class="gnb__child-link">Community</a>
+            </div>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="main-header__util">
+        <div class="main-header__util-item">
+          <button type="button" class="main-header__util-button has-dropdown">Support</button>
+          <div class="main-header__util-dropdown">
+            <a href="FAQ01.html" class="main-header__util-dropdown-link">Contact</a>
+            <a href="FAQ02.html" class="main-header__util-dropdown-link">FAQ</a>
+          </div>
+        </div>
+
+        <div class="main-header__util-item language">
+          <button type="button" class="main-header__util-button has-dropdown">EN</button>
+          <div class="main-header__util-dropdown">
+            <a href="/html/sub/BU33.html" class="main-header__util-dropdown-link">KR</a>
+            <a href="/html/en/sub/BU33.html" class="main-header__util-dropdown-link">EN</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+    <div id="content" class="page-content">
+      <div class="page-header">
+        <div class="page-header__inner">
+          <h2 class="page-header__title">R&D</h2>
+        </div>
+      </div>
+      <div class="page-tab">
+        <div class="page-tab__inner">
+          <a href="BU31.html" class="page-tab__item">R&D Projects</a>
+          <a href="BU32.html" class="page-tab__item">Government Policy Trends</a>
+          <a href="BU33.html" class="page-tab__item is-active">Global Technology Trends</a>
+        </div>
+      </div>
+      <!-- <section class="page-title no-tatab-title">
+        <div class="page-title__inner">
+          <h1 class="page-title__title">R&D Projects</h1>
+          <p class="page-title__text">We provide reliable quality that customers can trust, from design to maintenance.</p>
+        </div>
+      </section> -->
+
+      <!-- hero -->
+      <section class="hero-container">
+        <div class="hero-container__wrap">
+          <div class="hero-container__enlarge">
+            <div
+              class="hero-container__bg"
+              style="background-image: url(/assets/img/sub/hero-type-bg-bu33.webp)"
+            ></div>
+            <div class="sub-hero__dimmed"></div>
+            <div class="sub-hero__sections">
+              <div class="sub-hero__section hero-text">
+                <div class="hero-text__title hero-step">Global Technology Trends</div>
+                <div class="hero-text__detail">
+                  <p class="hero-text__main hero-step">Global hydrogen infrastructure market and technology expansion trends</p>
+                  <p class="hero-text__sub hero-step">
+                    The global hydrogen market is accelerating infrastructure investment centered on developed countries<br />
+                    such as the US, Europe, Japan, and Australia along with clean energy expansion.
+                  </p>
+                  <p class="hero-text__default hero-step">
+                    Along with this, demand for AI and digital twin-based smart facility management<br />
+                    and safety & regulation-responsive facility technologies is rapidly increasing.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- // hero -->
+
+      <section class="content-section">
+        <div class="trand">
+          <div class="trand__bg">
+            <img src="/assets/img/sub/bg-trand-wrapper.webp" alt="" />
+          </div>
+          <div class="trand__content">
+            <h3 class="trand__title">Key Trends</h3>
+            <div class="trand__steps">
+              <div class="trand__step">
+                <div class="trand__step-title">European REPowerEU & Hydrogen Regulation Enhancement</div>
+                <div class="trand__step-text">
+                  'Green hydrogen certification standards' are being strengthened according to the REPowerEU strategy, and regulatory framework for hydrogen production methods and usage is being established
+                </div>
+              </div>
+              <div class="trand__step">
+                <div class="trand__step-title">Global Hydrogen Port & Charging Network Expansion</div>
+                <div class="trand__step-text">
+                  Hydrogen ports for hydrogen import/export, hydrogen bunkering, and intercontinental maritime hydrogen distribution networks are expanding
+                </div>
+              </div>
+              <div class="trand__step">
+                <div class="trand__step-title">US IRA-based Clean Hydrogen Market Expansion</div>
+                <div class="trand__step-text">
+                  North American clean hydrogen production and infrastructure investment is surging due to tax benefits through the IRA (Inflation Reduction Act)
+                </div>
+              </div>
+              <div class="trand__step">
+                <div class="trand__step-title">AI & DT-based Hydrogen Plant Operation Technology Integration</div>
+                <div class="trand__step-text">
+                  Intelligent hydrogen facility operation technology integrating AI + Digital Twin + control systems is emerging as core competitiveness
+                </div>
+              </div>
+              <div class="trand__step">
+                <div class="trand__step-title">High-pressure & High-capacity Hydrogen Storage & Transport</div>
+                <div class="trand__step-text">
+                  Tube trailers, liquid hydrogen technology, etc. are evolving toward high pressure (700bar+) and large capacity (10ton+)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="trand-swiper-section">
+        <div class="trand-swiper-section__inner">
+          <h3 class="trand-swiper-section__title">NEXUSGAS Response Direction</h3>
+
+          <div class="trand-swiper-section__swiper swiper">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="swiper-slide__inner card-content active" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">1</span>
+                  <div class="swiper-slide__text">
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">Development of 'Export-oriented Hydrogen<br />Infrastructure Technology' Reflecting Global Trends</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Proactive response to overseas hydrogen market trends and policy changes</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Development of modular and scalable hydrogen infrastructure solutions applicable to various local environments</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Promotion of localization and high efficiency of facilities throughout the hydrogen production, storage, transport, and charging cycle</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Expansion of eco-friendly (green hydrogen/blue hydrogen, etc.) production and supply infrastructure</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Strengthening localization capabilities through building technology cooperation systems with local companies and research institutions</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Analysis of licensing and regulatory standards by export country and application of customized technology</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="swiper-slide__inner card-content" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">2</span>
+                  <div class="swiper-slide__text">
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">International Certification (KGS/ISO/IGC, etc.)<br />Based Standard Equipment Packaging</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Standard equipment design meeting major international certification standards such as KGS, ISO, IGC</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Optimization of certification procedures and rapid response for global market entry</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Provision of equipment packages (production, storage, transport, charging, etc.) based on certification acquisition</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Strengthening quality, safety, and reliability of packaged equipment</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Establishment of full-cycle quality management system from design-manufacturing-inspection-operation</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Securing equipment competitiveness through application of standardized technology and components</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="swiper-slide__inner card-content" style="padding: 40px; border-radius: 16px;">
+                  <span class="swiper-slide__number" style="font-size: 48px; font-weight: bold; display: block; margin-bottom: 20px;">3</span>
+                  <div class="swiper-slide__text">
+                    <h4 class="swiper-slide__title" style="font-size: 24px; font-weight: 600; margin-bottom: 30px; line-height: 1.3;">Operation Enhancement through Smart<br />Control & Simulation Technology</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· AI and IoT-based real-time facility monitoring and data analysis</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Implementation of predictive maintenance and facility failure prevention systems</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Optimization through facility operation simulation (efficiency, cost, safety, etc.)</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Management efficiency through introduction of remote control and operation systems</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Automatic detection and response to dangerous situations (emergency alerts, automatic shutdown, etc.)</li>
+                      <li style="position: relative; padding-left: 20px; line-height: 1.6; margin-bottom: 15px; font-size: 16px;">· Internalizing policy establishment and continuous improvement processes based on operational data</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pagenation-step">
+            <div class="pagenation-step__prev"></div>
+            <div class="swiper-pagination"></div>
+            <div class="pagenation-step__next"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer class="main-footer" id="footer">
+  <div class="main-footer__inner">
+    <div class="main-footer__company">
+      <div class="main-footer__logo">
+        <span class="ir">NEXUS GAS</span>
+      </div>
+      <p class="main-footer__copyright">
+        Copyright © 2025 NEXUSGAS. <br />
+        All rights reserved.
+      </p>
+    </div>
+    
+    <div class="main-footer__info">
+      <ul class="main-footer__site">
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">About us</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Contact</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Investor</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Projects</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Business</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Location</a>
+        </li>
+        
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Sustainability</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">Media Center</a>
+        </li>
+        <li class="main-footer__site-item">
+          <a href="#" class="main-footer__site-link">NEXUS™ Solutions</a>
+        </li>
+      </ul>
+
+      <div class="main-footer__contact-wrap">
+        <dl class="main-footer__contact">
+          <div class="main-footer__contact-row">
+            <div class="main-footer__contact-column">
+              <dt>Address</dt>
+              <dd>2F, 12-14 Huimang-gil, Gwangyang-si, Jeollanam-do (Steel Building)</dd>
+            </div>
+          </div>
+          <div class="main-footer__contact-row">
+            <div class="main-footer__contact-column">
+              <dt>Phone</dt>
+              <dd>+82-61-795-7495</dd>
+            </div>
+            <div class="main-footer__contact-column">
+              <dt>Fax</dt>
+              <dd>+82-61-795-7498</dd>
+            </div>
+          </div>
+          <div class="main-footer__contact-row">
+            <div class="main-footer__contact-column">
+              <dt>Email</dt>
+              <dd>contact@nexusgas.co.kr</dd>
+            </div>
+          </div>
+        </dl>
+        <div class="main-footer__sns">
+            <a href="#" class="main-footer__sns-item youtube">
+              <span class="ir">youtube</span>
+            </a>
+            <a href="#" class="main-footer__sns-item instagram">
+              <span class="ir">instagram</span>
+            </a>
+        </div>
+      </div>
+
+      <div class="main-footer__policy">
+        <a href="#" class="main-footer__policy-link">Privacy Policy</a>
+        <a href="#" class="main-footer__policy-link">Terms of Service</a>
+        <a href="#" class="main-footer__policy-link">Cookie Settings</a>
+      </div>
+    </div>
+  </div>
+</footer>
+    <script src="/assets/js/lib/swiper-bundle.min.js"></script>
+<script src="/assets/js/lib/gsap.min.js"></script>
+<script src="/assets/js/lib/ScrollTrigger.min.js"></script>
+<script src="/assets/js/common.js"></script>
+<script>
+// 슬라이드 활성 상태 관리
+document.addEventListener('DOMContentLoaded', function() {
+  const swiper = document.querySelector('.trand-swiper-section__swiper');
+  if (swiper && swiper.swiper) {
+    swiper.swiper.on('slideChange', function() {
+      updateActiveSlide(this.activeIndex);
+    });
+  }
+  
+  // Swiper가 아직 초기화되지 않은 경우를 위한 대기
+  setTimeout(() => {
+    const swiperInstance = document.querySelector('.trand-swiper-section__swiper');
+    if (swiperInstance && swiperInstance.swiper) {
+      swiperInstance.swiper.on('slideChange', function() {
+        updateActiveSlide(this.activeIndex);
+      });
+    }
+  }, 1000);
+});
+
+function updateActiveSlide(activeIndex) {
+  const allCards = document.querySelectorAll('.card-content');
+  allCards.forEach((card, index) => {
+    if (index === activeIndex) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+}
+</script>
+  </body>
+</html>

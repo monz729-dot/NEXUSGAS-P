@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-background { background-color: #f8fafc; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        .focus\:not-sr-only:focus { position: static; width: auto; height: auto; padding: 0.5rem 1rem; margin: 0; overflow: visible; clip: auto; white-space: normal; }
+        .animate-bounce { animation: bounce 1s infinite; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen bg-background">
+    <div id="app" class="min-h-screen bg-background flex flex-col">
+        <!-- 일반/기업 회원용 상단 네비게이션 -->
+        <div id="mobile-navigation" class="hidden"></div>
+        
+        <!-- 관리자용 상단 네비게이션 -->
+        <div id="admin-header" class="hidden bg-white border-b border-blue-100 shadow-sm">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold">YCS</span>
+                    </div>
+                    <div>
+                        <h1 class="font-semibold text-blue-900">YCS 물류 시스템</h1>
+                        <p class="text-xs text-blue-600">
+                            관리자 | <span id="admin-name"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="navigateTo('page-list')" class="text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 px-3 py-1 rounded-full transition-colors">
+                        페이지목록
+                    </button>
+                    <button onclick="navigateTo('mypage')" class="text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1 rounded-full transition-colors">
+                        설정
+                    </button>
+                    <button onclick="logout()" class="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-full transition-colors">
+                        로그아웃
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 메인 컨텐츠 -->
+        <main id="main-content" class="flex-1">
+            <!-- 로딩 스피너 -->
+            <div id="loading-spinner" class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center hidden">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                        <div class="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p class="text-blue-600 font-medium">로딩 중...</p>
+                </div>
+            </div>
+            
+            <!-- 접근 권한 없음 페이지 -->
+            <div id="access-denied" class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4 hidden">
+                <div class="text-center max-w-md">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🚫</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">접근 권한이 없습니다</h2>
+                    <p id="access-denied-message" class="text-blue-600 mb-6"></p>
+                    <button onclick="navigateTo('page-list')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        페이지 목록으로 돌아가기
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 페이지 내용 -->
+            <div id="page-content" class="transition-opacity duration-300"></div>
+        </main>
+        
+        <!-- 파트너 전용 하단 네비게이션 -->
+        <div id="partner-navigation" class="hidden"></div>
+        
+        <!-- 관리자 전용 하단 네비게이션 -->
+        <div id="admin-navigation" class="hidden"></div>
+        
+        <!-- 푸터 -->
+        <div id="footer" class="hidden"></div>
+        
+        <!-- 접근성: 스킵 링크 -->
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50">
+            메인 콘텐츠로 건너뛰기
+        </a>
+    </div>
+
+    <script>
+        // 전역 상태 관리
+        let currentPage = 'page-list';
+        let user = null;
+        let isLoading = false;
+        let pageVisible = true;
+        let signupUserType = 'general';
+        let selectedOrderId = '';
+
+        // 사용자 타입별 Mock 데이터
+        const createMockUser = (userType, userSubType) => {
+            const baseUsers = {
+                general: {
+                    id: 'user-general-001',
+                    email: 'user@ycs-logistics.com',
+                    name: '김일반',
+                    type: 'general',
+                    phone: '010-1234-5678',
+                    address: '서울특별시 강남구 테헤란로 123',
+                    joinDate: '2024-01-15',
+                    lastLogin: new Date().toISOString()
+                },
+                corporate: {
+                    id: 'corp-business-001',
+                    email: 'business@company.co.kr',
+                    name: '(주)비즈니스컴퍼니',
+                    type: 'corporate',
+                    phone: '02-1234-5678',
+                    address: '서울특별시 중구 을지로 456',
+                    businessNumber: '123-45-67890',
+                    joinDate: '2024-01-10',
+                    lastLogin: new Date().toISOString()
+                },
+                admin: {
+                    id: 'admin-system-001',
+                    email: 'admin@ycs-logistics.com',
+                    name: '시스템관리자',
+                    type: 'admin',
+                    phone: '02-9876-5432',
+                    address: '서울특별시 서초구 강남대로 789',
+                    department: '운영팀',
+                    joinDate: '2023-12-01',
+                    lastLogin: new Date().toISOString()
+                },
+                partner: {
+                    id: 'partner-logistics-001',
+                    email: 'partner@logistics-partner.com',
+                    name: '물류파트너(주)',
+                    type: 'partner',
+                    phone: '02-5555-7777',
+                    address: '인천광역시 중구 항동 물류단지 101',
+                    businessNumber: '987-65-43210',
+                    partnerCode: 'P-2024-001',
+                    joinDate: '2024-01-05',
+                    lastLogin: new Date().toISOString()
+                }
+            };
+
+            if (userType === 'corporate' || (userType === 'general' && userSubType === 'corporate')) {
+                return baseUsers.corporate;
+            } else if (userType === 'admin') {
+                return baseUsers.admin;
+            } else if (userType === 'partner') {
+                return baseUsers.partner;
+            } else {
+                return baseUsers.general;
+            }
+        };
+
+        // 페이지별 필요한 사용자 타입 매핑
+        const getRequiredUserTypeForPage = (page) => {
+            const pageUserTypeMap = {
+                'login': null,
+                'signup': null,
+                'signup-complete': null,
+                'signup-pending': null,
+                'find-id': null,
+                'find-password': null,
+                'page-list': null,
+                'notices': 'general',
+                'faq': 'general',
+                'workflow-simulator': 'general',
+                'dashboard': 'general',
+                'mypage': 'general',
+                'order-form': 'general',
+                'order-history': 'general',
+                'order-detail': 'general',
+                'payment': 'general',
+                'admin-dashboard': 'admin',
+                'admin-orders': 'admin',
+                'admin-order-detail': 'admin',
+                'partner-dashboard': 'partner',
+                'partner-orders': 'partner',
+                'partner-history': 'partner',
+                'partner-settlement': 'partner',
+                'partner-tasks': 'partner'
+            };
+            
+            return pageUserTypeMap[page] || null;
+        };
+
+        // 페이지 접근 권한 확인
+        const hasPageAccess = (page, userType) => {
+            if (!userType) return true;
+            
+            switch (page) {
+                case 'order-form':
+                case 'payment':
+                    return userType === 'general' || userType === 'corporate';
+                case 'admin-orders':
+                case 'admin-order-detail':
+                    return userType === 'admin';
+                case 'partner-dashboard':
+                case 'partner-orders':
+                case 'partner-history':
+                case 'partner-settlement':
+                case 'partner-tasks':
+                    return userType === 'partner';
+                default:
+                    return true;
+            }
+        };
+
+        // 자동 로그인 처리
+        const handleAutoLogin = (page, urlParams) => {
+            const requiredUserType = getRequiredUserTypeForPage(page);
+            
+            if (requiredUserType && !user) {
+                const userSubType = urlParams.get('userType');
+                
+                let finalUserType = requiredUserType;
+                if (page === 'dashboard' && userSubType === 'corporate') {
+                    finalUserType = 'corporate';
+                }
+                
+                const mockUser = createMockUser(finalUserType, userSubType);
+                user = mockUser;
+                localStorage.setItem('mockUser', JSON.stringify(mockUser));
+                
+                console.log(`자동 로그인 처리: ${page} 페이지 접근을 위해 ${finalUserType} 사용자로 로그인`);
+            }
+        };
+
+        // 네비게이션 표시 조건
+        const shouldShowNavigation = () => {
+            return user && (user.type === 'general' || user.type === 'corporate');
+        };
+
+        const shouldShowPartnerNavigation = () => {
+            return user && user.type === 'partner';
+        };
+
+        const shouldShowAdminNavigation = () => {
+            return user && user.type === 'admin';
+        };
+
+        const shouldShowFooter = () => {
+            return shouldShowNavigation() && !['login', 'signup', 'find-id', 'find-password', 'order-detail', 'payment', 'page-list'].includes(currentPage);
+        };
+
+        // 페이지 렌더링
+        const renderPage = () => {
+            hideAllElements();
+            
+            if (isLoading) {
+                document.getElementById('loading-spinner').classList.remove('hidden');
+                return;
+            }
+
+            // 접근 권한 확인
+            if (user && !hasPageAccess(currentPage, user.type)) {
+                showAccessDenied(user.type);
+                return;
+            }
+
+            // 페이지별 컨텐츠 로드
+            loadPageContent(currentPage);
+            
+            // 네비게이션 표시/숨김
+            updateNavigation();
+        };
+
+        // 모든 요소 숨김
+        const hideAllElements = () => {
+            document.getElementById('loading-spinner').classList.add('hidden');
+            document.getElementById('access-denied').classList.add('hidden');
+            document.getElementById('mobile-navigation').classList.add('hidden');
+            document.getElementById('admin-header').classList.add('hidden');
+            document.getElementById('partner-navigation').classList.add('hidden');
+            document.getElementById('admin-navigation').classList.add('hidden');
+            document.getElementById('footer').classList.add('hidden');
+        };
+
+        // 접근 권한 없음 페이지 표시
+        const showAccessDenied = (userType) => {
+            const accessDenied = document.getElementById('access-denied');
+            const message = document.getElementById('access-denied-message');
+            
+            if (userType === 'admin') {
+                message.textContent = '관리자는 이 기능을 사용할 수 없습니다.';
+            } else if (userType === 'partner') {
+                message.textContent = '파트너는 주문서 작성 기능을 사용할 수 없습니다. 파트너 전용 업무를 수행해주세요.';
+            } else {
+                message.textContent = '이 페이지에 접근할 권한이 없습니다.';
+            }
+            
+            accessDenied.classList.remove('hidden');
+        };
+
+        // 페이지별 컨텐츠 로드
+        const loadPageContent = (page) => {
+            const pageContent = document.getElementById('page-content');
+            
+            // 페이지와 실제 HTML 파일 매핑
+            const pageFileMap = {
+                'page-list': '../index.html',
+                'login': '../LoginPage.html',
+                'signup': 'html/signup.html',
+                'dashboard': 'html/dashboard.html',
+                'admin-dashboard': 'html/dashboard.html',
+                'partner-dashboard': 'html/dashboard.html',
+                'order-form': 'html/order-form.html',
+                'order-history': 'html/order-history.html',
+                'mypage': 'html/mypage.html',
+                'notices': 'html/notices.html',
+                'faq': 'html/faq.html',
+                'find-id': null,
+                'find-password': null,
+                'payment': null,
+                'order-detail': null
+            };
+            
+            const htmlFile = pageFileMap[page];
+            
+            if (htmlFile) {
+                // 실제 HTML 파일로 리다이렉트
+                window.location.href = htmlFile;
+            } else {
+                // 기본 페이지 콘텐츠
+                switch (page) {
+                    case 'page-list':
+                        window.location.href = 'index.html';
+                        break;
+                    case 'find-id':
+                        pageContent.innerHTML = `
+                            <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
+                                <div class="w-full max-w-md">
+                                    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6">
+                                        <h2 class="text-2xl font-bold text-blue-900 mb-4 text-center">아이디 찾기</h2>
+                                        <form class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-blue-900 mb-2">이름</label>
+                                                <input type="text" class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="이름을 입력하세요">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-blue-900 mb-2">전화번호</label>
+                                                <input type="tel" class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="전화번호를 입력하세요">
+                                            </div>
+                                            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">아이디 찾기</button>
+                                        </form>
+                                        <div class="mt-4 text-center">
+                                            <button onclick="navigateTo('login')" class="text-blue-600 hover:underline">로그인으로 돌아가기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'find-password':
+                        pageContent.innerHTML = `
+                            <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
+                                <div class="w-full max-w-md">
+                                    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6">
+                                        <h2 class="text-2xl font-bold text-blue-900 mb-4 text-center">비밀번호 찾기</h2>
+                                        <form class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-blue-900 mb-2">이메일</label>
+                                                <input type="email" class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="이메일을 입력하세요">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-blue-900 mb-2">이름</label>
+                                                <input type="text" class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="이름을 입력하세요">
+                                            </div>
+                                            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">비밀번호 재설정</button>
+                                        </form>
+                                        <div class="mt-4 text-center">
+                                            <button onclick="navigateTo('login')" class="text-blue-600 hover:underline">로그인으로 돌아가기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    default:
+                        pageContent.innerHTML = '<div class="p-4 text-center"><h1 class="text-2xl font-bold text-blue-900 mb-4">페이지를 찾을 수 없습니다</h1><p class="text-blue-600">요청한 페이지를 찾을 수 없습니다.</p></div>';
+                }
+            }
+        };
+
+        // 네비게이션 업데이트
+        const updateNavigation = () => {
+            if (shouldShowNavigation()) {
+                document.getElementById('mobile-navigation').classList.remove('hidden');
+            }
+            
+            if (shouldShowAdminNavigation() && currentPage === 'admin-dashboard') {
+                document.getElementById('admin-header').classList.remove('hidden');
+                if (user) {
+                    document.getElementById('admin-name').textContent = user.name;
+                }
+            }
+            
+            if (shouldShowPartnerNavigation()) {
+                document.getElementById('partner-navigation').classList.remove('hidden');
+            }
+            
+            if (shouldShowAdminNavigation()) {
+                document.getElementById('admin-navigation').classList.remove('hidden');
+            }
+            
+            if (shouldShowFooter()) {
+                document.getElementById('footer').classList.remove('hidden');
+            }
+        };
+
+        // 페이지 네비게이션
+        const navigateTo = (page, options = {}) => {
+            if (user && user.type === 'operator') {
+                console.warn('오퍼레이터 계정은 더 이상 지원하지 않습니다. 관리자에게 문의해주세요.');
+                logout();
+                return;
+            }
+
+            pageVisible = false;
+            isLoading = true;
+            
+            if ((page.startsWith('signup-complete') || page.startsWith('signup-pending')) && options.userType) {
+                signupUserType = options.userType;
+            }
+            
+            if ((page === 'order-detail' || page === 'admin-order-detail' || page === 'payment') && options.orderId) {
+                selectedOrderId = options.orderId;
+            }
+
+            const requiredUserType = getRequiredUserTypeForPage(page);
+            if (requiredUserType && (!user || user.type !== requiredUserType)) {
+                let finalUserType = requiredUserType;
+                if (page === 'dashboard' && options.userType === 'corporate') {
+                    finalUserType = 'corporate';
+                }
+                
+                const mockUser = createMockUser(finalUserType, options.userType);
+                user = mockUser;
+                console.log(`페이지 이동 중 자동 로그인: ${page} 페이지 접근을 위해 ${finalUserType} 사용자로 로그인`);
+            }
+            
+            setTimeout(() => {
+                currentPage = page;
+                isLoading = false;
+                pageVisible = true;
+                renderPage();
+            }, 300);
+        };
+
+        // 로그인 처리
+        const handleLogin = (userData) => {
+            if (userData.type === 'operator') {
+                alert('오퍼레이터 계정은 더 이상 지원하지 않습니다. 관리자에게 문의해주세요.');
+                return;
+            }
+            
+            user = userData;
+            isLoading = true;
+            renderPage();
+            
+            setTimeout(() => {
+                if (userData.type === 'admin') {
+                    navigateTo('admin-dashboard');
+                } else if (userData.type === 'partner') {
+                    navigateTo('partner-dashboard');
+                } else {
+                    navigateTo('dashboard');
+                }
+                isLoading = false;
+            }, 800);
+        };
+
+        // 로그아웃 처리
+        const logout = () => {
+            isLoading = true;
+            renderPage();
+            
+            setTimeout(() => {
+                user = null;
+                localStorage.removeItem('rememberedUser');
+                localStorage.removeItem('mockUser');
+                navigateTo('page-list');
+                isLoading = false;
+            }, 500);
+        };
+
+        // URL 파라미터 처리
+        const initializeFromURL = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page');
+            const userType = urlParams.get('userType');
+            const orderId = urlParams.get('orderId');
+            const mockUserData = urlParams.get('mockUser');
+
+            if (page) {
+                currentPage = page;
+                
+                if (mockUserData) {
+                    try {
+                        const parsedUser = JSON.parse(decodeURIComponent(mockUserData));
+                        user = parsedUser;
+                        localStorage.setItem('mockUser', JSON.stringify(parsedUser));
+                    } catch (e) {
+                        console.error('Mock user 데이터 파싱 오류:', e);
+                        handleAutoLogin(page, urlParams);
+                    }
+                } else {
+                    handleAutoLogin(page, urlParams);
+                }
+                
+                if ((page.startsWith('signup-complete') || page.startsWith('signup-pending')) && userType) {
+                    signupUserType = userType;
+                }
+                
+                if ((page === 'order-detail' || page === 'admin-order-detail' || page === 'payment') && orderId) {
+                    selectedOrderId = orderId;
+                }
+            } else {
+                currentPage = 'page-list';
+            }
+        };
+
+        // 저장된 로그인 정보 확인
+        const checkStoredLogin = () => {
+            const mockUser = localStorage.getItem('mockUser');
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page');
+            
+            if (!page && mockUser && !user) {
+                try {
+                    const parsedMockUser = JSON.parse(mockUser);
+                    
+                    if (parsedMockUser.type === 'operator') {
+                        localStorage.removeItem('mockUser');
+                        localStorage.removeItem('rememberedUser');
+                        currentPage = 'page-list';
+                        console.log('오퍼레이터 계정이 제거되었습니다. 다시 로그인해주세요.');
+                        return;
+                    }
+                    
+                    user = parsedMockUser;
+                    currentPage = 'page-list';
+                    
+                } catch (e) {
+                    console.error('Mock user 로드 오류:', e);
+                    localStorage.removeItem('mockUser');
+                    localStorage.removeItem('rememberedUser');
+                    currentPage = 'page-list';
+                }
+            }
+        };
+
+        // 키보드 네비게이션
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                // ESC 키 처리
+            }
+            
+            if (event.key === 'Tab') {
+                // Tab 키 네비게이션
+            }
+        };
+
+        // 초기화
+        const initialize = () => {
+            initializeFromURL();
+            checkStoredLogin();
+            renderPage();
+            
+            window.addEventListener('keydown', handleKeyDown);
+        };
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>

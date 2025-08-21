@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 내역 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="navigation.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button onclick="navigateBack()" class="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+            <i data-lucide="arrow-left" class="h-4 w-4 mr-2 inline"></i>
+            뒤로가기
+        </button>
+        <div>
+            <h1 class="text-xl text-blue-900 font-bold">주문 내역</h1>
+            <p class="text-sm text-blue-600">주문 상태를 확인하고 관리하세요</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mb-6">
+        <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
+            <input id="searchInput" type="text" placeholder="주문번호 또는 품목명으로 검색..." class="w-full pl-10 h-12 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+        </div>
+    </div>
+
+    <!-- Order Status Legend -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-blue-900 mb-4">주문 상태 안내</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">접수완료</span>
+                <span class="text-sm text-gray-600">주문 접수됨</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">창고도착</span>
+                <span class="text-sm text-gray-600">YCS 창고 도착</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">청구서발행</span>
+                <span class="text-sm text-gray-600">비용 산정 완료</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-1 text-xs bg-emerald-100 text-emerald-800 rounded-full">배송완료</span>
+                <span class="text-sm text-gray-600">배송 완료</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    <div id="ordersList" class="space-y-4">
+        <!-- Orders will be dynamically inserted here -->
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 id="modalOrderNumber" class="text-lg font-semibold text-blue-900"></h3>
+                    <button onclick="closeOrderDetail()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="modalContent" class="p-6">
+                <!-- Order details will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+        let filteredOrders = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadOrders();
+            setupEventListeners();
+            lucide.createIcons();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterOrders);
+        }
+
+        function loadOrders() {
+            // Mock order data
+            orders = [
+                {
+                    id: 'YCS-2024-001',
+                    orderNumber: 'YCS-240115-001',
+                    date: '2024-01-15',
+                    status: 'payment_pending',
+                    statusLabel: '입금대기',
+                    statusColor: 'bg-yellow-100 text-yellow-800',
+                    items: [
+                        { name: '빼빼로 초콜릿', quantity: 10, weight: 1.5, unitPrice: 25 }
+                    ],
+                    shippingType: '해상',
+                    trackingNumber: 'EE123456789KR',
+                    destination: '태국 방콕',
+                    recipient: {
+                        name: '김수취',
+                        phone: '+66-123-456-789',
+                        address: '방콕시 중심가 123번지'
+                    },
+                    total: 117700
+                },
+                {
+                    id: 'YCS-2024-002',
+                    orderNumber: 'YCS-240114-002',
+                    date: '2024-01-14',
+                    status: 'billing',
+                    statusLabel: '청구서발행',
+                    statusColor: 'bg-purple-100 text-purple-800',
+                    items: [
+                        { name: '전자제품', quantity: 2, weight: 2.0, unitPrice: 1200 },
+                        { name: '액세서리', quantity: 5, weight: 0.5, unitPrice: 300 }
+                    ],
+                    shippingType: '항공',
+                    trackingNumber: 'EE987654321KR',
+                    destination: '태국 치앙마이',
+                    recipient: {
+                        name: '이수취',
+                        phone: '+66-987-654-321',
+                        address: '치앙마이시 올드타운 456번지'
+                    },
+                    total: 245000
+                },
+                {
+                    id: 'YCS-2024-003',
+                    orderNumber: 'YCS-240113-003',
+                    date: '2024-01-13',
+                    status: 'delivered',
+                    statusLabel: '배송완료',
+                    statusColor: 'bg-emerald-100 text-emerald-800',
+                    items: [
+                        { name: '화장품 세트', quantity: 3, weight: 0.8, unitPrice: 800 }
+                    ],
+                    shippingType: '해상',
+                    trackingNumber: 'EE555666777KR',
+                    destination: '베트남 호치민',
+                    recipient: {
+                        name: '박수취',
+                        phone: '+84-123-456-789',
+                        address: '호치민시 1구 센터가'
+                    },
+                    total: 89000
+                }
+            ];
+
+            filteredOrders = [...orders];
+            renderOrders();
+        }
+
+        function filterOrders() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredOrders = [...orders];
+            } else {
+                filteredOrders = orders.filter(order => {
+                    return order.orderNumber.toLowerCase().includes(searchTerm) ||
+                           order.items.some(item => item.name.toLowerCase().includes(searchTerm)) ||
+                           order.destination.toLowerCase().includes(searchTerm);
+                });
+            }
+            
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('ordersList');
+            
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-8 text-center">
+                        <i data-lucide="package" class="h-16 w-16 mx-auto mb-4 text-gray-400"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">주문 내역이 없습니다</h3>
+                        <p class="text-gray-600 mb-4">아직 주문하신 내역이 없습니다.</p>
+                        <button onclick="navigateToOrderForm()" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-3 rounded-lg transition-colors">
+                            첫 주문 하기
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = filteredOrders.map(order => `
+                <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-900">${order.orderNumber}</h3>
+                            <p class="text-sm text-gray-600">${formatDate(order.date)}</p>
+                        </div>
+                        <span class="px-3 py-1 text-sm rounded-full ${order.statusColor}">
+                            ${order.statusLabel}
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">배송 정보</p>
+                            <p class="text-sm text-gray-600">${order.shippingType} • ${order.destination}</p>
+                            <p class="text-sm text-gray-600">송장: ${order.trackingNumber}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">품목 정보</p>
+                            <p class="text-sm text-gray-600">
+                                ${order.items[0].name}
+                                ${order.items.length > 1 ? ` 외 ${order.items.length - 1}개` : ''}
+                            </p>
+                            <p class="text-sm text-gray-600">총 ${formatCurrency(order.total)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button onclick="viewOrderDetail('${order.id}')" class="flex-1 bg-blue-600 text-white hover:bg-blue-700 py-2 px-4 rounded-lg transition-colors text-sm">
+                            <i data-lucide="eye" class="h-4 w-4 mr-2 inline"></i>
+                            상세보기
+                        </button>
+                        <button onclick="trackOrder('${order.trackingNumber}')" class="flex-1 border border-blue-300 text-blue-700 hover:bg-blue-50 py-2 px-4 rounded-lg transition-colors text-sm">
+                            <i data-lucide="truck" class="h-4 w-4 mr-2 inline"></i>
+                            배송추적
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function viewOrderDetail(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('modalOrderNumber').textContent = order.orderNumber;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-6">
+                    <!-- Order Status -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">주문 상태</h4>
+                        <span class="px-3 py-1 text-sm rounded-full ${order.statusColor}">
+                            ${order.statusLabel}
+                        </span>
+                    </div>
+                    
+                    <!-- Shipping Info -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">배송 정보</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">배송 방식</p>
+                                    <p class="text-sm text-gray-600">${order.shippingType}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">송장번호</p>
+                                    <p class="text-sm text-gray-600">${order.trackingNumber}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">목적지</p>
+                                    <p class="text-sm text-gray-600">${order.destination}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">주문일</p>
+                                    <p class="text-sm text-gray-600">${formatDate(order.date)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recipient Info -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">수취인 정보</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm"><span class="font-medium">이름:</span> ${order.recipient.name}</p>
+                            <p class="text-sm"><span class="font-medium">연락처:</span> ${order.recipient.phone}</p>
+                            <p class="text-sm"><span class="font-medium">주소:</span> ${order.recipient.address}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Items -->
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">품목 정보</h4>
+                        <div class="space-y-2">
+                            ${order.items.map(item => `
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-medium">${item.name}</p>
+                                            <p class="text-sm text-gray-600">
+                                                수량: ${item.quantity}개 • 중량: ${item.weight}kg
+                                            </p>
+                                        </div>
+                                        <p class="font-medium">${formatCurrency(item.unitPrice * item.quantity)}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold">총 결제금액</span>
+                            <span class="text-lg font-bold text-blue-600">${formatCurrency(order.total)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('orderDetailModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeOrderDetail() {
+            document.getElementById('orderDetailModal').classList.add('hidden');
+        }
+
+        function trackOrder(trackingNumber) {
+            // In a real application, this would open a tracking service
+            alert(`배송 추적: ${trackingNumber}\n\n실제 서비스에서는 우체국 또는 배송업체 추적 페이지가 열립니다.`);
+        }
+
+        function navigateBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function navigateToOrderForm() {
+            window.location.href = 'order-form.html';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('orderDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOrderDetail();
+            }
+        });
+    </script>
+</body>
+</html>

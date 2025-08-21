@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCS 물류 시스템 - 홈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="ui-components.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <span class="text-white font-bold text-lg">YCS</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">YCS 물류 시스템</h1>
+                        <p class="text-white/80">안전하고 신뢰할 수 있는 물류 서비스</p>
+                    </div>
+                </div>
+                <button onclick="navigateToLogin()" class="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-lg hover:bg-white/30 transition-colors">
+                    로그인
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">물류 관리의 새로운 표준</h2>
+            <p class="text-xl text-gray-600 mb-8">효율적이고 투명한 물류 서비스를 경험해보세요</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="navigateToSignup()" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                    회원가입
+                </button>
+                <button onclick="navigateToDemo()" class="bg-gray-200 text-gray-800 px-8 py-3 rounded-lg hover:bg-gray-300 transition-colors">
+                    데모 보기
+                </button>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-center text-gray-900 mb-8">주요 기능</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card card-hover bg-white p-6 rounded-lg border">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">실시간 배송 추적</h4>
+                    <p class="text-gray-600">주문부터 배송까지 모든 과정을 실시간으로 추적하고 관리할 수 있습니다.</p>
+                </div>
+                
+                <div class="card card-hover bg-white p-6 rounded-lg border">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">안전한 물류 관리</h4>
+                    <p class="text-gray-600">첨단 보안 시스템과 검증된 파트너들로 안전한 물류 서비스를 제공합니다.</p>
+                </div>
+                
+                <div class="card card-hover bg-white p-6 rounded-lg border">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">빠른 처리</h4>
+                    <p class="text-gray-600">효율적인 시스템으로 빠르고 정확한 주문 처리와 배송을 보장합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Navigation -->
+        <section class="mb-12">
+            <h3 class="text-2xl font-bold text-center text-gray-900 mb-8">페이지 목록</h3>
+            
+            <!-- User Pages -->
+            <div class="mb-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">🔐 사용자 페이지</h4>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="navigateToPage('LoginPage.html')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-blue-600 mb-1">로그인</h5>
+                        <p class="text-sm text-gray-600">사용자 인증 및 로그인</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=signup')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-blue-600 mb-1">회원가입</h5>
+                        <p class="text-sm text-gray-600">새 계정 생성</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=find-id')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-blue-600 mb-1">아이디 찾기</h5>
+                        <p class="text-sm text-gray-600">이메일로 아이디 찾기</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Features -->
+            <div class="mb-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">📊 메인 기능</h4>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="navigateToPage('App.html?page=dashboard')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">대시보드</h5>
+                        <p class="text-sm text-gray-600">일반/기업 사용자 대시보드</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=order-form')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">주문서 작성</h5>
+                        <p class="text-sm text-gray-600">새 주문 생성</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=order-history')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">주문 내역</h5>
+                        <p class="text-sm text-gray-600">주문 조회 및 추적</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=mypage')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">마이페이지</h5>
+                        <p class="text-sm text-gray-600">계정 정보 관리</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=notices')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">공지사항</h5>
+                        <p class="text-sm text-gray-600">시스템 공지 및 뉴스</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=faq')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-green-600 mb-1">FAQ</h5>
+                        <p class="text-sm text-gray-600">자주 묻는 질문</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Pages -->
+            <div class="mb-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">👨‍💼 관리자 페이지</h4>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="navigateToPage('App.html?page=admin-dashboard')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-purple-600 mb-1">관리자 대시보드</h5>
+                        <p class="text-sm text-gray-600">전체 시스템 관리</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=admin-orders')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-purple-600 mb-1">주문 관리</h5>
+                        <p class="text-sm text-gray-600">전체 주문 조회 및 관리</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Partner Pages -->
+            <div class="mb-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">🤝 파트너 페이지</h4>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="navigateToPage('App.html?page=partner-dashboard')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-orange-600 mb-1">파트너 대시보드</h5>
+                        <p class="text-sm text-gray-600">파트너 전용 대시보드</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=partner-orders')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-orange-600 mb-1">배정된 주문</h5>
+                        <p class="text-sm text-gray-600">처리할 주문 목록</p>
+                    </button>
+                    <button onclick="navigateToPage('App.html?page=partner-settlement')" class="card card-hover bg-white p-4 rounded-lg border text-left">
+                        <h5 class="font-medium text-orange-600 mb-1">정산 관리</h5>
+                        <p class="text-sm text-gray-600">수수료 및 정산 내역</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Test Accounts -->
+            <div class="mb-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">🧪 테스트 계정</h4>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p class="text-sm text-yellow-800 mb-3">다음 테스트 계정으로 시스템을 체험해보세요:</p>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <strong>일반 회원:</strong> general@example.com / password123
+                        </div>
+                        <div>
+                            <strong>기업 회원:</strong> corporate@example.com / password123
+                        </div>
+                        <div>
+                            <strong>관리자:</strong> admin@example.com / admin123
+                        </div>
+                        <div>
+                            <strong>파트너:</strong> partner@example.com / partner123
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conversion Info -->
+        <section class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blue-900 mb-3">🔄 변환 정보</h3>
+            <div class="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                    <h4 class="font-medium mb-2">변환된 컴포넌트:</h4>
+                    <ul class="space-y-1">
+                        <li>✅ App.tsx → App.html</li>
+                        <li>✅ LoginPage.tsx → LoginPage.html</li>
+                        <li>✅ 모든 페이지 컴포넌트</li>
+                        <li>✅ UI 컴포넌트 CSS/JS 라이브러리</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">기술 스택:</h4>
+                    <ul class="space-y-1">
+                        <li>• 순수 HTML, CSS, JavaScript</li>
+                        <li>• Tailwind CSS (CDN)</li>
+                        <li>• Lucide Icons</li>
+                        <li>• Local Storage 활용</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div>
+                    <h4 class="text-lg font-semibold mb-3">YCS 물류 시스템</h4>
+                    <p class="text-gray-400">안전하고 효율적인 물류 서비스를 제공합니다.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-3">빠른 링크</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">서비스 소개</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">이용약관</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">개인정보처리방침</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-3">고객지원</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>📞 02-1234-5678</li>
+                        <li>📧 support@ycs-logistics.com</li>
+                        <li>🕒 평일 09:00 - 18:00</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2024 YCS 물류 시스템. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="ui-components.js"></script>
+    <script>
+        // Navigation functions
+        function navigateToLogin() {
+            window.location.href = 'LoginPage.html';
+        }
+
+        function navigateToSignup() {
+            window.location.href = 'App.html?page=signup';
+        }
+
+        function navigateToDemo() {
+            window.location.href = 'App.html?page=page-list';
+        }
+
+        function navigateToPage(url) {
+            window.location.href = url;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Add entrance animations
+            const cards = document.querySelectorAll('.card-hover');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

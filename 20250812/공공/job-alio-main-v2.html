@@ -1,0 +1,3176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="잡알리오 - 공공기관 채용 전용 플랫폼">
+    <title>잡알리오 - 공공 채용 플랫폼</title>
+    <style>
+        :root {
+            --brand-600: #3182F6;
+            --brand-700: #1B64DA;
+            --brand-50: #EBF4FF;
+            --ink: #191F28;
+            --muted: #8B95A1;
+            --bg: #FFFFFF;
+            --bg-alt: #F9FAFB;
+            --border: #E5E8EB;
+            --success: #07A320;
+            --warning: #FF8800;
+            --danger: #E8344E;
+            --focus: #3182F6;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,.12);
+            --r-8: 8px;
+            --r-12: 12px;
+            --r-16: 16px;
+            --r-20: 20px;
+            --r-pill: 999px;
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 전역 애니메이션 설정 */
+        * {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 클릭 가능한 요소들에 커서 포인터 */
+        button, a, .checkbox-item, .job-card, .filter-tag {
+            cursor: pointer;
+        }
+        
+        /* 포커스 스타일 통일 */
+        *:focus-visible {
+            outline: 2px solid var(--brand-600);
+            outline-offset: 2px;
+            border-radius: var(--r-8);
+        }
+
+        body {
+            font-family: "SUIT", "Spoqa Han Sans Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.55;
+            font-feature-settings: 'tnum';
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-600);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 100;
+            border-radius: var(--r-12);
+        }
+
+        .skip-link:focus {
+            top: 8px;
+            left: 8px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            z-index: 100;
+            box-shadow: 0 1px 0 0 rgba(0,0,0,0.05);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .logo-group img {
+            height: 32px;
+            width: auto;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 100%;
+            height: 52px;
+            padding: 0 48px 0 44px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-12);
+            font-size: 16px;
+            background: var(--bg);
+            color: var(--ink);
+            transition: all 0.2s ease;
+        }
+        
+        .search-bar:hover {
+            border-color: var(--brand-600);
+        }
+
+        .search-bar:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-hint {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 4px 8px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: var(--r-8);
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            min-height: 48px;
+            min-width: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .btn-ghost {
+            background: var(--bg);
+            color: var(--ink);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-alt);
+            border-color: var(--brand-600);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--brand-600);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+        
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .data-banner {
+            background: var(--bg-alt);
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .data-banner strong {
+            color: var(--ink);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('hero-government.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 400px;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(49, 130, 246, 0.1);
+            opacity: 0.8;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: white;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            padding: 24px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+
+        /* 메인 필터 */
+        .main-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .filter-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+        }
+
+        .filter-group-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: var(--r-6);
+            transition: all 0.2s ease;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+        }
+
+        .filter-group-label:hover {
+            background: var(--brand-50);
+            border-color: var(--brand-600);
+        }
+
+        .filter-group-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .filter-group-icon {
+            transition: transform 0.3s ease;
+            color: var(--brand-600);
+        }
+
+        .filter-group-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .filter-group-count {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: var(--r-pill);
+            border: 1px solid var(--border);
+        }
+
+        /* 체크박스 그리드 - 기본 스타일 */
+        .checkbox-grid {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: auto;
+            width: 400px;
+            z-index: 999999;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 6px 8px;
+            margin-top: 8px;
+            padding: 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 근무지 말풍선만 가로로 길게 */
+        .checkbox-grid[data-group="location"] {
+            width: 1200px;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px 12px;
+            padding: 20px;
+        }
+
+        .checkbox-grid.collapsed {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+        }
+
+        .filter-group:hover .checkbox-grid,
+        .checkbox-grid:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .filter-group:hover .job-main-categories,
+        .job-main-categories:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .job-main-categories::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+            filter: drop-shadow(0 -2px 4px rgba(0,0,0,0.1));
+        }
+
+        .checkbox-grid::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+            filter: drop-shadow(0 -2px 4px rgba(0,0,0,0.1));
+        }
+
+        .checkbox-grid.employment-type {
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: var(--r-6);
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .checkbox-item:hover {
+            background: var(--bg-alt);
+            border-color: var(--brand-600);
+            transform: translateX(2px);
+        }
+        
+        .checkbox-item:active {
+            transform: scale(0.98);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--brand-600);
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* 직무 카테고리 필터 */
+        .job-category-filter {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .job-main-categories {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 99999;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding: 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .job-category-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-6);
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .job-category-btn:hover {
+            border-color: var(--brand-600);
+            background: var(--brand-50);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .job-category-btn:active {
+            transform: translateY(0px);
+        }
+
+        .job-category-btn.active {
+            background: var(--brand-600);
+            color: white;
+            border-color: var(--brand-600);
+        }
+
+        .job-sub-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-alt);
+            border-radius: var(--r-8);
+            border: 1px solid var(--border);
+        }
+
+        /* 필터 액션 버튼들 */
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .detail-filter-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--bg);
+            border: 2px solid var(--brand-600);
+            border-radius: var(--r-8);
+            color: var(--brand-600);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .detail-filter-toggle:hover {
+            background: var(--brand-600);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .detail-filter-toggle:active {
+            transform: translateY(0px);
+        }
+
+        .detail-filter-toggle svg {
+            transition: transform 0.2s ease;
+        }
+
+        .detail-filter-toggle.active svg {
+            transform: rotate(180deg);
+        }
+
+        .filter-reset-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--r-8);
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-reset-btn:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .filter-reset-btn:active {
+            transform: translateY(0px);
+        }
+
+        /* 상세 필터 */
+        .detail-filters {
+            padding: 12px;
+            background: var(--bg-alt);
+            border-radius: var(--r-8);
+            border: 1px solid var(--border);
+            margin-top: 12px;
+        }
+
+        .detail-filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        /* 기관명 검색 */
+        .org-search-container {
+            position: relative;
+            margin-top: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .org-search-container.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .org-search-container.expanded {
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        .org-search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-8);
+            font-size: 14px;
+            background: var(--bg);
+        }
+
+        .org-search-input:focus {
+            outline: none;
+            border-color: var(--brand-600);
+        }
+
+        .org-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-8);
+            box-shadow: var(--shadow-md);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .org-suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .org-suggestion-item:hover {
+            background: var(--brand-50);
+            transform: translateX(4px);
+            color: var(--brand-700);
+        }
+        
+        .org-suggestion-item:active {
+            transform: scale(0.98);
+        }
+
+        /* 선택된 필터 태그 */
+        .selected-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .filter-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-600);
+            border-radius: var(--r-pill);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .filter-tag-remove {
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .filter-tag-remove:hover {
+            background: var(--brand-600);
+            color: white;
+            transform: scale(1.2);
+        }
+        
+        .filter-tag-remove:active {
+            transform: scale(0.9);
+        }
+
+        /* 페이지 로딩 애니메이션 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 요소별 로딩 애니메이션 적용 */
+        .hero {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .filters {
+            animation: slideDown 0.6s ease-out 0.1s both;
+        }
+        
+        .job-card {
+            animation: scaleIn 0.5s ease-out both;
+        }
+        
+        .job-card:nth-child(1) { animation-delay: 0.1s; }
+        .job-card:nth-child(2) { animation-delay: 0.2s; }
+        .job-card:nth-child(3) { animation-delay: 0.3s; }
+        .job-card:nth-child(4) { animation-delay: 0.4s; }
+        .job-card:nth-child(5) { animation-delay: 0.5s; }
+        .job-card:nth-child(6) { animation-delay: 0.6s; }
+        .job-card:nth-child(7) { animation-delay: 0.7s; }
+        .job-card:nth-child(8) { animation-delay: 0.8s; }
+        
+        .sidebar {
+            animation: fadeInRight 0.6s ease-out 0.3s both;
+        }
+        
+        .table-section {
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+        
+        .section h2 {
+            animation: fadeInLeft 0.6s ease-out;
+        }
+        
+        /* 부드러운 스크롤 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 개선된 호버 효과 */
+        .job-card::before {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .checkbox-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .job-category-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .filter-tag {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .banner-link {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 스크롤 시 나타나는 애니메이션 */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .main-filters {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 8px 12px;
+            }
+            
+            .job-main-categories {
+                gap: 6px;
+            }
+            
+            .job-category-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            
+            .detail-filter-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .filter-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .detail-filter-toggle,
+            .filter-reset-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            /* 모바일에서 애니메이션 간소화 */
+            .job-card {
+                animation-duration: 0.3s;
+            }
+            
+            .hero, .filters, .sidebar, .table-section {
+                animation-duration: 0.4s;
+            }
+        }
+        
+        /* 접근성 - 모션 줄이기 설정 시 애니메이션 비활성화 */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-button {
+            padding: 10px 36px 10px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            min-width: 140px;
+            color: var(--ink);
+            font-family: inherit;
+        }
+
+        .filter-button:hover {
+            background: var(--bg);
+            border-color: var(--brand-600);
+        }
+
+        .filter-button:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .filter-button::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .filter-button.active::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--muted);
+            margin-right: 4px;
+        }
+
+        .filter-value {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-alt);
+        }
+
+        .dropdown-item.selected {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            font-weight: 500;
+        }
+
+        .dropdown-item.selected::before {
+            content: '✓';
+            color: var(--brand-600);
+            font-weight: bold;
+        }
+
+        .checkbox-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .checkbox-filter:hover {
+            border-color: var(--brand-600);
+        }
+
+        .checkbox-filter input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--brand-600);
+        }
+
+        .checkbox-filter.checked {
+            background: var(--brand-50);
+            border-color: var(--brand-600);
+            color: var(--brand-700);
+        }
+
+        main {
+            padding: 24px 16px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-section {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-16);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-section:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        
+        .sidebar-section:active {
+            transform: translateY(-1px);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .sidebar-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-list li:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-list li::before {
+            content: '•';
+            color: var(--brand-600);
+            font-weight: bold;
+        }
+
+        .banner-link {
+            display: block;
+            background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-700) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: var(--r-16);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .banner-link:hover::before {
+            left: 100%;
+        }
+
+        .banner-link:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .banner-link:active {
+            transform: translateY(-2px);
+        }
+
+        .banner-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .banner-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .banner-cta {
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .banner-cta::after {
+            content: '→';
+            transition: transform 0.2s;
+        }
+
+        .banner-link:hover .banner-cta::after {
+            transform: translateX(4px);
+        }
+
+        .gradient-banner {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('banner-laptop.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        
+        .expo-banner {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('banner-venue.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .section {
+            margin: 0 0 48px 0;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .card-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .job-card {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transition: transform 0.6s ease-in-out;
+            border-radius: var(--r-16);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-front {
+            transform: rotateY(0deg);
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, var(--brand-50) 0%, var(--bg) 100%);
+        }
+        
+        .job-card:hover .card-front {
+            transform: rotateY(-180deg);
+        }
+        
+        .job-card:hover .card-back {
+            transform: rotateY(0deg);
+        }
+        
+        
+
+        .card-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: var(--r-pill);
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+        }
+
+        .badge-new {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-600);
+        }
+
+        .badge-due {
+            background: #FEF2F2;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .job-card:hover .card-info {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .card-info-row {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .card-info-label {
+            font-weight: 500;
+            margin-right: 6px;
+            color: var(--ink);
+            min-width: 60px;
+        }
+
+        .card-dates {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .date-item {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        .date-label {
+            color: var(--muted);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .date-value {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-progress {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-ended {
+            background: var(--muted);
+            color: white;
+        }
+        
+        .card-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .job-card:hover .card-actions {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .table-section {
+            max-width: 1200px;
+            margin: 32px auto 0;
+            padding: 0 20px;
+        }
+        
+        .more-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto 0;
+            padding: 16px 32px;
+            background: var(--bg);
+            border: 2px solid var(--brand-600);
+            border-radius: var(--r-12);
+            color: var(--brand-600);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: -0.01em;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .more-button:hover {
+            background: var(--brand-600);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .more-button:active {
+            transform: translateY(-1px);
+        }
+
+        .more-button svg {
+            transition: transform 0.2s;
+        }
+
+        .more-button.active svg {
+            transform: rotate(180deg);
+        }
+
+        .job-table-container {
+            display: none;
+            margin: 24px 0 0 0;
+            padding: 24px;
+            background: var(--bg);
+            border-radius: var(--r-20);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            width: 100%;
+        }
+
+        .job-table-container.show {
+            display: block;
+        }
+
+        .job-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg);
+            border-radius: var(--r-12);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            table-layout: fixed;
+        }
+
+        .job-table th,
+        .job-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* 컬럼 너비 설정 */
+        .job-table th:nth-child(1),
+        .job-table td:nth-child(1) {
+            width: 40%;
+        }
+        
+        .job-table th:nth-child(2),
+        .job-table td:nth-child(2) {
+            width: 15%;
+        }
+        
+        .job-table th:nth-child(3),
+        .job-table td:nth-child(3) {
+            width: 15%;
+        }
+        
+        .job-table th:nth-child(4),
+        .job-table td:nth-child(4) {
+            width: 10%;
+        }
+        
+        .job-table th:nth-child(5),
+        .job-table td:nth-child(5) {
+            width: 10%;
+        }
+        
+        .job-table th:nth-child(6),
+        .job-table td:nth-child(6) {
+            width: 10%;
+        }
+
+        .job-table th {
+            background: var(--bg-alt);
+            font-weight: 700;
+            color: var(--ink);
+            font-size: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .job-table td {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .job-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .job-table tbody tr:hover {
+            background: var(--bg-alt);
+            cursor: pointer;
+            transform: scale(1.01);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .job-table tbody tr:active {
+            transform: scale(0.99);
+        }
+
+        .job-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .table-new {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-600);
+        }
+
+        .table-due {
+            background: #FEF2F2;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .job-title-cell {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        footer {
+            background: var(--bg-alt);
+            padding: 24px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: var(--ink);
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-wrap: wrap;
+            }
+            
+            .search-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 8px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .pagination button:hover {
+            background: var(--brand-50);
+            border-color: var(--brand-600);
+        }
+        .pagination button.active {
+            background: var(--brand-600);
+            color: white;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">본문 바로가기</a>
+    
+    <header role="banner" aria-label="주 헤더">
+        <div class="header-inner">
+            <div class="header-left">
+                <img src="logo-jobalio.png" alt="JOB-ALIO 로고" class="logo">
+                <div class="search-container">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="9" cy="9" r="7" stroke="var(--muted)" stroke-width="2"/>
+                        <path d="M14 14L18 18" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input type="search" class="search-bar" placeholder="기관, 직무, 키워드 검색" aria-label="채용공고 검색">
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <button class="btn btn-ghost">로그인</button>
+                <button class="btn btn-primary">회원가입</button>
+            </div>
+        </div>
+    </header>
+
+
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>공공 채용, 잡알리오가 도와드려요</h1>
+            <p>복잡한 공공기관 채용정보, 이제 한 곳에서 간편하게 확인하세요</p>
+            <div class="hero-actions">
+                <button class="btn btn-ghost">오늘 새 공고</button>
+                <button class="btn btn-primary">마감 임박</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="filters">
+        <div class="filters-inner">
+
+            <!-- 메인 필터 -->
+            <div class="main-filters">
+                <!-- 근무지 필터 -->
+                <div class="filter-group">
+                    <div class="filter-group-label" onclick="toggleFilterGroup(this, 'location')">
+                        <div class="filter-group-toggle">
+                            <span>근무지</span>
+                        </div>
+                        <span class="filter-group-count" id="location-count">0</span>
+                    </div>
+                    <div class="checkbox-grid collapsed" data-group="location">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="seoul">
+                            <span class="checkbox-label">서울특별시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="gyeonggi">
+                            <span class="checkbox-label">경기도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="incheon">
+                            <span class="checkbox-label">인천광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="busan">
+                            <span class="checkbox-label">부산광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="daegu">
+                            <span class="checkbox-label">대구광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="gwangju">
+                            <span class="checkbox-label">광주광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="daejeon">
+                            <span class="checkbox-label">대전광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="ulsan">
+                            <span class="checkbox-label">울산광역시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="sejong">
+                            <span class="checkbox-label">세종특별자치시</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="gangwon">
+                            <span class="checkbox-label">강원특별자치도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="chungbuk">
+                            <span class="checkbox-label">충청북도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="chungnam">
+                            <span class="checkbox-label">충청남도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="jeonbuk">
+                            <span class="checkbox-label">전북특별자치도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="jeonnam">
+                            <span class="checkbox-label">전라남도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="gyeongbuk">
+                            <span class="checkbox-label">경상북도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="gyeongnam">
+                            <span class="checkbox-label">경상남도</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="location" value="jeju">
+                            <span class="checkbox-label">제주특별자치도</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 직무/분야 필터 -->
+                <div class="filter-group">
+                    <div class="filter-group-label">
+                        <span>직무/분야</span>
+                        <div class="filter-group-icon">
+                        </div>
+                        <span class="filter-group-count" id="job-category-count">0</span>
+                    </div>
+                    <div class="job-category-filter">
+                        <div class="job-main-categories">
+                            <button class="job-category-btn active" data-category="all">전체</button>
+                            <button class="job-category-btn" data-category="admin">사무/행정</button>
+                            <button class="job-category-btn" data-category="tech">기술/연구</button>
+                            <button class="job-category-btn" data-category="health">보건/의료</button>
+                            <button class="job-category-btn" data-category="education">교육</button>
+                            <button class="job-category-btn" data-category="safety">안전/환경</button>
+                            <button class="job-category-btn" data-category="culture">문화/예술</button>
+                        </div>
+                        <div class="job-sub-categories" id="subCategories" style="display: none;">
+                            <!-- 동적으로 생성될 세부 직무 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 고용형태 필터 -->
+                <div class="filter-group">
+                    <div class="filter-group-label" onclick="toggleFilterGroup(this, 'employment')">
+                        <div class="filter-group-toggle">
+                            <span>고용형태</span>
+                        </div>
+                        <span class="filter-group-count" id="employment-count">0</span>
+                    </div>
+                    <div class="checkbox-grid employment-type collapsed" data-group="employment">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="employment" value="regular">
+                            <span class="checkbox-label">정규직</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="employment" value="permanent-contract">
+                            <span class="checkbox-label">무기계약직</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="employment" value="contract">
+                            <span class="checkbox-label">계약직</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="employment" value="part-time">
+                            <span class="checkbox-label">시간제</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="employment" value="intern">
+                            <span class="checkbox-label">인턴</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상세 필터 토글 버튼 -->
+            <div class="filter-actions">
+                <button class="detail-filter-toggle" onclick="toggleDetailFilters()">
+                    <span>상세 필터 더 보기</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 12L2 6h12l-6 6z"/>
+                    </svg>
+                </button>
+                <button class="filter-reset-btn" onclick="resetAllFilters()">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1.5A6.5 6.5 0 1 0 14.5 8A6.5 6.5 0 0 0 8 1.5zM11.5 6l-1 1L8 4.5 5.5 7l-1-1L7 3.5 8 2.5 9 3.5z"/>
+                    </svg>
+                    모든 필터 초기화
+                </button>
+            </div>
+
+            <!-- 상세 필터 (숨김) -->
+            <div class="detail-filters" id="detailFilters" style="display: none;">
+                <div class="detail-filter-grid">
+                    <!-- 학력 -->
+                    <div class="filter-group">
+                        <div class="filter-group-label" onclick="toggleFilterGroup(this, 'education')">
+                            <div class="filter-group-toggle">
+                                <span>학력</span>
+                            </div>
+                            <span class="filter-group-count" id="education-count">0</span>
+                        </div>
+                        <div class="checkbox-grid collapsed" data-group="education">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="education" value="high-school">
+                                <span class="checkbox-label">고등학교 졸업</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="education" value="college">
+                                <span class="checkbox-label">전문대 졸업</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="education" value="university">
+                                <span class="checkbox-label">대학교 졸업</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="education" value="graduate">
+                                <span class="checkbox-label">대학원 졸업</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 경력 -->
+                    <div class="filter-group">
+                        <div class="filter-group-label" onclick="toggleFilterGroup(this, 'experience')">
+                            <div class="filter-group-toggle">
+                                <span>경력</span>
+                            </div>
+                            <span class="filter-group-count" id="experience-count">0</span>
+                        </div>
+                        <div class="checkbox-grid collapsed" data-group="experience">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="experience" value="new">
+                                <span class="checkbox-label">신입</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="experience" value="experienced">
+                                <span class="checkbox-label">경력</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="experience" value="any">
+                                <span class="checkbox-label">신입+경력</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 기관 유형 -->
+                    <div class="filter-group">
+                        <div class="filter-group-label" onclick="toggleFilterGroup(this, 'orgType')">
+                            <div class="filter-group-toggle">
+                                <span>기관 유형</span>
+                            </div>
+                            <span class="filter-group-count" id="orgType-count">0</span>
+                        </div>
+                        <div class="checkbox-grid collapsed" data-group="orgType">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="org-type" value="government">
+                                <span class="checkbox-label">중앙부처</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="org-type" value="local-gov">
+                                <span class="checkbox-label">지방자치단체</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="org-type" value="public-enterprise">
+                                <span class="checkbox-label">공기업</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="org-type" value="public-institution">
+                                <span class="checkbox-label">공공기관</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 기관명 검색 -->
+                    <div class="filter-group">
+                        <div class="filter-group-label" onclick="toggleFilterGroup(this, 'organization')">
+                            <div class="filter-group-toggle">
+                                <span>기관명</span>
+                            </div>
+                            <span class="filter-group-count" id="organization-count">0</span>
+                        </div>
+                        <div class="org-search-container collapsed" data-group="organization">
+                            <input type="text" class="org-search-input" placeholder="기관명을 입력하세요" 
+                                   oninput="searchOrganizations(this.value)">
+                            <div class="org-suggestions" id="orgSuggestions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 선택된 필터 태그 -->
+            <div class="selected-filters" id="selectedFilters">
+                <!-- 동적으로 생성될 필터 태그들 -->
+            </div>
+        </div>
+    </div>
+
+    <main id="main" tabindex="-1" role="main">
+        <div class="main-container">
+            <div class="main-content">
+                <section class="section">
+                    <h2>맞춤 공고</h2>
+                    <div class="card-grid">
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">정보시스템 운영 및 개발 담당자 채용</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.15</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.15</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국전력공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>서울특별시 강남구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>정규직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">가스안전 관리 전문요원 채용</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.01</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.08.23</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국가스공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>대전광역시 서구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>무기계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">수자원 시설물 건설 및 관리 전문가</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.18</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.30</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국수자원공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>충청남도 천안시</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>정규직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">행정업무 지원 전문인력 채용</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.10</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.10</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국도로공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>경기도 성남시</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2>오늘 새 공고</h2>
+                    <div class="card-grid">
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">재무회계 전문가 채용</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.17</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.17</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국철도공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>서울특별시 용산구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>정규직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">관광홍보 마케팅 전문가</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.16</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.06</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국관광공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>서울특별시 중구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">교육정책 기획 전문가</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.19</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.20</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국교육개발원</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>서울특별시 서초구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>무기계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">문화예술 기획운영 담당자</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.08.20</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.09.25</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국문화예술위원회</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>부산광역시 해운대구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>정규직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2>마감 임박</h2>
+                    <div class="card-grid">
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">행정지원 전문인력 채용</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.07.20</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.08.21</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국전력공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>광주광역시 남구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>정규직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">전산시스템 운영 및 개발자</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.07.22</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.08.22</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국가스공사</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>인천광역시 연수구</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>무기계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">환경보전 연구원</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.07.25</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.08.22</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>국립환경과학원</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>경기도 수원시</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="job-card">
+                            <div class="card-front">
+                                <h3 class="card-title">사회보장 정책 분석가</h3>
+                                <div class="card-dates">
+                                    <div class="date-item">
+                                        <span class="date-label">등록일</span>
+                                        <span class="date-value">2025.07.28</span>
+                                    </div>
+                                    <div class="date-item">
+                                        <span class="date-label">마감일</span>
+                                        <span class="date-value">2025.08.21</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-info">
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">기관명:</span>
+                                        <span>한국보건사회연구원</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">근무지:</span>
+                                        <span>세종특별자치시</span>
+                                    </div>
+                                    <div class="card-info-row">
+                                        <span class="card-info-label">고용형태:</span>
+                                        <span>무기계약직</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-primary" style="width: 100%; padding: 10px 16px; margin-top: auto;">채용정보</button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+            </div>
+            
+            <aside class="sidebar">
+                <!-- JOB-ALIO 소개 배너 -->
+                <a href="#" class="banner-link gradient-banner">
+                    <div class="banner-title">JOB-ALIO 소개</div>
+                    <div class="banner-subtitle">공공 채용, 더 쉽고 빠르게</div>
+                    <div class="banner-cta">지금 시작하기</div>
+                </a>
+                
+                <!-- 채용정보 박람회 배너 -->
+                <a href="#" class="banner-link expo-banner">
+                    <div class="banner-title">공공기관 채용정보 박람회</div>
+                    <div class="banner-subtitle">직접 만나는 채용 기회</div>
+                    <div class="banner-cta">자세히 보기</div>
+                </a>
+                
+                <!-- 공공기관 정보 -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        공공기관 정보
+                    </h3>
+                    <div class="sidebar-content">
+                        <p style="margin-bottom: 12px; font-weight: 500; color: var(--ink);">신뢰할 수 있는 공공기관 채용정보</p>
+                        <ul class="sidebar-list">
+                            <li>중앙부처 및 산하기관</li>
+                            <li>지방자치단체 (시·도, 군·구)</li>
+                            <li>공기업 및 공단</li>
+                            <li>실시간 채용정보 업데이트</li>
+                            <li>CSV 다운로드 지원</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- 테이블 섹션 - 별도 영역 -->
+        <section class="table-section">
+            <button class="more-button" onclick="toggleJobTable(this)">
+                <span>채용정보 더보기</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 12L2 6h12l-6 6z"/>
+                </svg>
+            </button>
+            
+            <div class="job-table-container" id="jobTableContainer">
+                <table class="job-table">
+                    <thead>
+                        <tr>
+                            <th>채용제목</th>
+                            <th>기관명</th>
+                            <th>근무지</th>
+                            <th>고용형태</th>
+                            <th>등록일</th>
+                            <th>마감일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>정보시스템 운영 및 개발 담당자 채용</div>
+                            </td>
+                            <td>한국전력공사</td>
+                            <td>서울특별시 강남구</td>
+                            <td>정규직</td>
+                            <td>2025.08.15</td>
+                            <td>2025.09.15</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>가스안전 관리 전문요원 채용</div>
+                            </td>
+                            <td>한국가스공사</td>
+                            <td>대전광역시 서구</td>
+                            <td>무기계약직</td>
+                            <td>2025.08.01</td>
+                            <td>2025.08.23</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>수자원 시설물 건설 및 관리 전문가</div>
+                            </td>
+                            <td>한국수자원공사</td>
+                            <td>충청남도 천안시</td>
+                            <td>정규직</td>
+                            <td>2025.08.18</td>
+                            <td>2025.09.30</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>행정업무 지원 전문인력 채용</div>
+                            </td>
+                            <td>한국도로공사</td>
+                            <td>경기도 성남시</td>
+                            <td>계약직</td>
+                            <td>2025.08.10</td>
+                            <td>2025.09.10</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>재무회계 전문가 채용</div>
+                            </td>
+                            <td>한국철도공사</td>
+                            <td>서울특별시 용산구</td>
+                            <td>정규직</td>
+                            <td>2025.08.17</td>
+                            <td>2025.09.17</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>행정지원 전문인력 채용</div>
+                            </td>
+                            <td>한국전력공사</td>
+                            <td>광주광역시 남구</td>
+                            <td>정규직</td>
+                            <td>2025.07.20</td>
+                            <td>2025.08.21</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>환경관리 전문가 채용</div>
+                            </td>
+                            <td>한국환경공단</td>
+                            <td>인천광역시 남동구</td>
+                            <td>무기계약직</td>
+                            <td>2025.08.05</td>
+                            <td>2025.08.22</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>토목건설 기술자 채용</div>
+                            </td>
+                            <td>한국토지주택공사</td>
+                            <td>경기도 성남시</td>
+                            <td>정규직</td>
+                            <td>2025.08.12</td>
+                            <td>2025.09.25</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>의료장비 관리 전문요원 채용</div>
+                            </td>
+                            <td>국민건강보험공단</td>
+                            <td>서울특별시 마포구</td>
+                            <td>계약직</td>
+                            <td>2025.08.19</td>
+                            <td>2025.09.20</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>디지털 전환 전문가 채용</div>
+                            </td>
+                            <td>한국정보화진흥원</td>
+                            <td>대구광역시 동구</td>
+                            <td>정규직</td>
+                            <td>2025.07.28</td>
+                            <td>2025.08.25</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>연구개발 전문연구원 채용</div>
+                            </td>
+                            <td>한국과학기술연구원</td>
+                            <td>서울특별시 성북구</td>
+                            <td>무기계약직</td>
+                            <td>2025.08.08</td>
+                            <td>2025.09.08</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>문화예술 기획 전문가 채용</div>
+                            </td>
+                            <td>한국문화예술위원회</td>
+                            <td>서울특별시 종로구</td>
+                            <td>계약직</td>
+                            <td>2025.08.18</td>
+                            <td>2025.10.01</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>농업기술 지원 전문가 채용</div>
+                            </td>
+                            <td>농촌진흥청</td>
+                            <td>전라북도 전주시</td>
+                            <td>정규직</td>
+                            <td>2025.07.25</td>
+                            <td>2025.08.27</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>교육프로그램 개발 전문가</div>
+                            </td>
+                            <td>한국교육개발원</td>
+                            <td>충북 진천군</td>
+                            <td>무기계약직</td>
+                            <td>2025.08.11</td>
+                            <td>2025.09.15</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>해양수산 정책 전문가 채용</div>
+                            </td>
+                            <td>한국해양수산개발원</td>
+                            <td>부산광역시 영도구</td>
+                            <td>정규직</td>
+                            <td>2025.08.17</td>
+                            <td>2025.09.28</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>에너지 효율화 전문요원</div>
+                            </td>
+                            <td>한국에너지공단</td>
+                            <td>울산광역시 남구</td>
+                            <td>계약직</td>
+                            <td>2025.08.02</td>
+                            <td>2025.08.24</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>산업안전 관리자 채용</div>
+                            </td>
+                            <td>한국산업안전보건공단</td>
+                            <td>경기도 안양시</td>
+                            <td>정규직</td>
+                            <td>2025.08.14</td>
+                            <td>2025.09.18</td>
+                        </tr>
+                        <tr>
+                            <td class="job-title-cell">
+                                <div>금융 리스크 관리 전문가</div>
+                            </td>
+                            <td>한국예금보험공사</td>
+                            <td>서울특별시 중구</td>
+                            <td>무기계약직</td>
+                            <td>2025.08.19</td>
+                            <td>2025.09.22</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <button id="prevBtn" onclick="changePage(-1)">이전</button>
+                    <button class="page-btn active" onclick="goToPage(1)">1</button>
+                    <button class="page-btn" onclick="goToPage(2)">2</button>
+                    <button class="page-btn" onclick="goToPage(3)">3</button>
+                    <button class="page-btn" onclick="goToPage(4)">4</button>
+                    <button class="page-btn" onclick="goToPage(5)">5</button>
+                    <button id="nextBtn" onclick="changePage(1)">다음</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <div class="footer-inner">
+            <div>© 2025 잡알리오 · 데이터 기준일: 2025-08-18</div>
+            <nav class="footer-links" aria-label="푸터 링크">
+                <a href="#">이용안내</a>
+                <a href="#">오픈 API</a>
+                <a href="#">개인정보 처리방침</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script>
+        // 직무 카테고리별 세부 직무 데이터
+        const jobSubCategories = {
+            admin: ['인사', '회계', '총무', '기획', '홍보', '법무', '감사'],
+            tech: ['IT개발', '연구개발', '품질관리', '기술지원', '시설관리', '엔지니어링'],
+            health: ['의사', '간호사', '약사', '의료기사', '보건직', '방역'],
+            education: ['교수', '교사', '교육행정', '연구원', '사서', '상담'],
+            safety: ['안전관리', '환경관리', '소방', '방재', '보안', '경비'],
+            culture: ['학예사', '문화기획', '예술강사', '문화재', '디자인', '방송']
+        };
+
+        // 기관명 샘플 데이터
+        const organizations = [
+            '한국전력공사', '한국가스공사', '한국수자원공사', '한국도로공사', '한국철도공사',
+            '한국관광공사', '한국국토정보공사', '한국농어촌공사', '한국산업인력공단', '한국보건산업진흥원',
+            '국민건강보험공단', '국민연금공단', '근로복지공단', '한국고용정보원', '한국장학재단',
+            '서울시청', '부산시청', '대구시청', '인천시청', '광주시청', '대전시청', '울산시청',
+            '경기도청', '강원도청', '충청북도청', '충청남도청', '전라북도청', '전라남도청', '경상북도청', '경상남도청', '제주도청'
+        ];
+
+        // 필터 상태 관리
+        let selectedFilters = {
+            search: '',
+            location: [],
+            jobCategory: 'all',
+            jobSubCategory: [],
+            employment: [],
+            education: [],
+            experience: [],
+            orgType: [],
+            organization: ''
+        };
+
+        // 필터 그룹 접기/펼치기 상태 관리
+        let filterGroupStates = {
+            location: false,
+            employment: false,
+            jobCategory: true,
+            education: false,
+            experience: false,
+            orgType: false,
+            organization: false
+        };
+
+        // 필터 그룹 접기/펼치기
+        function toggleFilterGroup(labelElement, groupName) {
+            const isExpanded = filterGroupStates[groupName];
+            const groupElement = document.querySelector(`[data-group="${groupName}"]`);
+            const iconElement = labelElement.querySelector('.filter-group-icon');
+            
+            if (isExpanded) {
+                // 접기
+                groupElement.classList.remove('expanded');
+                groupElement.classList.add('collapsed');
+                iconElement.classList.add('collapsed');
+                filterGroupStates[groupName] = false;
+            } else {
+                // 펼치기
+                groupElement.classList.remove('collapsed');
+                groupElement.classList.add('expanded');
+                iconElement.classList.remove('collapsed');
+                filterGroupStates[groupName] = true;
+            }
+        }
+
+        // 필터 그룹 선택 개수 업데이트
+        function updateFilterGroupCount(groupName) {
+            const countElement = document.getElementById(`${groupName}-count`);
+            if (countElement) {
+                let count = 0;
+                if (Array.isArray(selectedFilters[groupName])) {
+                    count = selectedFilters[groupName].length;
+                } else if (selectedFilters[groupName] && selectedFilters[groupName] !== '') {
+                    count = 1;
+                }
+                countElement.textContent = count;
+                
+                // 선택된 항목이 있으면 카운트 강조
+                if (count > 0) {
+                    countElement.style.background = 'var(--brand-600)';
+                    countElement.style.color = 'white';
+                    countElement.style.borderColor = 'var(--brand-600)';
+                } else {
+                    countElement.style.background = 'var(--bg)';
+                    countElement.style.color = 'var(--muted)';
+                    countElement.style.borderColor = 'var(--border)';
+                }
+            }
+        }
+
+        // 상세 필터 토글
+        function toggleDetailFilters() {
+            const detailFilters = document.getElementById('detailFilters');
+            const toggleBtn = document.querySelector('.detail-filter-toggle');
+            
+            if (detailFilters.style.display === 'none' || !detailFilters.style.display) {
+                detailFilters.style.display = 'block';
+                toggleBtn.classList.add('active');
+                toggleBtn.querySelector('span').textContent = '상세 필터 접기';
+            } else {
+                detailFilters.style.display = 'none';
+                toggleBtn.classList.remove('active');
+                toggleBtn.querySelector('span').textContent = '상세 필터 더 보기';
+            }
+        }
+
+        // 모든 필터 초기화
+        function resetAllFilters() {
+            // 필터 상태 초기화
+            selectedFilters = {
+                search: '',
+                location: [],
+                jobCategory: 'all',
+                jobSubCategory: [],
+                employment: [],
+                education: [],
+                experience: [],
+                orgType: [],
+                organization: ''
+            };
+
+            // UI 초기화
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.job-category-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.job-category-btn[data-category="all"]').classList.add('active');
+            document.getElementById('subCategories').style.display = 'none';
+            document.querySelector('.org-search-input').value = '';
+            
+            updateSelectedFiltersDisplay();
+        }
+
+        // 직무 카테고리 선택
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.job-category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    // 버튼 활성화 상태 변경
+                    document.querySelectorAll('.job-category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    selectedFilters.jobCategory = category;
+                    selectedFilters.jobSubCategory = [];
+                    
+                    // 세부 직무 표시/숨김
+                    const subCategoriesDiv = document.getElementById('subCategories');
+                    if (category === 'all') {
+                        subCategoriesDiv.style.display = 'none';
+                    } else {
+                        showSubCategories(category);
+                    }
+                    
+                    updateSelectedFiltersDisplay();
+                });
+            });
+
+            // 체크박스 이벤트 리스너
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const name = this.name;
+                    const value = this.value;
+                    
+                    if (this.checked) {
+                        if (!selectedFilters[name].includes(value)) {
+                            selectedFilters[name].push(value);
+                        }
+                    } else {
+                        selectedFilters[name] = selectedFilters[name].filter(v => v !== value);
+                    }
+                    
+                    updateFilterGroupCount(name);
+                    updateSelectedFiltersDisplay();
+                });
+            });
+
+        });
+
+        // 세부 직무 카테고리 표시
+        function showSubCategories(category) {
+            const subCategoriesDiv = document.getElementById('subCategories');
+            const subJobs = jobSubCategories[category] || [];
+            
+            subCategoriesDiv.innerHTML = '';
+            subJobs.forEach(job => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+                label.innerHTML = `
+                    <input type="checkbox" name="jobSubCategory" value="${job}">
+                    <span class="checkbox-label">${job}</span>
+                `;
+                
+                // 체크박스 이벤트 추가
+                const checkbox = label.querySelector('input');
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        if (!selectedFilters.jobSubCategory.includes(job)) {
+                            selectedFilters.jobSubCategory.push(job);
+                        }
+                    } else {
+                        selectedFilters.jobSubCategory = selectedFilters.jobSubCategory.filter(v => v !== job);
+                    }
+                    updateSelectedFiltersDisplay();
+                });
+                
+                subCategoriesDiv.appendChild(label);
+            });
+            
+            subCategoriesDiv.style.display = 'grid';
+        }
+
+        // 기관명 검색 자동완성
+        function searchOrganizations(query) {
+            const suggestions = document.getElementById('orgSuggestions');
+            
+            if (!query.trim()) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            
+            const filtered = organizations.filter(org => 
+                org.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            
+            suggestions.innerHTML = '';
+            filtered.slice(0, 10).forEach(org => {
+                const item = document.createElement('div');
+                item.className = 'org-suggestion-item';
+                item.textContent = org;
+                item.addEventListener('click', function() {
+                    document.querySelector('.org-search-input').value = org;
+                    selectedFilters.organization = org;
+                    suggestions.style.display = 'none';
+                    updateFilterGroupCount('organization');
+                    updateSelectedFiltersDisplay();
+                });
+                suggestions.appendChild(item);
+            });
+            
+            suggestions.style.display = 'block';
+        }
+
+        // 선택된 필터 태그 업데이트
+        function updateSelectedFiltersDisplay() {
+            const container = document.getElementById('selectedFilters');
+            container.innerHTML = '';
+            
+            const tags = [];
+            
+            // 검색어
+            if (selectedFilters.search) {
+                tags.push({ type: 'search', value: selectedFilters.search, label: `검색: ${selectedFilters.search}` });
+            }
+            
+            // 근무지
+            selectedFilters.location.forEach(loc => {
+                const locationMap = {
+                    seoul: '서울특별시', gyeonggi: '경기도', incheon: '인천광역시',
+                    busan: '부산광역시', daegu: '대구광역시', gwangju: '광주광역시',
+                    daejeon: '대전광역시', ulsan: '울산광역시', sejong: '세종특별자치시',
+                    gangwon: '강원특별자치도', chungbuk: '충청북도', chungnam: '충청남도',
+                    jeonbuk: '전북특별자치도', jeonnam: '전라남도', gyeongbuk: '경상북도',
+                    gyeongnam: '경상남도', jeju: '제주특별자치도'
+                };
+                tags.push({ type: 'location', value: loc, label: locationMap[loc] });
+            });
+            
+            // 직무 카테고리
+            if (selectedFilters.jobCategory !== 'all') {
+                const categoryMap = {
+                    admin: '사무/행정', tech: '기술/연구', health: '보건/의료',
+                    education: '교육', safety: '안전/환경', culture: '문화/예술'
+                };
+                tags.push({ type: 'jobCategory', value: selectedFilters.jobCategory, label: categoryMap[selectedFilters.jobCategory] });
+            }
+            
+            // 세부 직무
+            selectedFilters.jobSubCategory.forEach(job => {
+                tags.push({ type: 'jobSubCategory', value: job, label: job });
+            });
+            
+            // 고용형태
+            selectedFilters.employment.forEach(emp => {
+                const empMap = {
+                    regular: '정규직', 'permanent-contract': '무기계약직',
+                    contract: '계약직', 'part-time': '시간제', intern: '인턴'
+                };
+                tags.push({ type: 'employment', value: emp, label: empMap[emp] });
+            });
+            
+            // 기관명
+            if (selectedFilters.organization) {
+                tags.push({ type: 'organization', value: selectedFilters.organization, label: `기관: ${selectedFilters.organization}` });
+            }
+            
+            // 학력
+            selectedFilters.education.forEach(edu => {
+                const eduMap = {
+                    'high-school': '고등학교 졸업', 'college': '전문대 졸업',
+                    'university': '대학교 졸업', 'graduate': '대학원 졸업'
+                };
+                tags.push({ type: 'education', value: edu, label: eduMap[edu] });
+            });
+            
+            // 경력
+            selectedFilters.experience.forEach(exp => {
+                const expMap = {
+                    'new': '신입', 'experienced': '경력', 'any': '신입+경력'
+                };
+                tags.push({ type: 'experience', value: exp, label: expMap[exp] });
+            });
+            
+            // 기관 유형
+            selectedFilters.orgType.forEach(type => {
+                const typeMap = {
+                    'government': '중앙부처', 'local-gov': '지방자치단체',
+                    'public-enterprise': '공기업', 'public-institution': '공공기관'
+                };
+                tags.push({ type: 'orgType', value: type, label: typeMap[type] });
+            });
+            
+            // 태그 생성
+            tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'filter-tag';
+                tagElement.innerHTML = `
+                    ${tag.label}
+                    <span class="filter-tag-remove" onclick="removeFilter('${tag.type}', '${tag.value}')">×</span>
+                `;
+                container.appendChild(tagElement);
+            });
+            
+            // 태그가 있을 때만 컨테이너 표시
+            if (tags.length > 0) {
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // 필터 태그 제거
+        function removeFilter(type, value) {
+            if (type === 'search') {
+                selectedFilters.search = '';
+            } else if (type === 'jobCategory') {
+                selectedFilters.jobCategory = 'all';
+                selectedFilters.jobSubCategory = [];
+                document.querySelectorAll('.job-category-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.job-category-btn[data-category="all"]').classList.add('active');
+                document.getElementById('subCategories').style.display = 'none';
+            } else if (type === 'organization') {
+                selectedFilters.organization = '';
+                document.querySelector('.org-search-input').value = '';
+            } else if (Array.isArray(selectedFilters[type])) {
+                selectedFilters[type] = selectedFilters[type].filter(v => v !== value);
+                // 해당 체크박스 해제
+                const checkbox = document.querySelector(`input[name="${type}"][value="${value}"]`);
+                if (checkbox) checkbox.checked = false;
+            }
+            
+            updateFilterGroupCount(type);
+            updateSelectedFiltersDisplay();
+        }
+
+        // 더보기 버튼 토글
+        function toggleJobTable(button) {
+            const container = document.getElementById('jobTableContainer');
+            const isVisible = container.classList.contains('show');
+            
+            if (isVisible) {
+                container.classList.remove('show');
+                button.classList.remove('active');
+                button.querySelector('span').textContent = '채용정보 더보기';
+            } else {
+                container.classList.add('show');
+                button.classList.add('active');
+                button.querySelector('span').textContent = '채용정보 접기';
+            }
+        }
+
+        // 외부 클릭 시 기관명 자동완성 닫기
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.org-search-container')) {
+                document.getElementById('orgSuggestions').style.display = 'none';
+            }
+        });
+        
+        // 페이지네이션 관련 변수
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let allRows = [];
+        
+        // 페이지 로드 시 테이블 행들을 저장하고 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            const tbody = document.querySelector('.job-table tbody');
+            allRows = Array.from(tbody.querySelectorAll('tr'));
+            showPage(currentPage);
+            updatePaginationButtons();
+        });
+        
+        // 특정 페이지 표시
+        function showPage(page) {
+            const tbody = document.querySelector('.job-table tbody');
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            
+            // 모든 행 숨기기
+            allRows.forEach(row => row.style.display = 'none');
+            
+            // 현재 페이지의 행들만 표시
+            for (let i = startIndex; i < endIndex && i < allRows.length; i++) {
+                allRows[i].style.display = '';
+            }
+        }
+        
+        // 페이지 변경
+        function changePage(direction) {
+            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                showPage(currentPage);
+                updatePaginationButtons();
+            }
+        }
+        
+        // 특정 페이지로 이동
+        function goToPage(page) {
+            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+            
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                showPage(currentPage);
+                updatePaginationButtons();
+            }
+        }
+        
+        // 페이지네이션 버튼 상태 업데이트
+        function updatePaginationButtons() {
+            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageButtons = document.querySelectorAll('.page-btn');
+            
+            // 이전/다음 버튼 활성화/비활성화
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // 페이지 번호 버튼 활성화 상태 업데이트
+            pageButtons.forEach((btn, index) => {
+                const pageNum = index + 1;
+                btn.classList.toggle('active', pageNum === currentPage);
+                
+                // 총 페이지 수보다 큰 페이지 버튼은 숨기기
+                if (pageNum > totalPages) {
+                    btn.style.display = 'none';
+                } else {
+                    btn.style.display = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

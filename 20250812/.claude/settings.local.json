@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(npx serve:*)",
+      "Bash(find:*)",
+      "Bash(ipconfig)",
+      "Bash(for file in BU*.html CO*.html FAQ*.html HV*.html MK*.html OU*.html SU*.html)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(grep:*)",
+      "Bash(rm:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "Bash(copy:*)",
+      "Bash(cp:*)"
+    ],
+    "deny": []
+  }
+}

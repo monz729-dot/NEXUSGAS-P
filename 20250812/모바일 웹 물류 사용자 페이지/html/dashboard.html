@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="navigation.js"></script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+        
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .shadow-blue-lg {
+            box-shadow: 0 10px 25px -3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(219, 234, 254, 0.5);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-bounce { animation: bounce 2s infinite; }
+        .animate-pulse { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+    <!-- 로딩 상태 -->
+    <div id="loadingScreen" class="fixed inset-0 bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center z-50">
+        <div class="text-center space-y-4">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto animate-bounce">
+                <div class="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p class="text-blue-600 font-medium">대시보드를 불러오는 중...</p>
+        </div>
+    </div>
+
+    <!-- 상단 헤더 -->
+    <header id="header" class="bg-white border-b border-blue-100 shadow-sm sticky top-0 z-40 hidden">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold">YCS</span>
+                </div>
+                <div>
+                    <h1 class="font-semibold text-blue-900">
+                        YCS 물류 시스템
+                        <span id="userTypeBadge" class="ml-2 px-2 py-1 text-xs rounded-full border"></span>
+                    </h1>
+                    <p class="text-xs text-blue-600">개인 고객 대시보드</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="goToPageList()" class="text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 px-3 py-1 rounded-full transition-colors">
+                    페이지목록
+                </button>
+                <button onclick="goToOrderForm()" class="text-sm text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1 rounded-full transition-colors">
+                    주문서작성
+                </button>
+                <button onclick="logout()" class="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-full transition-colors">
+                    로그아웃
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main id="mainContent" class="hidden pb-20">
+        <div class="p-4 max-w-6xl mx-auto space-y-6">
+            <!-- 헤더 섹션 -->
+            <div class="space-y-4 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 id="greetingMessage" class="text-2xl font-bold text-blue-900"></h1>
+                        <p class="text-blue-600 mt-1">오늘도 안전한 배송을 위해 함께하겠습니다</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded text-xs flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+                            온라인
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 사용자 정보 카드 -->
+                <div id="userInfoCard" class="card p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                            <i data-lucide="users" class="h-6 w-6 text-white"></i>
+                        </div>
+                        <div>
+                            <p id="userName" class="font-medium text-blue-900"></p>
+                            <p id="userEmail" class="text-sm text-blue-600"></p>
+                            <p id="userCompany" class="text-xs text-blue-500 hidden"></p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div id="userTypeDisplayBadge" class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs"></div>
+                        <p class="text-xs text-blue-600 mt-1">
+                            <i class="fas fa-calendar text-xs mr-1"></i>
+                            <span id="currentDate"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 알림 섹션 -->
+            <div id="notificationsSection" class="space-y-2 animate-slide-up hidden"></div>
+
+            <!-- 통계 카드 섹션 -->
+            <div id="statsSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-scale-in">
+                <div class="card p-6 flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="package" class="h-6 w-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-blue-600">총 주문</p>
+                        <p id="totalOrders" class="text-2xl font-bold text-blue-900">0</p>
+                    </div>
+                </div>
+
+                <div class="card p-6 flex items-center gap-3">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="clock" class="h-6 w-6 text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-blue-600">대기 중</p>
+                        <p id="pendingOrders" class="text-2xl font-bold text-blue-900">0</p>
+                    </div>
+                </div>
+
+                <div class="card p-6 flex items-center gap-3">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="check-circle" class="h-6 w-6 text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-blue-600">완료</p>
+                        <p id="completedOrders" class="text-2xl font-bold text-blue-900">0</p>
+                    </div>
+                </div>
+
+                <div class="card p-6 flex items-center gap-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="dollar-sign" class="h-6 w-6 text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-blue-600">총 결제금액</p>
+                        <p id="totalAmount" class="text-xl font-bold text-blue-900">₩0</p>
+                        <div class="flex items-center gap-1 mt-1">
+                            <i data-lucide="trending-up" class="h-3 w-3 text-green-500"></i>
+                            <span id="monthlyGrowth" class="text-xs text-green-600">+0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 액션 버튼 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 animate-slide-up">
+                <button id="orderFormBtn" onclick="navigateTo('order-form')" class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg flex flex-col items-center justify-center gap-2 rounded-lg transition-all">
+                    <i data-lucide="file-text" class="h-5 w-5"></i>
+                    주문서 작성
+                </button>
+
+                <button onclick="navigateTo('order-history')" class="h-16 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 flex flex-col items-center justify-center gap-2 rounded-lg transition-colors">
+                    <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+                    주문 내역
+                </button>
+
+                <button onclick="navigateTo('notices')" class="h-16 border border-blue-300 text-blue-700 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 rounded-lg transition-colors">
+                    <i data-lucide="bell" class="h-5 w-5"></i>
+                    공지사항
+                </button>
+
+                <button onclick="navigateTo('faq')" class="h-16 text-blue-700 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 rounded-lg transition-colors">
+                    <i data-lucide="phone" class="h-5 w-5"></i>
+                    고객지원
+                </button>
+            </div>
+
+            <!-- 최근 주문 및 활동 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 최근 주문 -->
+                <div class="card">
+                    <div class="p-6 border-b border-blue-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-blue-900 font-semibold text-lg">최근 주문</h3>
+                            <button onclick="navigateTo('order-history')" class="text-blue-600 hover:text-blue-700 text-sm flex items-center">
+                                전체보기
+                                <i data-lucide="arrow-right" class="h-4 w-4 ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recentOrdersContainer" class="p-6 space-y-3">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 최근 활동 -->
+                <div class="card">
+                    <div class="p-6 border-b border-blue-100">
+                        <h3 class="text-blue-900 font-semibold text-lg">최근 활동</h3>
+                    </div>
+                    <div id="recentActivityContainer" class="p-6 space-y-3">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 고객지원 섹션 -->
+            <div class="card p-6 text-center space-y-4">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                    <i data-lucide="phone" class="h-8 w-8 text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-blue-900 mb-2">도움이 필요하신가요?</h3>
+                    <p class="text-blue-600 mb-4">궁금한 점이 있으시면 언제든지 고객지원팀에 문의해주세요</p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button onclick="navigateTo('faq')" class="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors">
+                            <i data-lucide="file-text" class="h-4 w-4 mr-2"></i>
+                            FAQ 보기
+                        </button>
+                        <button class="border border-blue-300 text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors">
+                            <i data-lucide="phone" class="h-4 w-4 mr-2"></i>
+                            전화 문의
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 하단 네비게이션 -->
+    <nav id="bottomNav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-blue-100 shadow-lg z-50 hidden">
+        <div class="grid grid-cols-5 h-16">
+            <button onclick="navigateTo('dashboard')" class="nav-item active flex flex-col items-center justify-center gap-1 transition-all duration-300 text-blue-600 bg-blue-50">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs font-medium">홈</span>
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full"></div>
+            </button>
+            
+            <button onclick="navigateTo('order-form')" class="nav-item flex flex-col items-center justify-center gap-1 transition-all duration-300 text-blue-400 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-box text-lg"></i>
+                <span class="text-xs">접수</span>
+            </button>
+            
+            <button onclick="navigateTo('order-history')" class="nav-item flex flex-col items-center justify-center gap-1 transition-all duration-300 text-blue-400 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-file-text text-lg"></i>
+                <span class="text-xs">내역</span>
+            </button>
+            
+            <button onclick="navigateTo('mypage')" class="nav-item flex flex-col items-center justify-center gap-1 transition-all duration-300 text-blue-400 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs">내정보</span>
+            </button>
+            
+            <button onclick="navigateTo('page-list')" class="nav-item flex flex-col items-center justify-center gap-1 transition-all duration-300 text-blue-400 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-list text-lg"></i>
+                <span class="text-xs">전체</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // 전역 변수
+        let currentUser = null;
+        let dashboardData = null;
+
+        // 페이지 네비게이션
+        function navigateTo(page) {
+            switch(page) {
+                case 'order-form':
+                    window.location.href = 'order-form.html';
+                    break;
+                case 'order-history':
+                    window.location.href = 'order-history.html';
+                    break;
+                case 'mypage':
+                    window.location.href = 'mypage.html';
+                    break;
+                case 'notices':
+                    window.location.href = 'notices.html';
+                    break;
+                case 'faq':
+                    window.location.href = 'faq.html';
+                    break;
+                case 'page-list':
+                    window.location.href = 'page-list.html';
+                    break;
+                case 'order-detail':
+                    window.location.href = 'order-detail.html';
+                    break;
+                default:
+                    window.location.href = page + '.html';
+            }
+        }
+
+        // 로그아웃
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberedUser');
+            localStorage.removeItem('mockUser');
+            window.location.href = 'login.html';
+        }
+
+        // 금액 포매팅
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+                minimumFractionDigits: 0,
+            }).format(amount);
+        }
+
+        // 날짜 포매팅
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            });
+        }
+
+        // 주문 상태별 배지
+        function getOrderStatusBadge(status) {
+            const statusMap = {
+                confirmed: { className: 'bg-green-50 text-green-700 border-green-200', text: '확인됨' },
+                pending: { className: 'bg-yellow-50 text-yellow-700 border-yellow-200', text: '대기중' },
+                rejected: { className: 'bg-red-50 text-red-700 border-red-200', text: '거부됨' },
+                delivered: { className: 'bg-blue-50 text-blue-700 border-blue-200', text: '배송완료' },
+                shipping: { className: 'bg-purple-50 text-purple-700 border-purple-200', text: '배송중' },
+                processing: { className: 'bg-orange-50 text-orange-700 border-orange-200', text: '처리중' },
+            };
+            
+            return statusMap[status] || {
+                className: 'bg-gray-50 text-gray-700 border-gray-200',
+                text: status,
+            };
+        }
+
+        // 인사말 생성
+        function getGreeting(user) {
+            const hour = new Date().getHours();
+            const timeGreeting = hour < 12 ? '좋은 아침입니다' : 
+                                hour < 18 ? '안녕하세요' : '좋은 저녁입니다';
+            
+            const userTypeText = user.type === 'corporate' ? '기업 고객' : '고객';
+            
+            return `${timeGreeting}, ${user.name} ${userTypeText}님!`;
+        }
+
+        // Mock 데이터 로드
+        async function loadDashboardData() {
+            // Mock API 호출 시뮬레이션
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // 통계 데이터
+            const mockStats = {
+                totalOrders: 156,
+                pendingOrders: 12,
+                completedOrders: 144,
+                totalAmount: 45600000,
+                monthlyGrowth: 12.5,
+            };
+            
+            // 최근 주문 데이터
+            const mockRecentOrders = [
+                {
+                    id: '1',
+                    orderNumber: 'ORD-2024-001',
+                    orderDate: '2024-01-15',
+                    expectedDate: '2024-01-20',
+                    status: 'shipping',
+                    deliveryType: '일반배송',
+                    items: [
+                        {
+                            id: 'ITEM-001',
+                            name: '노트북 컴퓨터',
+                            quantity: 1,
+                        },
+                    ],
+                },
+                {
+                    id: '2',
+                    orderNumber: 'ORD-2024-002',
+                    orderDate: '2024-01-14',
+                    expectedDate: '2024-01-19',
+                    status: 'pending',
+                    deliveryType: '특급배송',
+                    items: [
+                        {
+                            id: 'ITEM-002',
+                            name: '무선 이어폰',
+                            quantity: 5,
+                        },
+                    ],
+                },
+            ];
+            
+            // 최근 활동 데이터
+            const mockActivity = [
+                {
+                    id: '1',
+                    type: 'order',
+                    title: '새 주문 접수',
+                    description: 'ORD-2024-003 주문이 접수되었습니다',
+                    time: '2024-01-15 14:30',
+                    status: 'info',
+                },
+                {
+                    id: '2',
+                    type: 'delivery',
+                    title: '배송 완료',
+                    description: 'ORD-2024-001 배송이 완료되었습니다',
+                    time: '2024-01-15 12:45',
+                    status: 'success',
+                },
+                {
+                    id: '3',
+                    type: 'payment',
+                    title: '결제 확인',
+                    description: '1,250,000원 결제가 확인되었습니다',
+                    time: '2024-01-15 11:20',
+                    status: 'success',
+                },
+            ];
+            
+            // 알림 데이터
+            const mockNotifications = [
+                '새로운 배송 알림이 있습니다. 확인해보세요.',
+                '대기 중인 주문이 12개 있습니다.',
+            ];
+            
+            return {
+                stats: mockStats,
+                recentOrders: mockRecentOrders,
+                recentActivity: mockActivity,
+                notifications: mockNotifications
+            };
+        }
+
+        // UI 업데이트
+        function updateUI(user, data) {
+            // 사용자 정보 업데이트
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('greetingMessage').textContent = getGreeting(user);
+            
+            // 사용자 타입 배지
+            const userTypeBadge = document.getElementById('userTypeBadge');
+            const userTypeDisplayBadge = document.getElementById('userTypeDisplayBadge');
+            
+            if (user.type === 'corporate') {
+                userTypeBadge.className = 'ml-2 px-2 py-1 text-xs rounded-full border border-orange-300 text-orange-700';
+                userTypeBadge.textContent = '기업';
+                userTypeDisplayBadge.textContent = '기업회원';
+                
+                if (user.companyName) {
+                    document.getElementById('userCompany').textContent = user.companyName;
+                    document.getElementById('userCompany').classList.remove('hidden');
+                }
+            } else {
+                userTypeBadge.className = 'ml-2 px-2 py-1 text-xs rounded-full border border-blue-300 text-blue-700';
+                userTypeBadge.textContent = '개인';
+                userTypeDisplayBadge.textContent = '일반회원';
+            }
+            
+            // 현재 날짜
+            document.getElementById('currentDate').textContent = formatDate(new Date().toISOString());
+            
+            // 통계 데이터 업데이트
+            if (data.stats) {
+                document.getElementById('totalOrders').textContent = data.stats.totalOrders.toLocaleString();
+                document.getElementById('pendingOrders').textContent = data.stats.pendingOrders.toLocaleString();
+                document.getElementById('completedOrders').textContent = data.stats.completedOrders.toLocaleString();
+                document.getElementById('totalAmount').textContent = formatCurrency(data.stats.totalAmount);
+                document.getElementById('monthlyGrowth').textContent = `+${data.stats.monthlyGrowth}%`;
+            }
+            
+            // 알림 업데이트
+            if (data.notifications && data.notifications.length > 0) {
+                const notificationsSection = document.getElementById('notificationsSection');
+                notificationsSection.classList.remove('hidden');
+                
+                data.notifications.forEach(notification => {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'p-4 border-l-4 border-l-blue-500 bg-blue-50 rounded';
+                    alertDiv.innerHTML = `
+                        <div class="flex items-start">
+                            <i class="fas fa-bell text-blue-600 mt-0.5 mr-2"></i>
+                            <span class="text-blue-900">${notification}</span>
+                        </div>
+                    `;
+                    notificationsSection.appendChild(alertDiv);
+                });
+            }
+            
+            // 최근 주문 업데이트
+            if (data.recentOrders && data.recentOrders.length > 0) {
+                const container = document.getElementById('recentOrdersContainer');
+                container.innerHTML = '';
+                
+                data.recentOrders.forEach(order => {
+                    const statusBadge = getOrderStatusBadge(order.status);
+                    
+                    const orderDiv = document.createElement('div');
+                    orderDiv.className = 'p-3 border border-blue-100 rounded-lg hover:bg-blue-50/30 transition-colors cursor-pointer';
+                    orderDiv.onclick = () => navigateTo('order-detail');
+                    
+                    orderDiv.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-blue-900">${order.orderNumber}</p>
+                                <p class="text-sm text-blue-600">
+                                    ${order.items[0]?.name}
+                                    ${order.items.length > 1 ? ` 외 ${order.items.length - 1}건` : ''}
+                                </p>
+                                <p class="text-xs text-blue-500 mt-1">
+                                    <i class="fas fa-calendar text-xs mr-1"></i>
+                                    ${formatDate(order.orderDate)}
+                                </p>
+                            </div>
+                            <div class="px-2 py-1 text-xs rounded border ${statusBadge.className}">
+                                ${statusBadge.text}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(orderDiv);
+                });
+            } else {
+                const container = document.getElementById('recentOrdersContainer');
+                container.innerHTML = `
+                    <div class="text-center py-8 text-blue-600">
+                        <i class="fas fa-box text-4xl mb-3 opacity-50"></i>
+                        <p>아직 주문 내역이 없습니다</p>
+                        <button onclick="navigateTo('order-form')" class="mt-3 border border-blue-200 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded text-sm transition-colors" ${user.type === 'partner' || user.type === 'admin' ? 'disabled' : ''}>
+                            첫 주문 하기
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // 최근 활동 업데이트
+            if (data.recentActivity && data.recentActivity.length > 0) {
+                const container = document.getElementById('recentActivityContainer');
+                container.innerHTML = '';
+                
+                data.recentActivity.forEach(activity => {
+                    const activityDiv = document.createElement('div');
+                    activityDiv.className = 'flex items-start gap-3 p-3 border border-blue-100 rounded-lg';
+                    
+                    let iconClass = '';
+                    let bgClass = '';
+                    
+                    switch(activity.type) {
+                        case 'order':
+                            iconClass = 'fas fa-file-text text-blue-600';
+                            bgClass = 'bg-blue-100';
+                            break;
+                        case 'delivery':
+                            iconClass = 'fas fa-box text-green-600';
+                            bgClass = 'bg-green-100';
+                            break;
+                        case 'payment':
+                            iconClass = 'fas fa-dollar-sign text-purple-600';
+                            bgClass = 'bg-purple-100';
+                            break;
+                    }
+                    
+                    activityDiv.innerHTML = `
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${bgClass}">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-blue-900">${activity.title}</p>
+                            <p class="text-sm text-blue-600">${activity.description}</p>
+                            <p class="text-xs text-blue-500 mt-1">${activity.time}</p>
+                        </div>
+                    `;
+                    
+                    container.appendChild(activityDiv);
+                });
+            }
+            
+            // 주문서 작성 버튼 비활성화 (관리자/파트너)
+            if (user.type === 'admin' || user.type === 'partner') {
+                const orderFormBtn = document.getElementById('orderFormBtn');
+                orderFormBtn.disabled = true;
+                orderFormBtn.className = orderFormBtn.className.replace('hover:from-blue-600 hover:to-blue-700', 'opacity-50 cursor-not-allowed');
+                orderFormBtn.onclick = null;
+            }
+        }
+
+        // 페이지 초기화
+        async function initializePage() {
+            // 사용자 정보 확인 (mockUser 또는 currentUser)
+            let userStr = localStorage.getItem('mockUser') || localStorage.getItem('currentUser');
+            if (!userStr) {
+                // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+                window.location.href = '../LoginPage.html';
+                return;
+            }
+
+            currentUser = JSON.parse(userStr);
+
+            try {
+                // 대시보드 데이터 로드
+                dashboardData = await loadDashboardData();
+                
+                // UI 업데이트
+                updateUI(currentUser, dashboardData);
+                
+                // 로딩 화면 숨기고 메인 컨텐츠 표시
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('header').classList.remove('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('bottomNav').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('대시보드 데이터 로드 실패:', error);
+                // 에러 처리
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div class="text-center max-w-md">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold text-blue-900 mb-4">로그인이 필요합니다</h2>
+                        <p class="text-blue-600 mb-6">대시보드를 이용하려면 먼저 로그인해주세요.</p>
+                        <button onclick="window.location.href='login.html'" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-3 rounded-lg">
+                            로그인하기
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // 네비게이션 함수들은 navigation.js에서 로드됨
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

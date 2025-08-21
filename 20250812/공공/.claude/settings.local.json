@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(where python)",
+      "Bash(C:Usersinfoin1AppDataLocalMicrosoftWindowsAppspython.exe -m http.server 8080)",
+      "Bash(node:*)",
+      "Bash(copy:*)",
+      "Bash(cp:*)",
+      "Bash(curl:*)",
+      "Bash(ipconfig)",
+      "Bash(npx http-server:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx live-server:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}

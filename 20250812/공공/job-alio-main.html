@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="잡알리오 - 공공기관 채용 전용 플랫폼">
+    <title>잡알리오 - 공공 채용, 덜 귀찮게</title>
+    <style>
+        :root {
+            --brand-600: #0B6CFF;
+            --brand-700: #085AE0;
+            --brand-50: #E7F0FF;
+            --ink: #0B1220;
+            --muted: #637081;
+            --bg: #FFFFFF;
+            --bg-alt: #F6F8FB;
+            --border: #E6EAF0;
+            --success: #16A34A;
+            --warning: #DC6803;
+            --danger: #D92D20;
+            --focus: #1A56DB;
+            --shadow-sm: 0 1px 2px rgba(16,24,40,.06);
+            --shadow-md: 0 8px 24px rgba(16,24,40,.12);
+            --r-12: 12px;
+            --r-16: 16px;
+            --r-pill: 999px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ink: #F5F7FA;
+                --muted: #94A3B8;
+                --bg: #0F172A;
+                --bg-alt: #1E293B;
+                --border: #334155;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple SD Gothic Neo", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.6;
+            font-feature-settings: 'tnum';
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--brand-600);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 100;
+            border-radius: var(--r-12);
+        }
+
+        .skip-link:focus {
+            top: 8px;
+            left: 8px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .logo-group svg {
+            width: 150px;
+            height: 32px;
+        }
+
+        .logo-title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            height: 48px;
+            padding: 0 48px 0 44px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-16);
+            font-size: 16px;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        .search-bar:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-hint {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 4px 8px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--r-12);
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--ink);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-alt);
+        }
+
+        .btn-primary {
+            background: var(--brand-600);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-700);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .data-banner {
+            background: var(--bg-alt);
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .data-banner strong {
+            color: var(--ink);
+        }
+
+        .hero {
+            background: linear-gradient(90deg, #F5FAFF 0%, #E7F0FF 35%, #CFE0FF 100%);
+            min-height: 150px;
+            padding: 24px 16px;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-alt);
+        }
+
+        .filters-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-button {
+            padding: 10px 36px 10px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            min-width: 140px;
+            color: var(--ink);
+            font-family: inherit;
+        }
+
+        .filter-button:hover {
+            background: var(--bg);
+            border-color: var(--brand-600);
+        }
+
+        .filter-button:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .filter-button::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .filter-button.active::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--muted);
+            margin-right: 4px;
+        }
+
+        .filter-value {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-alt);
+        }
+
+        .dropdown-item.selected {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            font-weight: 500;
+        }
+
+        .dropdown-item.selected::before {
+            content: '✓';
+            color: var(--brand-600);
+            font-weight: bold;
+        }
+
+        .checkbox-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-12);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .checkbox-filter:hover {
+            border-color: var(--brand-600);
+        }
+
+        .checkbox-filter input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--brand-600);
+        }
+
+        .checkbox-filter.checked {
+            background: var(--brand-50);
+            border-color: var(--brand-600);
+            color: var(--brand-700);
+        }
+
+        main {
+            padding: 24px 16px;
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 0 auto 48px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .card-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .job-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-16);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .job-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-alt);
+            border-radius: var(--r-12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-badge {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .badge-new {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-600);
+        }
+
+        .badge-due {
+            background: #FEF2F2;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .card-info-row {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .card-info-label {
+            font-weight: 500;
+            margin-right: 6px;
+            color: var(--ink);
+            min-width: 60px;
+        }
+
+        .card-dates {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .date-item {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        .date-label {
+            color: var(--muted);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .date-value {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-progress {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-ended {
+            background: var(--muted);
+            color: white;
+        }
+
+        .more-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 24px auto 0;
+            padding: 12px 24px;
+            background: var(--bg);
+            border: 2px solid var(--brand-600);
+            border-radius: var(--r-12);
+            color: var(--brand-600);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .more-button:hover {
+            background: var(--brand-600);
+            color: white;
+        }
+
+        .more-button svg {
+            transition: transform 0.2s;
+        }
+
+        .more-button.active svg {
+            transform: rotate(180deg);
+        }
+
+        .job-table-container {
+            display: none;
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-alt);
+            border-radius: var(--r-16);
+            border: 1px solid var(--border);
+        }
+
+        .job-table-container.show {
+            display: block;
+        }
+
+        .job-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg);
+            border-radius: var(--r-12);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .job-table th,
+        .job-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .job-table th {
+            background: var(--bg-alt);
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        .job-table td {
+            font-size: 14px;
+        }
+
+        .job-table tbody tr:hover {
+            background: var(--bg-alt);
+        }
+
+        .job-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .table-new {
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-600);
+        }
+
+        .table-due {
+            background: #FEF2F2;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .content-section {
+            background: var(--bg);
+            margin: 48px 0;
+            padding: 48px 0;
+        }
+
+        .content-section:nth-child(even) {
+            background: var(--bg-alt);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--ink);
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            font-size: 16px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg);
+            padding: 24px;
+            border-radius: var(--r-16);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .content-section:nth-child(even) .feature-card {
+            background: var(--bg);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: var(--brand-50);
+            border-radius: var(--r-12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--brand-600);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: var(--bg-alt);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .card-action {
+            width: 100%;
+        }
+
+        footer {
+            background: var(--bg-alt);
+            padding: 24px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: var(--ink);
+        }
+
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-wrap: wrap;
+            }
+            
+            .search-container {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 8px;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">본문 바로가기</a>
+    
+    <header role="banner" aria-label="주 헤더">
+        <div class="header-inner">
+            <div class="logo-group">
+                <img src="data:image/png;base64,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" alt="JOB-ALIO 로고" style="height: 32px; width: auto;">
+            </div>
+            
+            <div class="search-container">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="9" cy="9" r="7" stroke="var(--muted)" stroke-width="2"/>
+                    <path d="M14 14L18 18" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="search" class="search-bar" placeholder="기관, 직무, 키워드 검색" aria-label="채용공고 검색">
+                <span class="search-hint">/</span>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn btn-ghost">로그인</button>
+                <button class="btn btn-primary">회원가입</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="data-banner">
+        제공 데이터는 <strong>오늘 기준 1개월치</strong>입니다. 목록에서 <strong>CSV 다운로드</strong>를 지원합니다.
+    </div>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>공공 채용, 덜 귀찮게</h1>
+            <p>오늘 새 공고와 마감 임박만 깔끔하게 모아볼까요?</p>
+            <div class="hero-actions">
+                <button class="btn btn-ghost">오늘 새 공고</button>
+                <button class="btn btn-primary">마감 임박</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="filters">
+        <div class="filters-inner">
+            <!-- 지역 드롭다운 -->
+            <div class="filter-dropdown">
+                <button class="filter-button" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show')">
+                    <span class="filter-label">지역:</span>
+                    <span class="filter-value">전국</span>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item selected">전국</div>
+                    <div class="dropdown-item">서울</div>
+                    <div class="dropdown-item">경기</div>
+                    <div class="dropdown-item">인천</div>
+                    <div class="dropdown-item">강원</div>
+                    <div class="dropdown-item">충청</div>
+                    <div class="dropdown-item">대전</div>
+                    <div class="dropdown-item">세종</div>
+                    <div class="dropdown-item">전라</div>
+                    <div class="dropdown-item">광주</div>
+                    <div class="dropdown-item">경상</div>
+                    <div class="dropdown-item">대구</div>
+                    <div class="dropdown-item">울산</div>
+                    <div class="dropdown-item">부산</div>
+                    <div class="dropdown-item">제주</div>
+                </div>
+            </div>
+
+            <!-- 고용형태 드롭다운 -->
+            <div class="filter-dropdown">
+                <button class="filter-button" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show')">
+                    <span class="filter-label">고용형태:</span>
+                    <span class="filter-value">전체</span>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item selected">전체</div>
+                    <div class="dropdown-item">정규직</div>
+                    <div class="dropdown-item">무기계약직</div>
+                    <div class="dropdown-item">계약직</div>
+                    <div class="dropdown-item">시간제</div>
+                    <div class="dropdown-item">인턴</div>
+                </div>
+            </div>
+
+            <!-- 경력 드롭다운 -->
+            <div class="filter-dropdown">
+                <button class="filter-button" onclick="this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show')">
+                    <span class="filter-label">경력:</span>
+                    <span class="filter-value">전체</span>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item selected">전체</div>
+                    <div class="dropdown-item">신입</div>
+                    <div class="dropdown-item">경력</div>
+                    <div class="dropdown-item">경력무관</div>
+                </div>
+            </div>
+
+            <!-- 체크박스 필터 -->
+            <label class="checkbox-filter">
+                <input type="checkbox" onchange="this.parentElement.classList.toggle('checked', this.checked)">
+                <span>체험형 인턴</span>
+            </label>
+
+            <label class="checkbox-filter">
+                <input type="checkbox" checked onchange="this.parentElement.classList.toggle('checked', this.checked)">
+                <span>진행중만</span>
+            </label>
+        </div>
+    </div>
+
+    <script>
+        // 드롭다운 메뉴 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.filter-dropdown')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                    menu.previousElementSibling.classList.remove('active');
+                });
+            }
+        });
+
+        // 드롭다운 아이템 선택
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = this.closest('.filter-dropdown');
+                const button = dropdown.querySelector('.filter-button');
+                const valueSpan = button.querySelector('.filter-value');
+                
+                // 기존 선택 해제
+                this.parentElement.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+                
+                // 새 선택 적용
+                this.classList.add('selected');
+                valueSpan.textContent = this.textContent;
+                
+                // 드롭다운 닫기
+                this.parentElement.classList.remove('show');
+                button.classList.remove('active');
+            });
+        });
+
+        // 체크박스 초기화
+        document.querySelectorAll('.checkbox-filter input[type="checkbox"]').forEach(checkbox => {
+            checkbox.parentElement.classList.toggle('checked', checkbox.checked);
+        });
+
+        // 더보기 버튼 토글
+        function toggleJobTable(button) {
+            const container = document.getElementById('jobTableContainer');
+            const isVisible = container.classList.contains('show');
+            
+            if (isVisible) {
+                container.classList.remove('show');
+                button.classList.remove('active');
+                button.querySelector('span').textContent = '채용정보 더보기';
+            } else {
+                container.classList.add('show');
+                button.classList.add('active');
+                button.querySelector('span').textContent = '채용정보 접기';
+            }
+        }
+    </script>
+
+    <main id="main" tabindex="-1" role="main">
+        <section class="section">
+            <h2>맞춤 공고</h2>
+            <div class="card-grid">
+                <article class="job-card">
+                    <span class="card-badge badge-new">NEW</span>
+                    <h3 class="card-title">정보시스템 운영 및 개발 담당자 채용</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국전력공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>서울특별시 강남구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>정규직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.15</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.09.15</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+
+                <article class="job-card">
+                    <span class="card-badge badge-due">D-3</span>
+                    <h3 class="card-title">가스안전 관리 전문요원 채용</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국가스공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>대전광역시 서구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>무기계약직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.01</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.08.23</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+
+                <article class="job-card">
+                    <span class="card-badge badge-new">NEW</span>
+                    <h3 class="card-title">수자원 시설물 건설 및 관리 전문가</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국수자원공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>충청남도 천안시</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>정규직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.18</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.09.30</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+
+                <article class="job-card">
+                    <h3 class="card-title">행정업무 지원 전문인력 채용</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국도로공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>경기도 성남시</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>계약직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.10</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.09.10</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>오늘 새 공고</h2>
+            <div class="card-grid">
+                <article class="job-card">
+                    <span class="card-badge badge-new">NEW</span>
+                    <h3 class="card-title">재무회계 전문가 채용</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국철도공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>서울특별시 용산구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>정규직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.17</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.09.17</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+
+                <article class="job-card">
+                    <span class="card-badge badge-new">NEW</span>
+                    <h3 class="card-title">관광홍보 마케팅 전문가</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국관광공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>서울특별시 중구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>계약직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.08.16</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.09.06</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>마감 임박</h2>
+            <div class="card-grid">
+                <article class="job-card">
+                    <span class="card-badge badge-due">D-1</span>
+                    <h3 class="card-title">행정지원 전문인력 채용</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국전력공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>광주광역시 남구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>정규직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.07.20</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.08.21</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+
+                <article class="job-card">
+                    <span class="card-badge badge-due">D-2</span>
+                    <h3 class="card-title">전산시스템 운영 및 개발자</h3>
+                    <div class="card-info">
+                        <div class="card-info-row">
+                            <span class="card-info-label">기관명:</span>
+                            <span>한국가스공사</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">근무지:</span>
+                            <span>인천광역시 연수구</span>
+                        </div>
+                        <div class="card-info-row">
+                            <span class="card-info-label">고용형태:</span>
+                            <span>무기계약직</span>
+                        </div>
+                    </div>
+                    <div class="card-dates">
+                        <div class="date-item">
+                            <span class="date-label">등록일</span>
+                            <span class="date-value">2025.07.22</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">마감일</span>
+                            <span class="date-value">2025.08.22</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span class="status-badge status-progress">진행중</span>
+                        <button class="btn btn-primary card-action" style="width: auto; padding: 8px 16px;">채용정보</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+        
+        <button class="more-button" onclick="toggleJobTable(this)">
+            <span>채용정보 더보기</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 12L2 6h12l-6 6z"/>
+            </svg>
+        </button>
+        
+        <div class="job-table-container" id="jobTableContainer">
+            <table class="job-table">
+                <thead>
+                    <tr>
+                        <th>채용제목</th>
+                        <th>기관명</th>
+                        <th>근무지</th>
+                        <th>고용형태</th>
+                        <th>등록일</th>
+                        <th>마감일</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="table-badge table-new">NEW</span>
+                            정보시스템 운영 및 개발 담당자 채용
+                        </td>
+                        <td>한국전력공사</td>
+                        <td>서울특별시 강남구</td>
+                        <td>정규직</td>
+                        <td>2025.08.15</td>
+                        <td>2025.09.15</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="table-badge table-due">D-3</span>
+                            가스안전 관리 전문요원 채용
+                        </td>
+                        <td>한국가스공사</td>
+                        <td>대전광역시 서구</td>
+                        <td>무기계약직</td>
+                        <td>2025.08.01</td>
+                        <td>2025.08.23</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="table-badge table-new">NEW</span>
+                            수자원 시설물 건설 및 관리 전문가
+                        </td>
+                        <td>한국수자원공사</td>
+                        <td>충청남도 천안시</td>
+                        <td>정규직</td>
+                        <td>2025.08.18</td>
+                        <td>2025.09.30</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            행정업무 지원 전문인력 채용
+                        </td>
+                        <td>한국도로공사</td>
+                        <td>경기도 성남시</td>
+                        <td>계약직</td>
+                        <td>2025.08.10</td>
+                        <td>2025.09.10</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="table-badge table-new">NEW</span>
+                            재무회계 전문가 채용
+                        </td>
+                        <td>한국철도공사</td>
+                        <td>서울특별시 용산구</td>
+                        <td>정규직</td>
+                        <td>2025.08.17</td>
+                        <td>2025.09.17</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="table-badge table-due">D-1</span>
+                            행정지원 전문인력 채용
+                        </td>
+                        <td>한국전력공사</td>
+                        <td>광주광역시 남구</td>
+                        <td>정규직</td>
+                        <td>2025.07.20</td>
+                        <td>2025.08.21</td>
+                        <td><span class="status-badge status-progress">진행중</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- 공공기관 정보 섹션 -->
+    <section class="content-section">
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">공공기관 정보</h2>
+                <p class="section-subtitle">신뢰할 수 있는 공공기관 채용정보</p>
+                <p class="section-description">전국 공공기관의 채용 정보를 한 곳에서 확인하고, 실시간 업데이트로 최신 정보를 제공합니다.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">중앙부처</h3>
+                    <p class="feature-description">각 부처별 공기업 및 산하기관의 채용정보를 종합적으로 제공합니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">지방자치단체</h3>
+                    <p class="feature-description">시·도, 군·구, 공기업 등 지방자치단체의 다양한 채용기회를 확인할 수 있습니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">실시간 업데이트</h3>
+                    <p class="feature-description">매일 새로운 채용공고와 마감임박 정보를 실시간으로 업데이트합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 채용정보 박람회 섹션 -->
+    <section class="content-section">
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">공공기관 채용정보 박람회</h2>
+                <p class="section-subtitle">직접 만나는 채용 기회</p>
+                <p class="section-description">전국 공공기관이 참여하는 박람회에서 직접 상담하고 채용 기회를 높이세요.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <path d="m22 21-4.35-4.35"/>
+                            <circle cx="19" cy="7" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">직접 상담</h3>
+                    <p class="feature-description">채용 담당자와 직접 만나 궁금한 사항을 질문하고 상세한 정보를 얻을 수 있습니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M8 2v4"/>
+                            <path d="M16 2v4"/>
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <path d="M3 10h18"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">정기 개융</h3>
+                    <p class="feature-description">매년 상·하반기 정기적으로 개최되는 박람회 일정을 안내해드립니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--brand-600)">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">전국 개최</h3>
+                    <p class="feature-description">서울, 부산, 대구, 긑주 등 전국 주요 도시에서 박람회가 열립니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JOB-ALIO 소개 섹션 -->
+    <section class="content-section">
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">JOB-ALIO로 시작하세요</h2>
+                <p class="section-subtitle">공공 채용, 더 쉽고 빠르게</p>
+                <p class="section-description">공공기관 채용에 특화된 플랫폼으로, 효율적인 일자리 찾기를 지원합니다.</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1,250+</div>
+                    <div class="stat-label">누적 채용공고</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">180+</div>
+                    <div class="stat-label">참여 공공기관</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">사용자 만족도</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">언제나 업데이트</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn btn-primary" style="padding: 16px 32px; font-size: 18px;">지금 시작하기</button>
+            </div>
+        </div>
+    </section>
+
+    <footer role="contentinfo">
+        <div class="footer-inner">
+            <div>© 2025 잡알리오 · 데이터 기준일: 2025-08-18</div>
+            <nav class="footer-links" aria-label="푸터 링크">
+                <a href="#">이용안내</a>
+                <a href="#">오픈 API</a>
+                <a href="#">개인정보 처리방침</a>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

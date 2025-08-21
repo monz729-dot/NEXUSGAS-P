@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="navigation.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button onclick="navigateBack()" class="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+            <i data-lucide="arrow-left" class="h-4 w-4 mr-2 inline"></i>
+            뒤로가기
+        </button>
+        <div>
+            <h1 class="text-xl text-blue-900 font-bold">공지사항</h1>
+            <p class="text-sm text-blue-600">중요한 소식과 업데이트를 확인하세요</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1 relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
+                <input id="searchInput" type="text" placeholder="공지사항을 검색해보세요..." class="w-full pl-10 h-12 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+            </div>
+            <select id="categoryFilter" class="h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                <option value="all">전체 카테고리</option>
+                <option value="service">서비스</option>
+                <option value="system">시스템</option>
+                <option value="policy">정책</option>
+                <option value="event">이벤트</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Important Notices -->
+    <div id="importantNotices" class="mb-6">
+        <!-- Important notices will be inserted here -->
+    </div>
+
+    <!-- Notices List -->
+    <div id="noticesList" class="space-y-4">
+        <!-- Notices will be dynamically inserted here -->
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="flex justify-center mt-8">
+        <!-- Pagination will be inserted here -->
+    </div>
+
+    <!-- Notice Detail Modal -->
+    <div id="noticeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 id="modalTitle" class="text-lg font-semibold text-blue-900"></h3>
+                        <div class="flex items-center gap-3 mt-2 text-sm text-gray-600">
+                            <span id="modalDate"></span>
+                            <span id="modalCategory" class="px-2 py-1 rounded-full text-xs"></span>
+                        </div>
+                    </div>
+                    <button onclick="closeNoticeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="modalContent" class="p-6">
+                <!-- Notice content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let notices = [];
+        let filteredNotices = [];
+        let currentPage = 1;
+        const noticesPerPage = 10;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotices();
+            setupEventListeners();
+            lucide.createIcons();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterNotices);
+            document.getElementById('categoryFilter').addEventListener('change', filterNotices);
+        }
+
+        function loadNotices() {
+            notices = [
+                {
+                    id: 1,
+                    title: '[긴급] 시스템 점검 안내 (2024.01.20)',
+                    category: 'system',
+                    categoryLabel: '시스템',
+                    categoryColor: 'bg-red-100 text-red-800',
+                    date: '2024-01-18',
+                    important: true,
+                    content: `안녕하세요. YCS 물류 시스템입니다.
+
+시스템 안정성 향상을 위한 점검을 실시합니다.
+
+<strong>점검 일시:</strong> 2024년 1월 20일 (토) 02:00 ~ 06:00 (4시간)
+
+<strong>점검 내용:</strong>
+• 서버 보안 업데이트
+• 데이터베이스 최적화
+• 주문 시스템 개선
+
+<strong>점검 중 이용 제한:</strong>
+• 주문서 작성 불가
+• 결제 처리 일시 중단
+• 주문 조회 일부 제한
+
+점검 완료 후 정상 서비스가 재개됩니다.
+이용에 불편을 드려 죄송합니다.
+
+문의사항이 있으시면 고객지원팀으로 연락주세요.`
+                },
+                {
+                    id: 2,
+                    title: '신규 HS CODE 검색 기능 추가',
+                    category: 'service',
+                    categoryLabel: '서비스',
+                    categoryColor: 'bg-blue-100 text-blue-800',
+                    date: '2024-01-15',
+                    important: false,
+                    content: `주문서 작성 시 더욱 편리한 HS CODE 검색 기능이 추가되었습니다.
+
+<strong>새로운 기능:</strong>
+• 실시간 HS CODE 검색
+• 품목명으로 자동 매칭
+• 카테고리별 분류 제공
+• 최근 사용 HS CODE 저장
+
+<strong>사용 방법:</strong>
+1. 주문서 작성 시 HS CODE 필드에서 검색 버튼 클릭
+2. 품목명 또는 HS CODE로 검색
+3. 적합한 항목 선택하여 자동 입력
+
+정확한 HS CODE 입력으로 통관 지연을 방지하세요.`
+                },
+                {
+                    id: 3,
+                    title: '2024년 설날 연휴 배송 일정 안내',
+                    category: 'service',
+                    categoryLabel: '서비스',
+                    categoryColor: 'bg-blue-100 text-blue-800',
+                    date: '2024-01-10',
+                    important: true,
+                    content: `2024년 설날 연휴 기간 중 배송 일정을 안내드립니다.
+
+<strong>연휴 기간:</strong> 2024년 2월 9일 (금) ~ 2월 12일 (월)
+
+<strong>서비스 운영:</strong>
+• 주문 접수: 정상 운영
+• 고객지원: 2월 11일 (일) 휴무
+• YCS 창고: 2월 10일 (토) ~ 2월 12일 (월) 휴무
+
+<strong>배송 일정:</strong>
+• 2월 8일 (목) 이전 접수 주문: 연휴 전 발송
+• 2월 9일 (금) 이후 접수 주문: 2월 13일 (화) 순차 발송
+
+<strong>현지 배송:</strong>
+태국, 베트남 등 현지 배송업체도 연휴 기간 중 일부 지연될 수 있습니다.
+
+미리 주문해주시면 연휴 영향을 최소화할 수 있습니다.`
+                },
+                {
+                    id: 4,
+                    title: '배송비 정책 변경 안내',
+                    category: 'policy',
+                    categoryLabel: '정책',
+                    categoryColor: 'bg-orange-100 text-orange-800',
+                    date: '2024-01-05',
+                    important: false,
+                    content: `2024년 2월 1일부터 배송비 정책이 일부 변경됩니다.
+
+<strong>변경 내용:</strong>
+
+<strong>1. 해상운송 (변경 없음)</strong>
+• 기본 배송비: 무게/부피 기준
+• 최소 배송비: 50,000원
+
+<strong>2. 항공운송 (변경)</strong>
+• 기존: kg당 15,000원
+• 변경: kg당 18,000원 (20% 인상)
+• 최소 배송비: 30,000원 → 35,000원
+
+<strong>3. 추가 서비스</strong>
+• 리패킹 서비스: 5,000원 → 7,000원
+• 사진 촬영 서비스: 3,000원 → 5,000원
+
+<strong>적용 시점:</strong>
+• 2024년 2월 1일 이후 접수 주문부터 적용
+• 기존 접수 주문은 기존 요율 적용
+
+연료비 상승 및 현지 물가 인상에 따른 불가피한 조치임을 양해해주시기 바랍니다.`
+                },
+                {
+                    id: 5,
+                    title: '신규 회원 가입 이벤트',
+                    category: 'event',
+                    categoryLabel: '이벤트',
+                    categoryColor: 'bg-green-100 text-green-800',
+                    date: '2024-01-03',
+                    important: false,
+                    content: `YCS 물류 시스템 신규 회원을 위한 특별 이벤트를 진행합니다.
+
+<strong>이벤트 기간:</strong> 2024년 1월 1일 ~ 1월 31일
+
+<strong>혜택 내용:</strong>
+
+<strong>1단계: 회원가입 완료</strong>
+• 첫 주문 시 배송비 10% 할인 쿠폰 지급
+
+<strong>2단계: 첫 주문 완료</strong>
+• 리패킹 서비스 1회 무료 이용권 지급
+
+<strong>3단계: 후기 작성</strong>
+• 다음 주문 시 5,000원 할인 쿠폰 지급
+
+<strong>추가 혜택:</strong>
+• 기업회원 가입 시 첫 주문 배송비 50% 할인
+• 친구 추천 시 추천인, 피추천인 모두 10,000원 적립금 지급
+
+<strong>참여 방법:</strong>
+1. YCS 물류 시스템 회원가입
+2. 이벤트 페이지에서 참여 신청
+3. 조건 달성 시 자동으로 혜택 지급
+
+많은 관심과 참여 부탁드립니다!`
+                },
+                {
+                    id: 6,
+                    title: '고객지원 채팅 서비스 오픈',
+                    category: 'service',
+                    categoryLabel: '서비스',
+                    categoryColor: 'bg-blue-100 text-blue-800',
+                    date: '2023-12-28',
+                    important: false,
+                    content: `실시간 고객지원을 위한 채팅 서비스가 오픈되었습니다.
+
+<strong>서비스 개요:</strong>
+• 실시간 1:1 채팅 상담
+• 평일 09:00 ~ 18:00 운영
+• 주문, 배송, 결제 관련 즉시 상담
+
+<strong>이용 방법:</strong>
+1. 화면 우측 하단 채팅 아이콘 클릭
+2. 간단한 정보 입력 후 상담 시작
+3. 전문 상담원과 실시간 대화
+
+<strong>채팅 서비스 장점:</strong>
+• 즉시 응답으로 빠른 문제 해결
+• 파일 첨부 및 이미지 전송 가능
+• 상담 내역 자동 저장
+
+기존 전화 및 이메일 상담도 계속 이용 가능합니다.
+편리한 채팅 서비스를 활용해보세요!`
+                },
+                {
+                    id: 7,
+                    title: '개인정보 처리방침 개정 안내',
+                    category: 'policy',
+                    categoryLabel: '정책',
+                    categoryColor: 'bg-orange-100 text-orange-800',
+                    date: '2023-12-20',
+                    important: true,
+                    content: `개인정보 처리방침이 일부 개정되어 안내드립니다.
+
+<strong>개정 시행일:</strong> 2024년 1월 1일
+
+<strong>주요 개정 내용:</strong>
+
+<strong>1. 개인정보 수집 항목 명확화</strong>
+• 필수 수집 정보와 선택 수집 정보 구분
+• 서비스 이용 목적별 수집 항목 세분화
+
+<strong>2. 개인정보 보유 기간 조정</strong>
+• 회원 탈퇴 후 즉시 삭제 → 30일 후 삭제
+• 주문 정보 5년 → 3년 보관
+
+<strong>3. 제3자 제공 관련</strong>
+• 배송업체 정보 제공 범위 명시
+• 고객 동의 없는 마케팅 정보 제공 금지
+
+<strong>4. 개인정보 안전성 확보조치 강화</strong>
+• 암호화 방식 업그레이드
+• 접근권한 관리 강화
+
+개정된 처리방침은 홈페이지에서 확인하실 수 있습니다.
+궁금한 사항은 고객지원팀으로 문의해주세요.`
+                }
+            ];
+
+            filteredNotices = [...notices];
+            renderNotices();
+            renderImportantNotices();
+        }
+
+        function filterNotices() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            
+            filteredNotices = notices.filter(notice => {
+                const matchesSearch = !searchTerm || 
+                    notice.title.toLowerCase().includes(searchTerm) ||
+                    notice.content.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = category === 'all' || notice.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            currentPage = 1;
+            renderNotices();
+        }
+
+        function renderImportantNotices() {
+            const importantNotices = notices.filter(notice => notice.important);
+            const container = document.getElementById('importantNotices');
+            
+            if (importantNotices.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="bg-white shadow-lg border border-red-200 rounded-lg mb-6">
+                    <div class="p-4 bg-red-50 border-b border-red-200 rounded-t-lg">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="h-5 w-5 text-red-600"></i>
+                            <h3 class="font-semibold text-red-900">중요 공지</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        ${importantNotices.map(notice => `
+                            <div onclick="viewNotice(${notice.id})" class="p-3 border border-red-100 rounded-lg hover:bg-red-50 transition-colors cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-red-900">${notice.title}</h4>
+                                        <p class="text-sm text-red-600">${formatDate(notice.date)}</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="h-4 w-4 text-red-400"></i>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+
+        function renderNotices() {
+            const container = document.getElementById('noticesList');
+            const startIndex = (currentPage - 1) * noticesPerPage;
+            const endIndex = startIndex + noticesPerPage;
+            const paginatedNotices = filteredNotices.slice(startIndex, endIndex);
+            
+            if (filteredNotices.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-8 text-center">
+                        <i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-gray-400"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">검색 결과가 없습니다</h3>
+                        <p class="text-gray-600">다른 키워드로 검색해보세요.</p>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = paginatedNotices.map(notice => `
+                <div onclick="viewNotice(${notice.id})" class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 hover:shadow-xl transition-all cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="px-2 py-1 text-xs rounded-full ${notice.categoryColor}">
+                                    ${notice.categoryLabel}
+                                </span>
+                                ${notice.important ? '<span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">중요</span>' : ''}
+                            </div>
+                            <h3 class="text-lg font-semibold text-blue-900 mb-2">${notice.title}</h3>
+                            <p class="text-sm text-gray-600">${formatDate(notice.date)}</p>
+                        </div>
+                        <i data-lucide="chevron-right" class="h-5 w-5 text-gray-400 flex-shrink-0"></i>
+                    </div>
+                </div>
+            `).join('');
+            
+            renderPagination();
+            lucide.createIcons();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredNotices.length / noticesPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <button onclick="changePage(${currentPage - 1})" class="px-3 py-2 border border-blue-300 text-blue-700 hover:bg-blue-50 rounded-l-lg transition-colors">
+                        <i data-lucide="chevron-left" class="h-4 w-4"></i>
+                    </button>
+                `;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHTML += `
+                        <button class="px-4 py-2 bg-blue-600 text-white border border-blue-600">
+                            ${i}
+                        </button>
+                    `;
+                } else {
+                    paginationHTML += `
+                        <button onclick="changePage(${i})" class="px-4 py-2 border border-blue-300 text-blue-700 hover:bg-blue-50 transition-colors">
+                            ${i}
+                        </button>
+                    `;
+                }
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <button onclick="changePage(${currentPage + 1})" class="px-3 py-2 border border-blue-300 text-blue-700 hover:bg-blue-50 rounded-r-lg transition-colors">
+                        <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                    </button>
+                `;
+            }
+            
+            pagination.innerHTML = `<div class="flex">${paginationHTML}</div>`;
+            lucide.createIcons();
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderNotices();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function viewNotice(noticeId) {
+            const notice = notices.find(n => n.id === noticeId);
+            if (!notice) return;
+
+            document.getElementById('modalTitle').textContent = notice.title;
+            document.getElementById('modalDate').textContent = formatDate(notice.date);
+            
+            const categoryElement = document.getElementById('modalCategory');
+            categoryElement.textContent = notice.categoryLabel;
+            categoryElement.className = `px-2 py-1 rounded-full text-xs ${notice.categoryColor}`;
+            
+            // Convert content with HTML formatting
+            const formattedContent = notice.content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            document.getElementById('modalContent').innerHTML = `<div class="prose prose-sm max-w-none"><p>${formattedContent}</p></div>`;
+            
+            document.getElementById('noticeModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').classList.add('hidden');
+        }
+
+        function navigateBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('noticeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeNoticeModal();
+            }
+        });
+    </script>
+</body>
+</html>

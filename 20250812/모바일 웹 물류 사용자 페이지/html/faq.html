@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자주 묻는 질문 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="navigation.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button onclick="navigateBack()" class="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+            <i data-lucide="arrow-left" class="h-4 w-4 mr-2 inline"></i>
+            뒤로가기
+        </button>
+        <div>
+            <h1 class="text-xl text-blue-900 font-bold">자주 묻는 질문</h1>
+            <p class="text-sm text-blue-600">궁금한 점을 빠르게 해결하세요</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mb-6">
+        <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
+            <input id="searchInput" type="text" placeholder="궁금한 내용을 검색해보세요..." class="w-full pl-10 h-12 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-blue-900 mb-4">카테고리</h3>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="filterByCategory('all')" class="category-btn px-4 py-2 text-sm rounded-full transition-colors bg-blue-600 text-white">
+                전체
+            </button>
+            <button onclick="filterByCategory('shipping')" class="category-btn px-4 py-2 text-sm rounded-full transition-colors border border-blue-300 text-blue-700 hover:bg-blue-50">
+                배송 관련
+            </button>
+            <button onclick="filterByCategory('payment')" class="category-btn px-4 py-2 text-sm rounded-full transition-colors border border-blue-300 text-blue-700 hover:bg-blue-50">
+                결제 관련
+            </button>
+            <button onclick="filterByCategory('account')" class="category-btn px-4 py-2 text-sm rounded-full transition-colors border border-blue-300 text-blue-700 hover:bg-blue-50">
+                계정 관련
+            </button>
+            <button onclick="filterByCategory('service')" class="category-btn px-4 py-2 text-sm rounded-full transition-colors border border-blue-300 text-blue-700 hover:bg-blue-50">
+                서비스 관련
+            </button>
+        </div>
+    </div>
+
+    <!-- FAQ List -->
+    <div id="faqList" class="space-y-4">
+        <!-- FAQ items will be dynamically inserted here -->
+    </div>
+
+    <!-- Contact Support -->
+    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-6 mt-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="help-circle" class="h-8 w-8 text-blue-600"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2">원하는 답변을 찾지 못하셨나요?</h3>
+            <p class="text-gray-600 mb-4">고객지원팀에 직접 문의해주세요.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onclick="contactSupport('email')" class="bg-blue-600 text-white hover:bg-blue-700 px-6 py-3 rounded-lg transition-colors">
+                    <i data-lucide="mail" class="h-4 w-4 mr-2 inline"></i>
+                    이메일 문의
+                </button>
+                <button onclick="contactSupport('phone')" class="border border-blue-300 text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-lg transition-colors">
+                    <i data-lucide="phone" class="h-4 w-4 mr-2 inline"></i>
+                    전화 문의
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let faqs = [];
+        let filteredFaqs = [];
+        let currentCategory = 'all';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFAQs();
+            setupEventListeners();
+            lucide.createIcons();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', searchFAQs);
+        }
+
+        function loadFAQs() {
+            faqs = [
+                {
+                    id: 1,
+                    category: 'shipping',
+                    question: '배송 기간은 얼마나 걸리나요?',
+                    answer: `배송 기간은 운송 방식에 따라 다릅니다:
+                    
+• 해상운송: 15-30일 (경제적)
+• 항공운송: 3-7일 (빠름)
+
+실제 배송 기간은 현지 상황, 통관 절차, 배송지 등에 따라 달라질 수 있습니다.`
+                },
+                {
+                    id: 2,
+                    category: 'shipping',
+                    question: '배송 추적은 어떻게 하나요?',
+                    answer: `배송 추적은 다음과 같이 확인할 수 있습니다:
+
+1. 주문 내역 페이지에서 '배송추적' 버튼 클릭
+2. 우체국 송장번호로 직접 추적
+3. YCS 창고 도착 후 SMS/이메일 알림 제공
+
+각 단계별로 상태가 업데이트되며, 실시간으로 확인 가능합니다.`
+                },
+                {
+                    id: 3,
+                    category: 'payment',
+                    question: '결제 방법은 어떻게 되나요?',
+                    answer: `현재 지원하는 결제 방법:
+
+• 무통장 입금 (기본)
+• 신용카드 결제 (준비 중)
+• 계좌이체 (준비 중)
+
+YCS 창고 도착 후 실제 무게와 부피를 측정하여 최종 청구서를 발행합니다.`
+                },
+                {
+                    id: 4,
+                    category: 'payment',
+                    question: '청구서는 언제 발행되나요?',
+                    answer: `청구서 발행 시점:
+
+1. 접수완료: 우체국 송장번호 등록
+2. YCS창고도착: 실제 무게/부피 측정
+3. 청구서발행: 최종 비용 계산 완료
+4. 입금대기: 결제 대기 상태
+
+청구서는 이메일과 SMS로 전송되며, 마이페이지에서도 확인 가능합니다.`
+                },
+                {
+                    id: 5,
+                    category: 'account',
+                    question: '회원가입은 어떻게 하나요?',
+                    answer: `회원가입 절차:
+
+1. 회원 유형 선택 (일반/기업/파트너)
+2. 기본 정보 입력 (아이디, 비밀번호, 이메일)
+3. 이메일 인증 완료
+4. 추가 정보 입력 (연락처, 주소 등)
+5. 약관 동의 후 가입 완료
+
+기업회원의 경우 사업자등록증이 필요합니다.`
+                },
+                {
+                    id: 6,
+                    category: 'account',
+                    question: '비밀번호를 잊어버렸어요.',
+                    answer: `비밀번호 재설정 방법:
+
+1. 로그인 페이지에서 '비밀번호 찾기' 클릭
+2. 가입 시 등록한 이메일 주소 입력
+3. 이메일로 전송된 인증번호 입력
+4. 새로운 비밀번호 설정
+
+이메일이 도착하지 않으면 스팸함을 확인하거나 고객지원에 문의해주세요.`
+                },
+                {
+                    id: 7,
+                    category: 'service',
+                    question: '리패킹 서비스란 무엇인가요?',
+                    answer: `리패킹 서비스:
+
+• 상품 포장 상태 확인 및 재포장
+• 파손된 상품의 안전한 재포장
+• 여러 상품을 하나로 통합 포장
+• 포장 상태 사진 제공
+
+리패킹이 필요한 경우 고객에게 사전 안내 후 진행하며, 추가 비용이 발생할 수 있습니다.`
+                },
+                {
+                    id: 8,
+                    category: 'service',
+                    question: 'HS CODE가 무엇인가요?',
+                    answer: `HS CODE (Harmonized System Code):
+
+• 국제적으로 통일된 상품 분류 코드
+• 통관 시 세율 및 규제 적용 기준
+• 정확한 신고를 위해 필수 입력 항목
+
+주문서 작성 시 HS CODE 검색 기능을 제공하며, 정확하지 않은 경우 통관 지연이 발생할 수 있습니다.`
+                },
+                {
+                    id: 9,
+                    category: 'shipping',
+                    question: '항공운송과 해상운송의 차이점은?',
+                    answer: `운송 방식별 특징:
+
+【항공운송】
+• 빠른 배송 (3-7일)
+• 높은 비용
+• 단가 THB 1,500 초과 시 추가 서류 필요
+• 부피무게 적용
+
+【해상운송】
+• 경제적 비용
+• 긴 배송 기간 (15-30일)
+• 대량 운송 가능
+• 실중량 기준`
+                },
+                {
+                    id: 10,
+                    category: 'service',
+                    question: '금지 품목이 있나요?',
+                    answer: `배송 금지/제한 품목:
+
+【금지 품목】
+• 위험물질 (폭발물, 인화성 물질)
+• 마약류, 향정신성 의약품
+• 무기류, 도검류
+• 동식물, 식품류 (일부)
+
+【제한 품목】
+• 전자제품 (배터리 포함)
+• 화장품 (용량 제한)
+• 의약품 (처방전 필요)
+
+자세한 내용은 관세청 또는 목적지 국가 규정을 확인해주세요.`
+                }
+            ];
+
+            filteredFaqs = [...faqs];
+            renderFAQs();
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = 'category-btn px-4 py-2 text-sm rounded-full transition-colors border border-blue-300 text-blue-700 hover:bg-blue-50';
+            });
+            
+            event.target.className = 'category-btn px-4 py-2 text-sm rounded-full transition-colors bg-blue-600 text-white';
+            
+            // Filter FAQs
+            if (category === 'all') {
+                filteredFaqs = [...faqs];
+            } else {
+                filteredFaqs = faqs.filter(faq => faq.category === category);
+            }
+            
+            // Apply search if there's a search term
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                filteredFaqs = filteredFaqs.filter(faq => 
+                    faq.question.toLowerCase().includes(searchTerm) ||
+                    faq.answer.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderFAQs();
+        }
+
+        function searchFAQs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!searchTerm) {
+                if (currentCategory === 'all') {
+                    filteredFaqs = [...faqs];
+                } else {
+                    filteredFaqs = faqs.filter(faq => faq.category === currentCategory);
+                }
+            } else {
+                let searchBase = currentCategory === 'all' ? faqs : faqs.filter(faq => faq.category === currentCategory);
+                filteredFaqs = searchBase.filter(faq => 
+                    faq.question.toLowerCase().includes(searchTerm) ||
+                    faq.answer.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderFAQs();
+        }
+
+        function renderFAQs() {
+            const container = document.getElementById('faqList');
+            
+            if (filteredFaqs.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white shadow-lg border border-blue-100 rounded-lg p-8 text-center">
+                        <i data-lucide="search" class="h-16 w-16 mx-auto mb-4 text-gray-400"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">검색 결과가 없습니다</h3>
+                        <p class="text-gray-600">다른 키워드로 검색하거나 고객지원에 문의해주세요.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = filteredFaqs.map(faq => `
+                <div class="bg-white shadow-lg border border-blue-100 rounded-lg">
+                    <button onclick="toggleFAQ(${faq.id})" class="w-full p-6 text-left hover:bg-blue-50 transition-colors rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-blue-900 pr-4">${faq.question}</h3>
+                            <i data-lucide="chevron-down" class="h-5 w-5 text-gray-400 transform transition-transform" id="icon-${faq.id}"></i>
+                        </div>
+                    </button>
+                    <div id="answer-${faq.id}" class="hidden border-t border-blue-100 p-6 bg-blue-50/30">
+                        <div class="prose prose-sm text-gray-700">
+                            ${faq.answer.split('\n').map(line => {
+                                if (line.trim().startsWith('•')) {
+                                    return `<div class="flex items-start gap-2 mb-1"><span class="text-blue-600 mt-1">•</span><span>${line.trim().substring(1).trim()}</span></div>`;
+                                } else if (line.trim().startsWith('【') && line.trim().endsWith('】')) {
+                                    return `<div class="font-semibold text-blue-900 mt-3 mb-2">${line.trim()}</div>`;
+                                } else if (line.trim()) {
+                                    return `<p class="mb-2">${line.trim()}</p>`;
+                                } else {
+                                    return '<br>';
+                                }
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function toggleFAQ(faqId) {
+            const answer = document.getElementById(`answer-${faqId}`);
+            const icon = document.getElementById(`icon-${faqId}`);
+            
+            if (answer.classList.contains('hidden')) {
+                // Close all other FAQs
+                document.querySelectorAll('[id^="answer-"]').forEach(el => {
+                    el.classList.add('hidden');
+                });
+                document.querySelectorAll('[id^="icon-"]').forEach(el => {
+                    el.classList.remove('rotate-180');
+                });
+                
+                // Open this FAQ
+                answer.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                // Close this FAQ
+                answer.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        function contactSupport(method) {
+            if (method === 'email') {
+                alert('이메일 문의\n\n고객지원 이메일: support@ycs-logistics.com\n\n평일 09:00-18:00 운영');
+            } else if (method === 'phone') {
+                alert('전화 문의\n\n고객지원 전화: 1588-1234\n\n평일 09:00-18:00 운영\n(점심시간 12:00-13:00 제외)');
+            }
+        }
+
+        function navigateBack() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

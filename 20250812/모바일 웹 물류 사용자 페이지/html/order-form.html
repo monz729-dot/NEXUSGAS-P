@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배송 접수 - YCS 물류 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="navigation.js"></script>
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUp 0.6s ease-out; }
+        .shadow-blue-lg { box-shadow: 0 10px 25px -3px rgba(59, 130, 246, 0.1), 0 4px 6px -2px rgba(59, 130, 246, 0.05); }
+        .shadow-blue { box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06); }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4 space-y-6">
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden animate-slide-up">
+        <div id="messageAlert" class="shadow-blue-lg px-6 py-4 rounded-lg flex items-center gap-3">
+            <i id="messageIcon" class="h-5 w-5"></i>
+            <p id="messageText"></p>
+        </div>
+    </div>
+
+    <!-- Validation Messages -->
+    <div id="validationContainer" class="space-y-2 hidden">
+        <!-- Validation messages will be dynamically inserted here -->
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button onclick="navigateBack()" class="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+            <i data-lucide="arrow-left" class="h-4 w-4 mr-2 inline"></i>
+            뒤로가기
+        </button>
+        <div>
+            <h1 class="text-xl text-blue-900 font-bold">배송 접수</h1>
+            <p class="text-sm text-blue-600">새로운 배송을 접수해보세요 - 창고 도착 후 청구서 발행</p>
+        </div>
+    </div>
+
+    <!-- Customer Info Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900">주문자 정보</h2>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="grid grid-cols-1 gap-4">
+                <div class="space-y-2">
+                    <label class="text-blue-900 font-medium">고객 아이디</label>
+                    <input id="customerId" disabled class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-md font-mono">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-blue-900 font-medium">이름</label>
+                    <input id="customerName" disabled class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-md">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-blue-900 font-medium">이메일</label>
+                    <input id="customerEmail" disabled class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-md">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-blue-900 font-medium">연락처</label>
+                    <input id="customerPhone" disabled class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-md">
+                </div>
+                <div id="customerCompanyField" class="space-y-2 hidden">
+                    <label class="text-blue-900 font-medium">회사명</label>
+                    <input id="customerCompany" disabled class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-md">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracking Number Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900 flex items-center gap-2">
+                우체국 송장번호
+                <span class="px-2 py-1 text-xs bg-red-100 text-red-700 border border-red-200 rounded-full">필수</span>
+            </h2>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="space-y-2">
+                <label class="text-blue-900 font-medium">송장번호 *</label>
+                <input id="trackingNumber" type="text" placeholder="우체국 송장번호를 입력해주세요" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none" required>
+                <p class="text-xs text-blue-600">
+                    우체국 송장번호가 없으면 주문을 접수할 수 없습니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Info Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900">배송 정보</h2>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="space-y-3">
+                <label class="text-blue-900 font-medium">배송 유형</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <div id="seaShippingOption" class="p-4 rounded-lg border-2 border-blue-500 bg-blue-50 flex items-center gap-3 transition-all cursor-pointer">
+                        <input type="radio" name="shippingType" value="sea" id="seaShipping" checked class="text-blue-600">
+                        <div>
+                            <label for="seaShipping" class="font-medium cursor-pointer">해상운송</label>
+                            <p class="text-sm text-gray-600">경제적, 15-30일</p>
+                        </div>
+                    </div>
+                    <div id="airShippingOption" class="p-4 rounded-lg border-2 border-gray-200 flex items-center gap-3 transition-all cursor-pointer">
+                        <input type="radio" name="shippingType" value="air" id="airShipping" class="text-blue-600">
+                        <div>
+                            <label for="airShipping" class="font-medium cursor-pointer">항공운송</label>
+                            <p class="text-sm text-gray-600">신속, 3-7일 (추가 검증 필요)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-blue-900 font-medium">도착 국가</label>
+                <select id="destinationCountry" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                    <option value="thailand">🇹🇭 태국</option>
+                    <option value="vietnam">🇻🇳 베트남</option>
+                    <option value="philippines">🇵🇭 필리핀</option>
+                    <option value="indonesia">🇮🇩 인도네시아</option>
+                </select>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-blue-900 font-medium">우편번호</label>
+                <input id="postalCode" type="text" placeholder="5자리 숫자 (예: 10110)" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                <p id="postalCodeGuide" class="text-xs text-blue-600">
+                    5자리 숫자 (예: 10110)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipient Info Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900">
+                수취인 정보
+                <span id="recipientRequiredBadge" class="hidden ml-2 px-2 py-1 text-xs bg-red-100 text-red-700 border border-red-200 rounded-full">필수</span>
+            </h2>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="space-y-2">
+                <label class="text-blue-900 font-medium">수취인 이름</label>
+                <input id="recipientName" type="text" placeholder="수취인 이름을 입력해주세요" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+            </div>
+            <div class="space-y-2">
+                <label class="text-blue-900 font-medium">수취인 연락처</label>
+                <input id="recipientPhone" type="text" placeholder="수취인 연락처를 입력해주세요" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+            </div>
+            <div class="space-y-2">
+                <label class="text-blue-900 font-medium">수취인 주소</label>
+                <textarea id="recipientAddress" placeholder="수취인 주소를 입력해주세요" class="w-full min-h-24 px-4 py-3 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none"></textarea>
+            </div>
+            <div class="space-y-2">
+                <label class="text-blue-900 font-medium">수취인 우편번호</label>
+                <input id="recipientPostalCode" type="text" placeholder="5자리 숫자 (예: 10110)" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-blue-900">품목 정보</h2>
+                <div class="flex gap-2">
+                    <button id="bulkUploadBtn" onclick="openBulkUploadModal()" class="hidden px-4 py-2 text-sm border border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700 hover:border-green-300 rounded-lg transition-colors">
+                        <i data-lucide="file-spreadsheet" class="h-4 w-4 mr-2 inline"></i>
+                        일괄등록
+                    </button>
+                    <button id="templateBtn" onclick="downloadTemplate()" class="hidden px-4 py-2 text-sm border border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-300 rounded-lg transition-colors">
+                        <i data-lucide="download" class="h-4 w-4 mr-2 inline"></i>
+                        양식받기
+                    </button>
+                    <button onclick="addOrderItem()" class="px-4 py-2 text-sm bg-blue-600/20 hover:bg-blue-600 border border-blue-300/50 hover:border-blue-500 text-blue-700 hover:text-white transition-all duration-300 rounded-lg">
+                        <i data-lucide="plus" class="h-4 w-4 mr-2 inline"></i>
+                        품목 추가
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="orderItemsContainer" class="p-6 space-y-6">
+            <!-- Order items will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Special Requests Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900">특별 요청사항</h2>
+        </div>
+        <div class="p-6">
+            <textarea id="specialRequests" placeholder="특별한 요청사항이 있으시면 입력해주세요..." class="w-full min-h-24 px-4 py-3 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none"></textarea>
+        </div>
+    </div>
+
+    <!-- Repacking Service Card -->
+    <div class="bg-white shadow-blue border border-blue-100 rounded-lg">
+        <div class="p-6 border-b border-blue-100">
+            <h2 class="text-lg font-semibold text-blue-900">리패킹 서비스</h2>
+        </div>
+        <div class="p-6">
+            <div class="flex items-center space-x-3">
+                <input type="checkbox" id="repacking" class="w-4 h-4 text-blue-600 border-blue-200 rounded focus:ring-blue-200">
+                <div>
+                    <label for="repacking" class="font-medium cursor-pointer">리패킹 서비스 신청</label>
+                    <p class="text-sm text-gray-600">
+                        창고 도착 후 상품 상태에 따라 리패킹 작업을 진행합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Buttons -->
+    <div class="flex gap-4 pb-20">
+        <button onclick="handleCancel()" class="flex-1 h-12 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+            취소
+        </button>
+        <button onclick="handleSave()" id="saveBtn" class="flex-1 h-12 border border-blue-200 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+            임시저장
+        </button>
+        <button onclick="handleSubmit()" id="submitBtn" class="flex-1 h-12 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors">
+            접수완료
+        </button>
+    </div>
+
+    <!-- HS Code Search Modal -->
+    <div id="hsCodeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-blue-900">HS CODE 품목 조회</h3>
+                <p class="text-sm text-gray-600 mt-2">
+                    HS CODE 또는 품목명으로 검색하여 해당 품목을 선택할 수 있습니다.
+                    API 조회에 실패한 경우 수동으로 입력해주세요.
+                </p>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
+                    <input id="hsCodeSearch" placeholder="HS CODE 또는 품목명 검색" class="w-full pl-10 pr-10 h-12 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                    <div id="hsCodeLoading" class="hidden absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+                
+                <div id="hsCodeResults" class="max-h-60 overflow-y-auto space-y-2">
+                    <!-- Search results will be dynamically inserted here -->
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeHSCodeModal()" class="flex-1 h-12 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div id="bulkUploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg max-w-lg w-full">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-blue-900">품목 일괄등록</h3>
+                <p class="text-sm text-gray-600 mt-2">
+                    양식을 다운로드하여 작성한 후 파일을 업로드하면 여러 품목을 한 번에 등록할 수 있습니다.
+                </p>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Template Download -->
+                <div class="p-4 bg-blue-50/50 rounded-lg border border-blue-100/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-blue-900">1. 양식 다운로드</h3>
+                            <p class="text-sm text-blue-600">먼저 양식을 다운로드하여 작성해주세요.</p>
+                        </div>
+                        <button onclick="downloadTemplate()" class="px-4 py-2 text-sm border border-blue-200 text-blue-600 hover:bg-blue-50 rounded-lg">
+                            <i data-lucide="download" class="h-4 w-4 mr-2 inline"></i>
+                            양식 다운로드
+                        </button>
+                    </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="space-y-3">
+                    <h3 class="font-medium text-blue-900">2. 작성된 파일 업로드</h3>
+                    <div class="relative">
+                        <input id="bulkFile" type="file" accept=".csv,.xlsx" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div class="h-20 px-4 border-2 border-dashed border-blue-200 hover:border-blue-300 bg-blue-50/30 hover:bg-blue-50/50 transition-all duration-300 rounded-lg flex items-center gap-3 cursor-pointer">
+                            <i data-lucide="package" class="h-8 w-8 text-blue-600"></i>
+                            <div>
+                                <p id="bulkFileText" class="font-medium text-blue-700">
+                                    파일을 선택하세요
+                                </p>
+                                <p class="text-sm text-blue-600">CSV 또는 Excel 파일 (최대 10MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Button -->
+                <div class="flex gap-4">
+                    <button onclick="closeBulkUploadModal()" class="flex-1 h-12 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg">
+                        취소
+                    </button>
+                    <button onclick="processBulkUpload()" id="bulkUploadSubmitBtn" class="flex-1 h-12 bg-blue-600 text-white hover:bg-blue-700 rounded-lg disabled:opacity-50" disabled>
+                        일괄등록
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let orderItems = [];
+        let validationMessages = [];
+        let isLoading = false;
+        let currentItemId = '';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            lucide.createIcons();
+        });
+
+        function initializePage() {
+            // Check if user is logged in
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = JSON.parse(userData);
+            
+            // Initialize customer info
+            initializeCustomerInfo();
+            
+            // Initialize order items
+            addOrderItem();
+            
+            // Add event listeners
+            addEventListeners();
+            
+            // Initial validation
+            validateForm();
+        }
+
+        function initializeCustomerInfo() {
+            // Generate customer ID
+            const prefix = currentUser.type === 'corporate' ? 'KYC' : 'KYP';
+            const number = String(Math.floor(Math.random() * 9000) + 1000).padStart(3, '0');
+            const customerId = `${prefix}${number}`;
+            
+            document.getElementById('customerId').value = customerId;
+            document.getElementById('customerName').value = currentUser.name;
+            document.getElementById('customerEmail').value = currentUser.email;
+            document.getElementById('customerPhone').value = currentUser.phone || '';
+            
+            if (currentUser.type !== 'general' && currentUser.companyName) {
+                document.getElementById('customerCompanyField').classList.remove('hidden');
+                document.getElementById('customerCompany').value = currentUser.companyName;
+            }
+            
+            // Show bulk upload buttons for corporate users
+            if (currentUser.type === 'corporate') {
+                document.getElementById('bulkUploadBtn').classList.remove('hidden');
+                document.getElementById('templateBtn').classList.remove('hidden');
+            }
+        }
+
+        function addEventListeners() {
+            // Shipping type change
+            document.querySelectorAll('input[name="shippingType"]').forEach(radio => {
+                radio.addEventListener('change', updateShippingType);
+            });
+            
+            // Country change
+            document.getElementById('destinationCountry').addEventListener('change', updateCountryInfo);
+            
+            // Real-time validation
+            document.getElementById('trackingNumber').addEventListener('input', validateForm);
+            
+            // Bulk file upload
+            document.getElementById('bulkFile').addEventListener('change', handleBulkFileSelect);
+            
+            // HS Code search
+            document.getElementById('hsCodeSearch').addEventListener('input', debounce(searchHSCode, 500));
+        }
+
+        function updateShippingType() {
+            const shippingType = document.querySelector('input[name="shippingType"]:checked').value;
+            
+            // Update UI
+            document.querySelectorAll('[id$="ShippingOption"]').forEach(option => {
+                option.className = 'p-4 rounded-lg border-2 border-gray-200 flex items-center gap-3 transition-all cursor-pointer';
+            });
+            
+            document.getElementById(shippingType + 'ShippingOption').className = 'p-4 rounded-lg border-2 border-blue-500 bg-blue-50 flex items-center gap-3 transition-all cursor-pointer';
+            
+            validateForm();
+        }
+
+        function updateCountryInfo() {
+            const country = document.getElementById('destinationCountry').value;
+            const guides = {
+                thailand: '5자리 숫자 (예: 10110)',
+                vietnam: '6자리 숫자 (예: 100000)', 
+                philippines: '4자리 숫자 (예: 1000)',
+                indonesia: '5자리 숫자 (예: 10110)'
+            };
+            
+            const guide = guides[country] || '4-6자리 숫자';
+            document.getElementById('postalCodeGuide').textContent = guide;
+            document.getElementById('postalCode').placeholder = guide;
+            document.getElementById('recipientPostalCode').placeholder = guide;
+        }
+
+        function addOrderItem() {
+            const itemId = Date.now().toString();
+            const itemDiv = document.createElement('div');
+            itemDiv.id = `item-${itemId}`;
+            itemDiv.className = 'p-4 border-2 border-blue-100/50 rounded-lg space-y-4 bg-blue-50/30';
+            
+            itemDiv.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <h4 class="font-medium text-blue-900">품목 ${orderItems.length + 1}</h4>
+                    ${orderItems.length > 0 ? `
+                        <button onclick="removeOrderItem('${itemId}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors">
+                            <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        </button>
+                    ` : ''}
+                </div>
+
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- HS CODE -->
+                    <div class="space-y-2">
+                        <label class="text-blue-900 font-medium">HS CODE</label>
+                        <div class="flex gap-2">
+                            <input id="hscode-${itemId}" type="text" placeholder="HS CODE 입력" class="flex-1 h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                            <button onclick="openHSCodeModal('${itemId}')" class="h-12 px-3 border border-blue-200 text-blue-600 hover:bg-blue-50 rounded-md">
+                                <i data-lucide="search" class="h-4 w-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-2">
+                        <label class="text-blue-900 font-medium">품목명</label>
+                        <input id="description-${itemId}" type="text" placeholder="품목명 입력" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                    </div>
+
+                    <!-- Quantity and Weight -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-blue-900 font-medium">수량</label>
+                            <input id="quantity-${itemId}" type="number" placeholder="수량" min="1" value="1" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-blue-900 font-medium">중량 (kg)</label>
+                            <input id="weight-${itemId}" type="number" step="0.1" placeholder="중량" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Unit Price -->
+                    <div class="space-y-2">
+                        <label class="text-blue-900 font-medium flex items-center gap-2">
+                            단가 (THB)
+                            <span id="airValidationBadge-${itemId}" class="hidden px-2 py-1 text-xs border border-gray-300 rounded-full">항공운송 검증</span>
+                        </label>
+                        <input id="unitPrice-${itemId}" type="number" step="0.01" placeholder="단가 (태국 바트)" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                        <div id="priceWarning-${itemId}" class="hidden text-xs text-orange-600">
+                            ⚠️ THB 1,500 초과 시 수취인 정보 및 추가 서류가 필요합니다.
+                        </div>
+                    </div>
+
+                    <!-- Dimensions -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-blue-900 font-medium">가로 (cm)</label>
+                                <input id="width-${itemId}" type="number" step="0.1" placeholder="가로" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-blue-900 font-medium">세로 (cm)</label>
+                                <input id="height-${itemId}" type="number" step="0.1" placeholder="세로" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-blue-900 font-medium">높이 (cm)</label>
+                                <input id="depth-${itemId}" type="number" step="0.1" placeholder="높이" class="w-full h-12 px-4 border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-md outline-none">
+                            </div>
+                        </div>
+
+                        <!-- CBM Display -->
+                        <div id="cbmDisplay-${itemId}" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-green-900">CBM 자동계산</p>
+                                    <p id="cbmCalculation-${itemId}" class="text-sm text-green-700"></p>
+                                </div>
+                                <div class="text-right">
+                                    <p id="cbmValue-${itemId}" class="font-bold text-green-900"></p>
+                                    <p class="text-xs text-green-600">소수점 3째자리 반올림</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Volumetric Weight Display -->
+                        <div id="volumetricDisplay-${itemId}" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-blue-900">EMS 부피무게</p>
+                                    <p id="volumetricCalculation-${itemId}" class="text-sm text-blue-700"></p>
+                                </div>
+                                <div class="text-right">
+                                    <span id="volumetricScore-${itemId}" class="px-2 py-1 text-xs rounded-full"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('orderItemsContainer').appendChild(itemDiv);
+            
+            // Add item to array
+            orderItems.push({
+                id: itemId,
+                hscode: '',
+                description: '',
+                quantity: 1,
+                weight: 0,
+                width: 0,
+                height: 0,
+                depth: 0,
+                unitPrice: 0,
+                cbm: 0
+            });
+            
+            // Add event listeners for this item
+            addItemEventListeners(itemId);
+            
+            lucide.createIcons();
+        }
+
+        function addItemEventListeners(itemId) {
+            // Dimension change listeners for CBM calculation
+            ['width', 'height', 'depth'].forEach(dimension => {
+                document.getElementById(`${dimension}-${itemId}`).addEventListener('input', () => {
+                    calculateCBM(itemId);
+                    calculateVolumetricWeight(itemId);
+                });
+            });
+            
+            // Weight change listener
+            document.getElementById(`weight-${itemId}`).addEventListener('input', () => {
+                calculateVolumetricWeight(itemId);
+            });
+            
+            // Unit price change listener
+            document.getElementById(`unitPrice-${itemId}`).addEventListener('input', () => {
+                validateAirShipping();
+            });
+        }
+
+        function removeOrderItem(itemId) {
+            document.getElementById(`item-${itemId}`).remove();
+            orderItems = orderItems.filter(item => item.id !== itemId);
+            
+            // Update item numbers
+            updateItemNumbers();
+        }
+
+        function updateItemNumbers() {
+            const itemDivs = document.querySelectorAll('[id^="item-"]');
+            itemDivs.forEach((div, index) => {
+                const titleElement = div.querySelector('h4');
+                titleElement.textContent = `품목 ${index + 1}`;
+            });
+        }
+
+        function calculateCBM(itemId) {
+            const width = parseFloat(document.getElementById(`width-${itemId}`).value) || 0;
+            const height = parseFloat(document.getElementById(`height-${itemId}`).value) || 0;
+            const depth = parseFloat(document.getElementById(`depth-${itemId}`).value) || 0;
+            
+            if (width > 0 && height > 0 && depth > 0) {
+                const cbm = Math.round((width * height * depth) / 1000000 * 1000) / 1000;
+                
+                document.getElementById(`cbmDisplay-${itemId}`).classList.remove('hidden');
+                document.getElementById(`cbmCalculation-${itemId}`).textContent = `${width} × ${height} × ${depth} = ${cbm} m³`;
+                document.getElementById(`cbmValue-${itemId}`).textContent = `${cbm} m³`;
+                
+                // Update item in array
+                const item = orderItems.find(item => item.id === itemId);
+                if (item) {
+                    item.cbm = cbm;
+                    item.width = width;
+                    item.height = height;
+                    item.depth = depth;
+                }
+            } else {
+                document.getElementById(`cbmDisplay-${itemId}`).classList.add('hidden');
+            }
+        }
+
+        function calculateVolumetricWeight(itemId) {
+            const width = parseFloat(document.getElementById(`width-${itemId}`).value) || 0;
+            const height = parseFloat(document.getElementById(`height-${itemId}`).value) || 0;
+            const depth = parseFloat(document.getElementById(`depth-${itemId}`).value) || 0;
+            const weight = parseFloat(document.getElementById(`weight-${itemId}`).value) || 0;
+            
+            if (width > 0 && height > 0 && depth > 0) {
+                const volumetricWeight = (width * height * depth) / 6000;
+                const ratio = volumetricWeight / Math.max(weight, 0.1);
+                
+                let score = '낮음';
+                let scoreClass = 'bg-green-100 text-green-700';
+                
+                if (ratio > 2) {
+                    score = '높음';
+                    scoreClass = 'bg-red-100 text-red-700';
+                } else if (ratio > 1.5) {
+                    score = '보통';
+                    scoreClass = 'bg-yellow-100 text-yellow-700';
+                }
+                
+                document.getElementById(`volumetricDisplay-${itemId}`).classList.remove('hidden');
+                document.getElementById(`volumetricCalculation-${itemId}`).textContent = `${width} × ${height} × ${depth} ÷ 6000 = ${volumetricWeight.toFixed(2)}kg`;
+                
+                const scoreElement = document.getElementById(`volumetricScore-${itemId}`);
+                scoreElement.textContent = score;
+                scoreElement.className = `px-2 py-1 text-xs rounded-full ${scoreClass}`;
+            } else {
+                document.getElementById(`volumetricDisplay-${itemId}`).classList.add('hidden');
+            }
+        }
+
+        function validateAirShipping() {
+            const shippingType = document.querySelector('input[name="shippingType"]:checked').value;
+            const trackingNumber = document.getElementById('trackingNumber').value.trim();
+            
+            validationMessages = [];
+            
+            if (shippingType === 'air') {
+                if (!trackingNumber) {
+                    validationMessages.push({
+                        type: 'error',
+                        message: '항공 운송의 경우 우체국 송장번호가 필수입니다.'
+                    });
+                }
+                
+                orderItems.forEach((item, index) => {
+                    const unitPrice = parseFloat(document.getElementById(`unitPrice-${item.id}`).value) || 0;
+                    
+                    if (unitPrice > 1500) {
+                        const recipientName = document.getElementById('recipientName').value.trim();
+                        const recipientPhone = document.getElementById('recipientPhone').value.trim();
+                        const recipientAddress = document.getElementById('recipientAddress').value.trim();
+                        
+                        if (!recipientName || !recipientPhone || !recipientAddress) {
+                            validationMessages.push({
+                                type: 'error',
+                                message: `품목 ${index + 1}: 단가 THB 1,500 초과 시 수취인 정보가 필수입니다.`
+                            });
+                        } else {
+                            validationMessages.push({
+                                type: 'warning',
+                                message: `품목 ${index + 1}: 단가가 THB 1,500을 초과하여 추가 서류가 필요할 수 있습니다.`
+                            });
+                        }
+                        
+                        // Show price warning
+                        document.getElementById(`priceWarning-${item.id}`).classList.remove('hidden');
+                        document.getElementById(`recipientRequiredBadge`).classList.remove('hidden');
+                    } else {
+                        document.getElementById(`priceWarning-${item.id}`).classList.add('hidden');
+                    }
+                    
+                    // Show air validation badge
+                    document.getElementById(`airValidationBadge-${item.id}`).classList.remove('hidden');
+                });
+            } else {
+                // Hide air-specific elements
+                orderItems.forEach(item => {
+                    document.getElementById(`priceWarning-${item.id}`).classList.add('hidden');
+                    document.getElementById(`airValidationBadge-${item.id}`).classList.add('hidden');
+                });
+                document.getElementById(`recipientRequiredBadge`).classList.add('hidden');
+            }
+            
+            // General tracking number validation
+            if (!trackingNumber) {
+                validationMessages.push({
+                    type: 'error',
+                    message: '우체국 송장번호는 필수 입력 항목입니다.'
+                });
+            }
+            
+            updateValidationDisplay();
+        }
+
+        function validateForm() {
+            validateAirShipping();
+        }
+
+        function updateValidationDisplay() {
+            const container = document.getElementById('validationContainer');
+            
+            if (validationMessages.length > 0) {
+                container.classList.remove('hidden');
+                container.innerHTML = validationMessages.map(msg => {
+                    const iconName = msg.type === 'error' ? 'alert-circle' : 
+                                   msg.type === 'warning' ? 'alert-triangle' : 'info';
+                    const bgColor = msg.type === 'error' ? 'bg-red-50 border-red-200' :
+                                  msg.type === 'warning' ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200';
+                    const textColor = msg.type === 'error' ? 'text-red-700' :
+                                    msg.type === 'warning' ? 'text-yellow-700' : 'text-blue-700';
+                    
+                    return `
+                        <div class="p-4 border rounded-lg ${bgColor}">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="${iconName}" class="h-4 w-4 ${textColor}"></i>
+                                <p class="${textColor}">${msg.message}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                lucide.createIcons();
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // HS Code Search Functions
+        function openHSCodeModal(itemId) {
+            currentItemId = itemId;
+            document.getElementById('hsCodeModal').classList.remove('hidden');
+            document.getElementById('hsCodeSearch').focus();
+        }
+
+        function closeHSCodeModal() {
+            document.getElementById('hsCodeModal').classList.add('hidden');
+            document.getElementById('hsCodeSearch').value = '';
+            document.getElementById('hsCodeResults').innerHTML = '';
+            currentItemId = '';
+        }
+
+        async function searchHSCode() {
+            const query = document.getElementById('hsCodeSearch').value.trim();
+            
+            if (!query) {
+                document.getElementById('hsCodeResults').innerHTML = '<p class="text-center text-gray-500 py-4">검색어를 입력해주세요.</p>';
+                return;
+            }
+            
+            document.getElementById('hsCodeLoading').classList.remove('hidden');
+            
+            // Simulate API call
+            setTimeout(() => {
+                const mockResults = [
+                    { code: '1905.31', description: '빼빼로, 웨이퍼 과자', category: '제과류' },
+                    { code: '1806.32', description: '초콜릿 과자', category: '제과류' },
+                    { code: '1905.90', description: '기타 과자류', category: '제과류' },
+                    { code: '6203.42', description: '면제 남성용 바지', category: '의류' },
+                    { code: '6204.62', description: '면제 여성용 바지', category: '의류' },
+                    { code: '6109.10', description: '면제 티셔츠', category: '의류' },
+                    { code: '8517.12', description: '휴대폰', category: '전자제품' },
+                    { code: '8471.30', description: '휴대용 컴퓨터', category: '전자제품' },
+                    { code: '3304.99', description: '화장품', category: '화장품' },
+                    { code: '2106.90', description: '건강식품', category: '식품' },
+                    { code: '9503.00', description: '장난감', category: '완구' },
+                    { code: '4202.92', description: '가방', category: '가죽제품' },
+                    { code: '6403.51', description: '신발', category: '신발류' }
+                ];
+                
+                const filtered = mockResults.filter(item => 
+                    item.code.toLowerCase().includes(query.toLowerCase()) ||
+                    item.description.toLowerCase().includes(query.toLowerCase()) ||
+                    item.category.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                document.getElementById('hsCodeLoading').classList.add('hidden');
+                
+                if (filtered.length > 0) {
+                    document.getElementById('hsCodeResults').innerHTML = filtered.map(item => `
+                        <div onclick="selectHSCode('${item.code}', '${item.description}')" class="p-3 border border-blue-100 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <p class="font-medium text-blue-900">${item.code}</p>
+                                    <p class="text-sm text-gray-600">${item.description}</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs border border-gray-300 rounded-full">${item.category}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('hsCodeResults').innerHTML = `
+                        <div class="p-4 text-center">
+                            <p class="text-gray-500 mb-3">API 조회 결과가 없습니다.</p>
+                            <p class="text-sm text-blue-600">수동으로 입력하여 사용해주세요.</p>
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        function selectHSCode(code, description) {
+            document.getElementById(`hscode-${currentItemId}`).value = code;
+            document.getElementById(`description-${currentItemId}`).value = description;
+            closeHSCodeModal();
+        }
+
+        // Bulk Upload Functions
+        function openBulkUploadModal() {
+            document.getElementById('bulkUploadModal').classList.remove('hidden');
+        }
+
+        function closeBulkUploadModal() {
+            document.getElementById('bulkUploadModal').classList.add('hidden');
+            document.getElementById('bulkFile').value = '';
+            document.getElementById('bulkFileText').textContent = '파일을 선택하세요';
+            document.getElementById('bulkUploadSubmitBtn').disabled = true;
+        }
+
+        function handleBulkFileSelect(e) {
+            const file = e.target.files?.[0];
+            if (file) {
+                if (!file.name.endsWith('.csv') && !file.name.endsWith('.xlsx')) {
+                    showMessage('CSV 또는 Excel 파일만 업로드 가능합니다.', 'error');
+                    return;
+                }
+                
+                document.getElementById('bulkFileText').textContent = file.name;
+                document.getElementById('bulkUploadSubmitBtn').disabled = false;
+            }
+        }
+
+        function downloadTemplate() {
+            const csvContent = `HSCODE,품목명,수량,중량(kg),가로(cm),세로(cm),높이(cm),단가(THB)
+1905.31,빼빼로,10,5.0,30,20,5,25.00
+8517.12,휴대폰,5,1.0,15,8,1,1200.00
+3304.99,화장품,20,0.5,10,10,5,800.00`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'YCS_품목일괄등록_양식.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function processBulkUpload() {
+            const file = document.getElementById('bulkFile').files[0];
+            if (!file) {
+                showMessage('파일을 선택해주세요.', 'error');
+                return;
+            }
+
+            setLoading(true);
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                try {
+                    const csv = e.target?.result;
+                    const lines = csv.split('\n');
+                    const newItems = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = lines[i].split(',');
+                        if (values.length >= 8 && values[0].trim()) {
+                            const width = parseFloat(values[4]) || 0;
+                            const height = parseFloat(values[5]) || 0;
+                            const depth = parseFloat(values[6]) || 0;
+                            
+                            newItems.push({
+                                hscode: values[0].trim(),
+                                description: values[1].trim(),
+                                quantity: parseInt(values[2]) || 1,
+                                weight: parseFloat(values[3]) || 0,
+                                width,
+                                height,
+                                depth,
+                                unitPrice: parseFloat(values[7]) || 0,
+                                cbm: Math.round((width * height * depth) / 1000000 * 1000) / 1000
+                            });
+                        }
+                    }
+                    
+                    if (newItems.length > 0) {
+                        // Clear existing items
+                        document.getElementById('orderItemsContainer').innerHTML = '';
+                        orderItems = [];
+                        
+                        // Add new items
+                        newItems.forEach(item => {
+                            addOrderItemWithData(item);
+                        });
+                        
+                        closeBulkUploadModal();
+                        showMessage(`${newItems.length}개의 품목이 성공적으로 등록되었습니다.`, 'success');
+                    } else {
+                        showMessage('유효한 데이터가 없습니다.', 'error');
+                    }
+                    setLoading(false);
+                } catch (err) {
+                    showMessage('파일 처리 중 오류가 발생했습니다.', 'error');
+                    setLoading(false);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function addOrderItemWithData(data) {
+            const itemId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+            addOrderItem();
+            
+            // Populate data
+            document.getElementById(`hscode-${itemId}`).value = data.hscode;
+            document.getElementById(`description-${itemId}`).value = data.description;
+            document.getElementById(`quantity-${itemId}`).value = data.quantity;
+            document.getElementById(`weight-${itemId}`).value = data.weight;
+            document.getElementById(`width-${itemId}`).value = data.width;
+            document.getElementById(`height-${itemId}`).value = data.height;
+            document.getElementById(`depth-${itemId}`).value = data.depth;
+            document.getElementById(`unitPrice-${itemId}`).value = data.unitPrice;
+            
+            // Trigger calculations
+            calculateCBM(itemId);
+            calculateVolumetricWeight(itemId);
+        }
+
+        // Navigation Functions
+        function navigateBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Form Actions
+        function handleCancel() {
+            if (confirm('저장되지 않은 정보는 사라집니다. 취소하시겠습니까?')) {
+                navigateBack();
+            }
+        }
+
+        function handleSave() {
+            setLoading(true);
+            setTimeout(() => {
+                showMessage('주문서가 임시저장되었습니다.', 'success');
+                setLoading(false);
+            }, 1000);
+        }
+
+        function handleSubmit() {
+            // Validation
+            const errorMessages = validationMessages.filter(msg => msg.type === 'error');
+            if (errorMessages.length > 0) {
+                showMessage(errorMessages[0].message, 'error');
+                return;
+            }
+
+            // Required fields validation
+            const recipientName = document.getElementById('recipientName').value.trim();
+            const recipientAddress = document.getElementById('recipientAddress').value.trim();
+            const recipientPostalCode = document.getElementById('recipientPostalCode').value.trim();
+            
+            if (!recipientName || !recipientAddress || !recipientPostalCode) {
+                showMessage('수취인 정보를 모두 입력해주세요.', 'error');
+                return;
+            }
+
+            const hasValidItems = orderItems.some(item => {
+                const description = document.getElementById(`description-${item.id}`).value.trim();
+                const quantity = parseInt(document.getElementById(`quantity-${item.id}`).value) || 0;
+                return description && quantity > 0;
+            });
+            
+            if (!hasValidItems) {
+                showMessage('최소 하나의 유효한 품목을 입력해주세요.', 'error');
+                return;
+            }
+
+            const trackingNumber = document.getElementById('trackingNumber').value.trim();
+            if (!trackingNumber) {
+                showMessage('우체국 송장번호를 입력해주세요.', 'error');
+                return;
+            }
+
+            setLoading(true);
+            
+            setTimeout(() => {
+                const receiptNumber = `YCS-${Date.now().toString().slice(-8)}`;
+                showMessage(`접수완료! 접수번호: ${receiptNumber} - YCS 창고 도착 후 청구서를 발행해드립니다.`, 'success');
+                setLoading(false);
+                
+                // Navigate to dashboard after 3 seconds
+                setTimeout(() => {
+                    navigateBack();
+                }, 3000);
+            }, 2000);
+        }
+
+        // Utility Functions
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const alert = document.getElementById('messageAlert');
+            const icon = document.getElementById('messageIcon');
+            const text = document.getElementById('messageText');
+            
+            text.textContent = message;
+            
+            if (type === 'error') {
+                alert.className = 'shadow-blue-lg px-6 py-4 rounded-lg flex items-center gap-3 bg-red-50 border border-red-200';
+                icon.className = 'h-5 w-5 text-red-600';
+                icon.setAttribute('data-lucide', 'alert-circle');
+                text.className = 'text-red-700';
+            } else {
+                alert.className = 'shadow-blue-lg px-6 py-4 rounded-lg flex items-center gap-3 bg-green-50 border border-green-200';
+                icon.className = 'h-5 w-5 text-green-600';
+                icon.setAttribute('data-lucide', 'check-circle');
+                text.className = 'text-green-700';
+            }
+            
+            container.classList.remove('hidden');
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, type === 'success' ? 5000 : 3000);
+        }
+
+        function setLoading(loading) {
+            isLoading = loading;
+            const submitBtn = document.getElementById('submitBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            if (loading) {
+                submitBtn.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
+                saveBtn.innerHTML = '<div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>';
+                submitBtn.disabled = true;
+                saveBtn.disabled = true;
+            } else {
+                submitBtn.textContent = '접수완료';
+                saveBtn.textContent = '임시저장';
+                submitBtn.disabled = false;
+                saveBtn.disabled = false;
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCS 물류 시스템 - 페이지 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/common.css">
+    <style>
+        .page-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .page-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -3px rgba(59, 130, 246, 0.1);
+            border-color: #93c5fd;
+        }
+        
+        .user-type-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .status-available { background-color: #10b981; }
+        .status-restricted { background-color: #f59e0b; }
+        .status-disabled { background-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gradient-blue min-h-screen">
+    <!-- 헤더 -->
+    <header class="bg-white border-b border-blue-100 shadow-sm sticky top-0 z-40">
+        <div class="flex items-center justify-between px-4 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold text-lg">YCS</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-blue-900 text-lg">YCS 물류 시스템</h1>
+                    <p class="text-xs text-blue-600">전체 페이지 목록</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="loginBtn" onclick="navigateTo('login')" class="text-sm bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                    로그인
+                </button>
+                <button id="logoutBtn" onclick="logout()" class="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors hidden">
+                    <i class="fas fa-sign-out-alt mr-1"></i>
+                    로그아웃
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 max-w-6xl">
+        <!-- 사용자 정보 섹션 -->
+        <div id="userInfoSection" class="hidden mb-6">
+            <div class="bg-white rounded-lg p-4 shadow-blue border border-blue-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i id="userIcon" class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p id="userNameDisplay" class="font-medium text-blue-900"></p>
+                            <p id="userEmailDisplay" class="text-sm text-blue-600"></p>
+                        </div>
+                    </div>
+                    <div id="userTypeBadge" class="user-type-badge"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지 설명 -->
+        <div class="mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                    <div>
+                        <h3 class="font-semibold text-blue-900 mb-2">페이지 목록 안내</h3>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• <span class="status-indicator status-available"></span>이용 가능한 페이지</li>
+                            <li>• <span class="status-indicator status-restricted"></span>권한이 필요한 페이지 (로그인 필요)</li>
+                            <li>• <span class="status-indicator status-disabled"></span>접근 불가능한 페이지 (권한 없음)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지 카테고리별 그룹 -->
+        <div class="space-y-8">
+            <!-- 인증 페이지 -->
+            <section>
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    <i class="fas fa-key mr-2 text-blue-600"></i>
+                    인증 페이지
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="authPages">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </section>
+
+            <!-- 일반/기업 고객 페이지 -->
+            <section id="generalPages" class="hidden">
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    <i class="fas fa-user mr-2 text-blue-600"></i>
+                    고객 페이지
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="generalPagesGrid">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </section>
+
+            <!-- 관리자 페이지 -->
+            <section id="adminPages" class="hidden">
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    <i class="fas fa-cog mr-2 text-red-600"></i>
+                    관리자 페이지
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="adminPagesGrid">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </section>
+
+            <!-- 파트너 페이지 -->
+            <section id="partnerPages" class="hidden">
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    <i class="fas fa-truck mr-2 text-green-600"></i>
+                    파트너 페이지
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="partnerPagesGrid">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </section>
+
+            <!-- 공통 페이지 -->
+            <section>
+                <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                    <i class="fas fa-globe mr-2 text-purple-600"></i>
+                    공통 페이지
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="commonPages">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </section>
+        </div>
+
+        <!-- 테스트 계정 섹션 -->
+        <div class="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h3 class="font-semibold text-gray-900 mb-3 flex items-center">
+                <i class="fas fa-flask mr-2 text-gray-600"></i>
+                테스트 계정
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <button onclick="quickLogin('general')" class="text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-2 rounded transition-colors">
+                    <i class="fas fa-user mr-1"></i>
+                    일반회원
+                </button>
+                <button onclick="quickLogin('corporate')" class="text-sm bg-orange-50 text-orange-700 hover:bg-orange-100 px-3 py-2 rounded transition-colors">
+                    <i class="fas fa-building mr-1"></i>
+                    기업회원
+                </button>
+                <button onclick="quickLogin('partner')" class="text-sm bg-green-50 text-green-700 hover:bg-green-100 px-3 py-2 rounded transition-colors">
+                    <i class="fas fa-truck mr-1"></i>
+                    파트너
+                </button>
+                <button onclick="quickLogin('admin')" class="text-sm bg-red-50 text-red-700 hover:bg-red-100 px-3 py-2 rounded transition-colors">
+                    <i class="fas fa-cog mr-1"></i>
+                    관리자
+                </button>
+            </div>
+            <p class="text-xs text-gray-600 mt-2">
+                테스트 계정으로 빠르게 로그인하여 각 사용자 타입별 페이지를 체험해보세요.
+            </p>
+        </div>
+    </main>
+
+    <script src="assets/common.js"></script>
+    <script>
+        // 페이지 정의
+        const pageDefinitions = {
+            // 인증 페이지
+            auth: [
+                {
+                    id: 'login',
+                    title: '로그인',
+                    description: '시스템에 로그인합니다',
+                    icon: 'fas fa-sign-in-alt',
+                    access: 'public',
+                    userTypes: ['all']
+                },
+                {
+                    id: 'signup',
+                    title: '회원가입',
+                    description: '새 계정을 생성합니다',
+                    icon: 'fas fa-user-plus',
+                    access: 'public',
+                    userTypes: ['all']
+                },
+                {
+                    id: 'find-id',
+                    title: '아이디 찾기',
+                    description: '등록된 이메일로 아이디를 찾습니다',
+                    icon: 'fas fa-search',
+                    access: 'public',
+                    userTypes: ['all']
+                },
+                {
+                    id: 'find-password',
+                    title: '비밀번호 찾기',
+                    description: '등록된 정보로 비밀번호를 재설정합니다',
+                    icon: 'fas fa-key',
+                    access: 'public',
+                    userTypes: ['all']
+                }
+            ],
+
+            // 고객 페이지
+            general: [
+                {
+                    id: 'dashboard',
+                    title: '대시보드',
+                    description: '주문 현황과 통계를 확인합니다',
+                    icon: 'fas fa-tachometer-alt',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'order-form',
+                    title: '주문서 작성',
+                    description: '새로운 배송 주문을 등록합니다',
+                    icon: 'fas fa-plus-circle',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'order-history',
+                    title: '주문 내역',
+                    description: '과거 주문 내역을 조회합니다',
+                    icon: 'fas fa-history',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'order-detail',
+                    title: '주문 상세',
+                    description: '선택한 주문의 상세 정보를 확인합니다',
+                    icon: 'fas fa-info-circle',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'payment',
+                    title: '무통장 입금',
+                    description: '무통장 입금 안내 정보를 확인합니다',
+                    icon: 'fas fa-credit-card',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'mypage',
+                    title: '마이페이지',
+                    description: '개인 정보를 관리합니다',
+                    icon: 'fas fa-user',
+                    access: 'private',
+                    userTypes: ['general', 'corporate']
+                }
+            ],
+
+            // 관리자 페이지
+            admin: [
+                {
+                    id: 'admin-dashboard',
+                    title: '관리자 대시보드',
+                    description: '전체 시스템 현황을 모니터링합니다',
+                    icon: 'fas fa-chart-line',
+                    access: 'admin',
+                    userTypes: ['admin']
+                },
+                {
+                    id: 'admin-orders',
+                    title: '주문 관리',
+                    description: '모든 주문을 관리하고 처리합니다',
+                    icon: 'fas fa-boxes',
+                    access: 'admin',
+                    userTypes: ['admin']
+                },
+                {
+                    id: 'admin-order-detail',
+                    title: '관리자 주문 상세',
+                    description: '관리자 권한으로 주문 상세 정보를 관리합니다',
+                    icon: 'fas fa-clipboard-list',
+                    access: 'admin',
+                    userTypes: ['admin']
+                }
+            ],
+
+            // 파트너 페이지
+            partner: [
+                {
+                    id: 'partner-dashboard',
+                    title: '파트너 대시보드',
+                    description: '파트너 업무 현황을 확인합니다',
+                    icon: 'fas fa-truck',
+                    access: 'partner',
+                    userTypes: ['partner']
+                },
+                {
+                    id: 'partner-orders',
+                    title: '파트너 주문 관리',
+                    description: '할당된 주문을 처리합니다',
+                    icon: 'fas fa-clipboard-list',
+                    access: 'partner',
+                    userTypes: ['partner']
+                },
+                {
+                    id: 'partner-history',
+                    title: '파트너 처리 내역',
+                    description: '처리 완료된 주문 내역을 확인합니다',
+                    icon: 'fas fa-history',
+                    access: 'partner',
+                    userTypes: ['partner']
+                },
+                {
+                    id: 'partner-settlement',
+                    title: '정산 관리',
+                    description: '수수료 정산 내역을 확인합니다',
+                    icon: 'fas fa-calculator',
+                    access: 'partner',
+                    userTypes: ['partner']
+                },
+                {
+                    id: 'partner-tasks',
+                    title: '업무 관리',
+                    description: '배정된 업무를 관리합니다',
+                    icon: 'fas fa-tasks',
+                    access: 'partner',
+                    userTypes: ['partner']
+                }
+            ],
+
+            // 공통 페이지
+            common: [
+                {
+                    id: 'notices',
+                    title: '공지사항',
+                    description: '시스템 공지사항을 확인합니다',
+                    icon: 'fas fa-bullhorn',
+                    access: 'public',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'faq',
+                    title: 'FAQ',
+                    description: '자주 묻는 질문과 답변을 확인합니다',
+                    icon: 'fas fa-question-circle',
+                    access: 'public',
+                    userTypes: ['general', 'corporate']
+                },
+                {
+                    id: 'workflow-simulator',
+                    title: '워크플로우 시뮬레이터',
+                    description: '배송 과정을 시뮬레이션합니다',
+                    icon: 'fas fa-route',
+                    access: 'public',
+                    userTypes: ['general', 'corporate']
+                }
+            ]
+        };
+
+        // 현재 사용자 정보
+        let currentUser = null;
+
+        // 페이지 네비게이션
+        function navigateTo(pageId, params = {}) {
+            let url = `${pageId}.html`;
+            
+            const urlParams = new URLSearchParams();
+            for (const [key, value] of Object.entries(params)) {
+                urlParams.append(key, value);
+            }
+            
+            if (urlParams.toString()) {
+                url += '?' + urlParams.toString();
+            }
+
+            window.location.href = url;
+        }
+
+        // 로그아웃
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberedUser');
+            localStorage.removeItem('mockUser');
+            updateUI();
+            NotificationManager.success('로그아웃되었습니다.');
+        }
+
+        // 테스트 계정 로그인
+        function quickLogin(userType) {
+            const userData = {
+                general: {
+                    id: 'USER-001',
+                    type: 'general',
+                    name: '김일반',
+                    email: 'general@example.com',
+                    phone: '010-1234-5678'
+                },
+                corporate: {
+                    id: 'USER-002',
+                    type: 'corporate',
+                    name: '이기업',
+                    email: 'corporate@example.com',
+                    phone: '02-1234-5678',
+                    companyName: '(주)테스트기업',
+                    businessNumber: '123-45-67890'
+                },
+                partner: {
+                    id: 'USER-004',
+                    type: 'partner',
+                    name: '파트너',
+                    email: 'partner@example.com',
+                    phone: '02-7777-8888',
+                    companyName: '(주)파트너물류',
+                    businessNumber: '987-65-43210'
+                },
+                admin: {
+                    id: 'USER-003',
+                    type: 'admin',
+                    name: '관리자',
+                    email: 'admin@example.com',
+                    phone: '02-9999-8888'
+                }
+            };
+
+            if (userData[userType]) {
+                currentUser = userData[userType];
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUI();
+                NotificationManager.success(`${userType} 계정으로 로그인되었습니다.`);
+            }
+        }
+
+        // 페이지 접근 권한 확인
+        function checkPageAccess(page, user) {
+            if (page.access === 'public') {
+                return 'available';
+            }
+
+            if (!user) {
+                return 'restricted';
+            }
+
+            if (page.access === 'admin' && user.type !== 'admin') {
+                return 'disabled';
+            }
+
+            if (page.access === 'partner' && user.type !== 'partner') {
+                return 'disabled';
+            }
+
+            if (page.userTypes.includes(user.type)) {
+                return 'available';
+            }
+
+            return 'disabled';
+        }
+
+        // 페이지 카드 생성
+        function createPageCard(page) {
+            const access = checkPageAccess(page, currentUser);
+            const statusClass = `status-${access}`;
+            
+            const card = document.createElement('div');
+            card.className = `page-card bg-white rounded-lg p-4 cursor-pointer ${access === 'disabled' ? 'opacity-60' : 'hover-lift'}`;
+            
+            if (access !== 'disabled') {
+                card.onclick = () => {
+                    if (access === 'restricted') {
+                        NotificationManager.warning('로그인이 필요합니다.');
+                        navigateTo('login');
+                    } else {
+                        navigateTo(page.id);
+                    }
+                };
+            }
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="${page.icon} text-2xl text-blue-600 mr-3"></i>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${page.title}</h3>
+                            <span class="status-indicator ${statusClass}"></span>
+                            <span class="text-xs text-gray-600">
+                                ${access === 'available' ? '이용 가능' : 
+                                  access === 'restricted' ? '로그인 필요' : '접근 불가'}
+                            </span>
+                        </div>
+                    </div>
+                    ${access !== 'disabled' ? '<i class="fas fa-chevron-right text-gray-400"></i>' : ''}
+                </div>
+                <p class="text-sm text-gray-600">${page.description}</p>
+                <div class="mt-3 flex flex-wrap gap-1">
+                    ${page.userTypes.map(type => 
+                        `<span class="px-2 py-1 text-xs rounded-full border ${
+                            type === 'general' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                            type === 'corporate' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+                            type === 'admin' ? 'bg-red-50 text-red-700 border-red-200' :
+                            type === 'partner' ? 'bg-green-50 text-green-700 border-green-200' :
+                            'bg-gray-50 text-gray-700 border-gray-200'
+                        }">${
+                            type === 'general' ? '일반' :
+                            type === 'corporate' ? '기업' :
+                            type === 'admin' ? '관리자' :
+                            type === 'partner' ? '파트너' : type
+                        }</span>`
+                    ).join('')}
+                </div>
+            `;
+
+            return card;
+        }
+
+        // UI 업데이트
+        function updateUI() {
+            const userInfoSection = document.getElementById('userInfoSection');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (currentUser) {
+                // 사용자 정보 표시
+                userInfoSection.classList.remove('hidden');
+                document.getElementById('userNameDisplay').textContent = currentUser.name;
+                document.getElementById('userEmailDisplay').textContent = currentUser.email;
+                
+                const userTypeBadge = document.getElementById('userTypeBadge');
+                const userIcon = document.getElementById('userIcon');
+                
+                switch (currentUser.type) {
+                    case 'general':
+                        userTypeBadge.className = 'user-type-badge bg-blue-50 text-blue-700 border border-blue-200';
+                        userTypeBadge.textContent = '일반회원';
+                        userIcon.className = 'fas fa-user text-blue-600';
+                        break;
+                    case 'corporate':
+                        userTypeBadge.className = 'user-type-badge bg-orange-50 text-orange-700 border border-orange-200';
+                        userTypeBadge.textContent = '기업회원';
+                        userIcon.className = 'fas fa-building text-orange-600';
+                        break;
+                    case 'admin':
+                        userTypeBadge.className = 'user-type-badge bg-red-50 text-red-700 border border-red-200';
+                        userTypeBadge.textContent = '관리자';
+                        userIcon.className = 'fas fa-cog text-red-600';
+                        break;
+                    case 'partner':
+                        userTypeBadge.className = 'user-type-badge bg-green-50 text-green-700 border border-green-200';
+                        userTypeBadge.textContent = '파트너';
+                        userIcon.className = 'fas fa-truck text-green-600';
+                        break;
+                }
+
+                // 버튼 상태 변경
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+
+                // 사용자 타입별 섹션 표시
+                const generalPages = document.getElementById('generalPages');
+                const adminPages = document.getElementById('adminPages');
+                const partnerPages = document.getElementById('partnerPages');
+
+                generalPages.classList.add('hidden');
+                adminPages.classList.add('hidden');
+                partnerPages.classList.add('hidden');
+
+                if (currentUser.type === 'general' || currentUser.type === 'corporate') {
+                    generalPages.classList.remove('hidden');
+                } else if (currentUser.type === 'admin') {
+                    adminPages.classList.remove('hidden');
+                } else if (currentUser.type === 'partner') {
+                    partnerPages.classList.remove('hidden');
+                }
+            } else {
+                // 사용자 정보 숨김
+                userInfoSection.classList.add('hidden');
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+
+                // 모든 사용자별 섹션 숨김
+                document.getElementById('generalPages').classList.add('hidden');
+                document.getElementById('adminPages').classList.add('hidden');
+                document.getElementById('partnerPages').classList.add('hidden');
+            }
+
+            // 페이지 카드들 다시 생성
+            renderPages();
+        }
+
+        // 페이지 렌더링
+        function renderPages() {
+            // 인증 페이지
+            const authPagesGrid = document.getElementById('authPages');
+            authPagesGrid.innerHTML = '';
+            pageDefinitions.auth.forEach(page => {
+                authPagesGrid.appendChild(createPageCard(page));
+            });
+
+            // 일반/기업 고객 페이지
+            const generalPagesGrid = document.getElementById('generalPagesGrid');
+            generalPagesGrid.innerHTML = '';
+            pageDefinitions.general.forEach(page => {
+                generalPagesGrid.appendChild(createPageCard(page));
+            });
+
+            // 관리자 페이지
+            const adminPagesGrid = document.getElementById('adminPagesGrid');
+            adminPagesGrid.innerHTML = '';
+            pageDefinitions.admin.forEach(page => {
+                adminPagesGrid.appendChild(createPageCard(page));
+            });
+
+            // 파트너 페이지
+            const partnerPagesGrid = document.getElementById('partnerPagesGrid');
+            partnerPagesGrid.innerHTML = '';
+            pageDefinitions.partner.forEach(page => {
+                partnerPagesGrid.appendChild(createPageCard(page));
+            });
+
+            // 공통 페이지
+            const commonPagesGrid = document.getElementById('commonPages');
+            commonPagesGrid.innerHTML = '';
+            pageDefinitions.common.forEach(page => {
+                commonPagesGrid.appendChild(createPageCard(page));
+            });
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 현재 사용자 정보 로드
+            const userStr = localStorage.getItem('currentUser');
+            if (userStr) {
+                try {
+                    currentUser = JSON.parse(userStr);
+                } catch (e) {
+                    console.error('사용자 정보 파싱 오류:', e);
+                    localStorage.removeItem('currentUser');
+                }
+            }
+
+            // UI 초기화
+            updateUI();
+        });
+    </script>
+</body>
+</html>
